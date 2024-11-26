@@ -1,0 +1,2311 @@
+---
+title: A Historical Analysis of the Evolution of Active Travel Behaviour in Canada
+author:
+  - name: Alice Anonymous
+    email: alice@example.com
+    affiliation: Some Institute of Technology
+    correspondingauthor: true
+    footnote: 1
+  - name: Bob Security
+    email: bob@example.com
+    affiliation: Another University
+  - name: Cat Memes
+    email: cat@example.com
+    affiliation: Another University
+    footnote: 2
+  - name: Derek Zoolander
+    email: derek@example.com
+    affiliation: Some Institute of Technology
+    footnote: 2
+address:
+  - code: Some Institute of Technology
+    organization: Big Wig University
+    addressline: 1 main street
+    city: Gotham
+    state: State
+    postcode: 123456
+    country: United States
+  - code: Another University
+    organization: Department
+    addressline: A street 29
+    postcode: 2054 NX
+    city: Manchester,
+    country: The Netherlands
+footnote:
+  - code: 1
+    text: "This is the first author footnote."
+  - code: 2
+    text: "Another author footnote."
+abstract: |
+  This is the abstract.
+
+  It consists of two paragraphs.
+keywords: 
+  - keyword1
+  - keyword2
+journal: "An awesome journal"
+date: "`r Sys.Date()`"
+linenumbers: false
+numbersections: true
+bibliography: mybibfile.bib
+biblio-style: elsarticle-harv # author year style for natbib - use 'elsarticle-num' or 'elsarticle-num-names' for numbered scheme
+classoption: preprint, 3p, authoryear # remove authoryear is not using `elsarticle-harv`
+# Use a CSL with `citation_package = "default"`
+# csl: https://www.zotero.org/styles/elsevier-harvard
+output: 
+  rticles::elsevier_article:
+    keep_tex: true
+    citation_package: natbib
+---
+```{r load-data, include = FALSE}
+install.packages("pak")
+pak::pak("dias-bruno/ActiveCA")
+
+rm(list=ls())
+```
+
+```{r load-packages, include=FALSE, cache=FALSE}
+# Load packages
+library(ActiveCA)
+library(here)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(kableExtra)
+library(reshape2)
+library(rlang)
+library(scales)
+library(gridExtra)
+library(ggpubr)
+library(grid)
+library(stats)
+```
+
+```{r load-data, include = FALSE}
+# Load data
+data(walking_1992, 
+     walking_1998, 
+     walking_2005, 
+     walking_2010, 
+     walking_2015,
+     cycling_1992, 
+     cycling_1998, 
+     cycling_2005, 
+     cycling_2010, 
+     cycling_2015,
+     gss_episodes,
+     gss_impedances)
+```
+
+
+```{r echo=FALSE, cache=FALSE, include=FALSE}
+less_than100 <- nrow(gss_episodes %>% filter(DURATION > 100 & YEAR > 1986))
+
+all_episodes <- nrow(gss_episodes %>% filter(YEAR > 1986))
+```
+
+
+```{r table-01, echo=FALSE, cache=FALSE}
+# Calculate the count of trips for each mode and year
+
+gss_episodes[is.na(gss_episodes$WGHT_EPI), ]$WGHT_EPI <- 1
+
+gss_episodes <- gss_episodes %>% 
+  filter(DURATION <= 100 & 
+           DURATION > 0 & 
+           YEAR > 1986 & 
+           Pop_centre %in% c("CMA/CA", "CMA"))
+
+episodes_counts <- gss_episodes %>%
+  group_by(YEAR, MODE) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  pivot_wider(names_from = YEAR, values_from = count)
+
+# Calculate min, mean, and max statictis (duration)
+stats_data <- gss_episodes %>%
+  group_by(YEAR, MODE) %>%
+  summarise(
+    min = min(DURATION),
+    mean = mean(DURATION),
+    median = median(DURATION),
+    max = max(DURATION),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(cols = c(min, mean, median, max), names_to = "Statistic", values_to = "Value") %>%
+  pivot_wider(names_from = YEAR, values_from = Value)
+
+# Combine counts and stats into one data frame
+final_data <- bind_rows(
+  episodes_counts %>% mutate(Statistic = "count"),
+  stats_data
+) %>%
+  mutate(MODE = factor(MODE, levels = c("Walking", "Cycling"))) %>%
+  arrange(MODE, Statistic) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 0)))
+
+# Rename the 'MODE' column to 'Mode' before generating the table
+final_data <- final_data %>%
+  rename(Mode = MODE) %>%
+  dplyr::select(Mode, Statistic, everything())
+
+# Creating a latex table
+styled_ch03_table_01 <- final_data %>%
+  kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
+        caption = "\\label{tab:table-01}Descriptive statistics for episodes with active transport records",  
+        align = c('l', 'l', rep('c', ncol(final_data) - 2))) %>%
+  kable_styling(full_width = FALSE, font_size = 10) %>%
+  column_spec(1, bold = TRUE) %>%
+  add_header_above(c(" " = 2, "Year" = ncol(final_data) - 2)) %>%
+  collapse_rows(columns = 1, valign = "top", latex_hline = "major")
+
+# Print the table
+styled_ch03_table_01
+```
+
+
+```{r table-02, echo=FALSE, cache=FALSE, warning=FALSE, results="asis"}
+# Filter for selected years and calculate statistics of trip duration
+episodes_stats_before <- gss_episodes %>%
+  filter(YEAR < 2005) %>%
+  group_by(YEAR, dest_label, MODE) %>%
+  summarise(
+    count = n(),
+    min = min(DURATION),
+    median = median(DURATION),
+    max = max(DURATION),
+    .groups = "drop"
+  )
+
+# Calculate percentages of trips by mode/year 
+total_counts <- episodes_stats_before %>% 
+  group_by(YEAR, MODE) %>% 
+  summarise(total_count = sum(count), 
+            .groups = "drop")
+
+episodes_stats_before <- left_join(episodes_stats_before, total_counts, by = c("YEAR", "MODE"))
+
+episodes_stats_before$Percentage <- round((episodes_stats_before$count / episodes_stats_before$total_count) * 100, 1)
+
+# Pivot data for the table layout
+wide_data <- episodes_stats_before %>%
+  pivot_wider(
+    id_cols = c(dest_label, MODE),
+    names_from = YEAR,
+    values_from = c(min, median, max, Percentage)
+  )  %>% 
+  arrange(MODE, dest_label, desc(Percentage_1998))
+
+wide_data <- wide_data %>%
+  group_by(MODE) %>%
+  mutate(MODE = if_else(row_number() == 2, as.character(MODE), "")) %>%
+  ungroup() %>%
+ dplyr::select(
+    dest_label, MODE, min_1992, median_1992, max_1992, Percentage_1992,
+    min_1998, median_1998, max_1998, Percentage_1998
+  )
+
+# Latex table
+styled_table_03 <- wide_data %>%
+  kable(
+    format = "latex", 
+    booktabs = TRUE, 
+    longtable = TRUE, 
+    align = c(rep("c", ncol(wide_data))),
+    caption = "\\label{tab:table-03}Comparison of travel statistics by mode and destination: 1986, 1992, 1998",
+    col.names = c("Destination", "Mode*","Min*","Med*","Max*", "(%)*",  "Min","Med","Max", "(%)")
+  ) %>%
+  kable_styling(full_width = FALSE, 
+                #latex_options=c("striped", "scale_down"), 
+                latex_options=c("scale_down"),
+                 font_size = 6) %>%
+  # column_spec(1, width = "1cm") %>%  # Set width of 'Dest' column to 1.5cm
+  # column_spec(2:14, width = "0.5cm") %>%  # Set width of remaining columns to 0.7cm
+  add_header_above(c(" " = 2, "1992" = 4, "1998" = 4)) %>%
+  row_spec(0, bold = TRUE, align = "c") %>%
+  column_spec(6, border_right = TRUE) %>%
+  footnote(general = c("* The symbols used in this table represent the following: `Min` denotes the minimum time to reach the destination; `Max` denotes the maximum time to reach the destination; `(%)` indicates a percentage of the total time to reach the destination; `Med` refers to the median time to reach the destination"), threeparttable = T)
+
+styled_table_03 
+```
+
+```{r table-03,echo=FALSE, cache=FALSE, warning=FALSE}
+# Renaming 'dest_label' and 'orig_label' values to reduce table space
+gss_episodes_renamed <- gss_episodes %>%
+  mutate(dest_label = case_when(
+    dest_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    dest_label == "Restaurant, bar or club" ~ "Restaurant",
+    dest_label == "Sports centre, field or arena" ~ "Sport area",
+    dest_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    dest_label == "In the neighbourhood" ~ "Neighbourhood",
+    dest_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ dest_label  # Keep all other values as they are
+  ), 
+  orig_label = case_when(
+    orig_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    orig_label == "Restaurant, bar or club" ~ "Restaurant",
+    orig_label == "Sports centre, field or arena" ~ "Sport area",
+    orig_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    orig_label == "In the neighbourhood" ~ "Neighbourhood",
+    orig_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ orig_label))
+
+# Selecting surveys after 2000 and calculating trip duration statistics 
+episodes_stats_after <- gss_episodes_renamed %>%
+  filter(YEAR > 2000) %>%
+  group_by(YEAR, dest_label, MODE) %>%
+  summarise(
+    count = n(),
+    min = min(DURATION),
+    median = median(DURATION),
+    max = max(DURATION),
+    .groups = "drop"
+  )
+
+# Calculate percentages of trips by mode/year
+total_counts <- episodes_stats_after %>% group_by(YEAR, MODE) %>% summarise(total_count = sum(count), .groups = "drop")
+episodes_stats_after <- left_join(episodes_stats_after, total_counts, by = c("YEAR", "MODE"))
+episodes_stats_after$Percentage <- round((episodes_stats_after$count / episodes_stats_after$total_count) * 100, 1)
+
+# Pivot data for the table layout
+wide_data <- episodes_stats_after %>%
+  pivot_wider(
+    id_cols = c(dest_label, MODE),
+    names_from = YEAR,
+    values_from = c(min, median, max, Percentage)
+  ) %>%
+ dplyr::select(
+    dest_label, MODE,
+    min_2005, median_2005, max_2005, Percentage_2005,
+    min_2010, median_2010, max_2010, Percentage_2010,
+    min_2015, median_2015, max_2015, Percentage_2015
+  ) %>% 
+  arrange(MODE, dest_label, desc(Percentage_2015)) %>%
+   group_by(MODE) %>%
+   mutate(MODE = if_else(row_number() == 2, as.character(MODE), "")) %>%
+   ungroup()
+
+# Latex table
+styled_table_04 <- wide_data %>%
+  kable(
+    format = "latex", 
+    booktabs = TRUE, 
+    longtable = TRUE, 
+    align = c(rep("c", ncol(wide_data))),
+    caption = "\\label{tab:table-04}Comparison of travel statistics by mode and destination: 2005, 2010, 2015",
+    col.names = c("Destination", "Mode*","Min*","Med*","Max*", "(%)*", "Min","Med","Max", "(%)", "Min","Med","Max", "(%)")
+  ) %>%
+  kable_styling(full_width = FALSE, 
+                #latex_options=c("striped", "scale_down"), 
+                latex_options=c("scale_down"),
+                font_size = 6) %>%
+  column_spec(1, width = "2cm") %>%  # Set width of 'Dest' column to 1.5cm
+  column_spec(2:14, width = "0.4cm") %>%  # Set width of remaining columns to 0.7cm
+  add_header_above(c(" " = 2, "2005" = 4, "2010" = 4, "2015" = 4)) %>%
+  row_spec(0, bold = TRUE, align = "c") %>%
+  column_spec(6, border_right = TRUE) %>%
+  column_spec(10, border_right = TRUE) %>% 
+  footnote(general = c("* The symbols used in this table represent the following: `Min` denotes the minimum time to reach the destination; `Max` denotes the maximum time to reach the destination; `(%)` indicates a percentage of the total time to reach the destination; `Med` refers to the median time to reach the destination"), threeparttable = T)
+
+styled_table_04
+```
+
+
+
+```{r}
+test_graph %>% 
+     group_by(dest_label, MODE) %>% 
+     summarise(count = n(), .groups = "drop") %>% 
+     filter(count > 2)
+```
+
+
+```{r}
+test_graph %>% 
+   dplyr::filter(dest_label %in% c("Cultural venues", "Grocery store", "Home", "Place of worship", "Restaurant",  "Work or school",  "Other's home", "Outdoors")) %>% 
+     ggplot(aes(x= YEAR, y = Median)) + 
+     geom_line() + 
+  theme_minimal() +
+     facet_wrap(dest_label~MODE)
+```
+
+```{r}
+test_graph %>% 
+  dplyr::filter(dest_label %in% c("Cultural venues", "Grocery store", "Home", "Place of worship", "Restaurant",  "Work or school",  "Other's home", "Outdoors")) %>% 
+  ggplot(aes(x = YEAR, y = Median, color = MODE)) +  # Distinguish by MODE using color
+  geom_line() + 
+  theme_minimal() +
+  facet_wrap(~dest_label) + 
+  labs(
+    color = "Mode",                      
+    x = "Year",                          
+    y = "Typical travel time (in minutes)"
+  )
+```
+
+
+```{r}
+
+  
+
+
+```
+
+
+# AQUI
+
+
+Tables \ref{tab:table-03} and \ref{tab:table-04} thoroughly explore trip statistics by transportation mode and destination for the GSS cycle year. These tables detail the minimum, median, and maximum trip durations, accompanied by their respective percentages, which reflect the proportion of trips within each category. The temporal measures are presented in minutes. An analytical comparison of the tables reveals evolving patterns in transportation behaviors over time, with a particular emphasis on walking and cycling.
+
+By 1992, cycling data appears, indicating an introduction or increased adoption of this mode of travel. The median cycling times to home and other destinations are relatively low at 20 and 10 minutes, respectively. However, the maximum times are substantial (90 and 70 minutes), suggesting some cyclists were willing to travel longer distances. Walking trips to home still dominate, with an increased percentage of nearly 59% and the median time remaining 10 minutes. The data might suggest an increasing tendency to reside closer to workplaces or schools or improved pedestrian access. Moreover, the percentages, reflective of the trip count, showed that over half of the commutes to home were done by bicycle. The presence of cycling trips to work or school is not recorded, which might suggest limited adoption or data collection constraints for this purpose. In 1998, walking trips to one's home accounted for 61.2% of the total trips, a substantial increase from 43.5% in 1986. The median duration of these trips remained consistent at 10 minutes over the years, with a maximum duration of 90 minutes. This indicates a strong preference for walking as a mode of transport to home, possibly due to various factors such as the proximity of residential areas to city centers, increased walkability of cities, or a heightened societal focus on physical health and environmental consciousness.
+
+In comparison, walking trips to work or school comprised 20.5% of trips in 1998, a slight increase from 14.6% in 1986. The median duration for these trips was 6.5 minutes, notably lower than for walking trips home. It could suggest that work or school destinations were, on average, closer to the individuals' starting points or that there was a selective preference for walking to work or school only when the distance was relatively short. The percentage of walking trips to 'other' destinations was 28.2%, with a median duration of 5 minutes and a maximum of 90 minutes. The 'other' category likely encompasses a variety of destinations such as shopping, leisure activities, or social visits, which may be more dispersed in location, hence the broader range in trip durations.
+
+Moving to Table 2.3, by 2005, a variety of destinations are included, such as grocery stores and restaurants, indicating a more detailed analysis of trip purposes. Cycling to work or school sees a high median time of 15 minutes and a maximum of 75 minutes, illustrating that cycling has become a more prominent mode of transportation for longer distances, possibly due to improved cycling infrastructure or increased environmental awareness. In addition, In 2005, the destination with the maximum percentage of walking was the trip to home, holding a significant 44.3%. It suggests that walking to work or school was the most common trip purpose among pedestrians. The second most common walking trip was to work or school, with a percentage of 17.1%, followed by grocery store destinations at 12.5%. The least common walking destinations were Library, museum, and theater locations, which held a negligible percentage, possibly due to their infrequency or distance from residential areas. The destination with the highest percentage for cycling was also to home, at 48.9%. This percentage, while higher than that of walking, reflects a considerable number of individuals opting to cycle for their commutes. The second and third most popular cycling destinations were work or school (22.5%), followed by grocery stores (10.2%).
+
+By 2010, the median durations for cycling to work or school increased to 15.0 minutes. The trend shifts slightly between 2005 to 2010. The maximum percentage for walking trips remained home, albeit decreased to 43.6%. The second most common destination for walking was work or school at 15%, followed by grocery stores at 13.3%. The least common was again library, museum, and theater locations, similar to 2005, suggesting a consistent pattern over the years. Cycling to home reached its peak in 2010, with the highest percentage at 51.4%, overtaking walking for this destination and indicating a surge in cycling's popularity for commuting. However, the second destination remains work or school with 25.7%, and the third destination was changed to restaurants and bars, which increased to 10.3%.
+
+In 2015, the median time for cycling trips to home and work or school decreased (15.0 and 10.0 minutes, respectively) compared to 2010, which might indicate more efficient cycling conditions or a shift in the locations of homes relative to workplaces. Walking trips maintain a steady percentage, especially to home, which could signal a consistent preference for walking as a reliable and health-conscious mode of transportation. In 2015, walking home with 46.7 was the most popular destination for walking. Also, walking to work or school increased to 17.1%, tying with cycling for the destination with the highest percentage. It suggests a balancing out of the preferences between the two modes for commuting. The third most common walking trip was to grocery stores, which increased to 12.7%, and the fourth was trips to restaurants at 8.9%. The least common walking destination was to places of worship or business, which had the smallest percentage, reflecting their specific and potentially less frequent nature. Cycling, while experiencing a decrease in the percentage of home travel compared to 2010, remained a significant mode of transportation for that purpose. In 2015, the specific percentages for other cycling destinations allocated to work or school and grocery stores increased to 31.8 and decreased to 7.4%.
+
+When comparing walking and cycling, it is evident that cycling has been embraced for longer-distance commutes over time, as seen in the extended median and maximum durations. While maintaining a significant share of trips, mainly to home destinations, walking tends to be favored for shorter distances. This preference may reflect walking's inherent limitations in speed and convenience over longer distances compared to cycling. The evolution from 2005 to 2015 suggests an increasing preference for shorter, more efficient trips, potentially indicative of changing urban designs and lifestyles that favor convenience and time-saving. The data points to a population increasingly incorporating cycling into their routine for various trip purposes, reflecting broader trends towards sustainable transportation and active lifestyles. Overall, these statistics offer valuable insights into the dynamics of urban transportation, highlighting the gradual but distinct shifts in how people choose to travel within their cities. These shifts are influenced by a confluence of factors, including urban development, cultural trends, environmental considerations, and transportation policies aimed at promoting active transport modes.
+
+
+
+
+
+
+
+
+
+Figure 1 and Figure 2, as depicted, serve as a comprehensive visual compilation of walking and cycling trip data spanning nearly three decades, from 1986 to 2015. These heat maps employ a nuanced color gradient to translate complex data into an easily interpretable format. The spectrum of colors, from deep, rich tones to pale hues, corresponds directly to the percentage of trips along various origins and destinations, with the darkest shades representing the highest percentage between origins and destinations. Lighter shades denote pathways less traveled, offering a clear visual distinction between the frequented and less frequented corridors of pedestrian/cyclist movement.
+
+The 2015 heat map particularly highlights the dominance of trips originating from homes. Walking trips from home to work or school represent a notable 13.2%, depicted as the darkest cell on the map. This indicates a preference for walking as a mode of transport for commuting in Canada. In contrast, the map also reveals walking trips from workplaces or schools back to homes at 13.91%, indicating a return flow in commuting patterns. Additionally, home-originating trips to other homes, accounting for 9.22%, might reflect short neighborhood walks for purposes like exercise or dog walking. Trips from home to grocery stores, other stores, or malls, making up 7.14% of the trips, suggest a shift in walking frequency for shopping purposes. Trips originating from other homes are also prominent, especially to homes (6.95%), possibly indicating social visitation patterns. Trips from home to restaurants, bars, or clubs, at 4.88%, reveal a social and recreational aspect of walking trips. However, walking trips starting outdoors are less frequent, with the highest being trips to homes at 0.51%. The lower end of the spectrum includes origins like businesses, libraries, museums, theaters, and places of worship, indicating these as less common walking paths. For example, business-to-restaurant, bar, or club trips are a mere 0.11%.
+
+The 2010 heatmap shows the most frequent walking trips from home to work or school, constituting 9.93% of all trips and emphasizing walking in daily commutes. The return trips from work or school to home also show a high percentage at 9.34%. Notably, trips from other's homes back to home, at 8.54%, may indicate a tendency for walking during social visitations. The third and fourth most common routes are from home to shopping destinations and back, accounting for 6.51% and 8.7% of the trips, respectively. Walking trips from home to restaurants or bars make up 3.28%, highlighting walking's role in leisure activities. Less frequent trips include those to libraries, places of worship, and outdoors, indicated by lighter shades on the heatmap. In 2005, the most prevalent walking trip was from home to work or school, accounting for 13.22% of all walking trips. The data further reveals that walking trips from other's homes to homes, at 8.3%, signify a notable trend in social visitations. Shopping-related walking trips also show high frequencies. Leisure activities like walking to restaurants or bars account for 3.61%. Less common trips include those to libraries, places of worship, and outdoors.
+
+The 1998 heatmap reveals a predominance of trips from home to other's homes, at 21.83%, emphasizing the role of pedestrian mobility in maintaining social connections. Commuting trips, such as from home to work or school, constitute 11.56% of the trips. However, trips within the work or school category are least frequent at 1.7%. In 1992, the most frequent walking trips were within the home category, at 27.85%, likely encompassing leisure, dog walking, or short errands. Social visitations also represent a significant portion, at 15.88%. Commuting trips from home to work or school made up 18.62% of the walking trips, with return trips being less frequent at 14.73%. Trips originating from other's homes show diverse figures, with 'other's home' to 'home' trips being quite prevalent at 17%. Lastly, in 1986, most walking trips occurred between homes and other's homes, with trips from other's homes to homes being most prevalent at 29.21%. It underscores the importance of walking in maintaining social ties. Commuting trips, represented at 11.56%, suggest a smaller proportion of walking trips compared to social visits. Intracategory trips from home to home, likely representing leisure walks, accounted for 6.01%. Walking trips within the work or school category were low at 1.7%, possibly due to limited walking opportunities during work or school.
+
+Over nearly three decades, the trends in walking trips reveal significant shifts in the patterns and preferences of pedestrians. In the earlier years, such as 1986 and 1992, walking trips were predominantly characterized by social visitations, as evidenced by the high percentage of trips between 'home' and 'other's home. In 1986, these social trips constituted the majority of walking activities, with 29.21% from 'other's home' to 'home' and 21.83% in the reverse direction. By 1992, there was a notable increase in intracategory 'home' trips (27.85%), suggesting a rise in walking for leisure or short errands within the neighborhood. This shift highlights transitioning from walking predominantly for social purposes to incorporating more leisure and short-distance errands.
+
+In contrast, in the later years, especially in 2005 and 2015, there has been a clear trend towards walking being more frequently used for commuting purposes. In 2005, the commute from 'home' to 'work or school' was the most prevalent walking trip, accounting for 13.22% of all walking trips. Similarly, in 2015, walking trips from home to work or school represented the highest percentage (13.2%), indicating an increased reliance on walking as a primary mode of transportation for commuting. This transition from social to commuting purposes reflects broader changes in urban lifestyles and possibly improvements in pedestrian infrastructure, making walking a more viable option for daily commutes. The data also shows a consistent pattern of return trips from work or school to home, further underscoring the bidirectional nature of commuting trips. These changing patterns indicate how the role of walking in urban environments has evolved. Initially, it served primarily as a means of social connectivity and short leisurely activities. Over time, however, it has increasingly become a key component of the daily commute, reflecting changes in urban planning, societal habits, and possibly environmental consciousness. The heat maps' changing color gradients over the years visually encapsulate this evolution, marking a shift in the urban pedestrian landscape
+
+```{r make-fig-01, include=FALSE}
+# Adjust each plot to have a fixed aspect ratio
+heatmap_plot_1986 <- heatmap_plot_1986 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12), 
+    axis.text.y = element_text(size = 12)   
+  )
+
+heatmap_plot_1992 <- heatmap_plot_1992 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)  
+  )
+heatmap_plot_1998 <- heatmap_plot_1998 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+heatmap_plot_2005 <- heatmap_plot_2005 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+heatmap_plot_2010 <- heatmap_plot_2010 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+heatmap_plot_2015 <- heatmap_plot_2015 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+
+
+# Combine the plots with adjusted spacing
+ch03_fig_01 <- cowplot::plot_grid(heatmap_plot_1986, heatmap_plot_2005, heatmap_plot_1992, heatmap_plot_2010, heatmap_plot_1998, heatmap_plot_2015, ncol = 2, align = 'hv',  rel_widths = c(1, 1), rel_heights = c(1, 1, 1))
+
+# Save the combined plot to a file
+ggsave(file = "figure/ch03_fig_01.jpg", 
+       plot = ch03_fig_01,
+       width = 17, 
+       height = 22, 
+       units = "in")
+
+```
+
+```{r plot-fig-01, echo=FALSE, out.width="100%", fig.cap="Percentage of walking Trips Categorized by Origin and Destination", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_01.jpg")
+```
+
+```{r make-fig-02, include=FALSE}
+
+# Adjust each plot to have a fixed aspect ratio
+
+heatmap_plot_c_1992 <- heatmap_plot_c_1992 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+heatmap_plot_c_1998 <- heatmap_plot_c_1998 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+heatmap_plot_c_2005 <- heatmap_plot_c_2005 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+heatmap_plot_c_2010 <- heatmap_plot_c_2010 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), 
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+heatmap_plot_c_2015 <- heatmap_plot_c_2015 +
+  coord_fixed(ratio = 1) +
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),  
+    axis.text.x = element_text(size = 12),  
+    axis.text.y = element_text(size = 12)   
+  )
+
+
+# Combine the plots with adjusted spacing
+ch03_fig_02 <- cowplot::plot_grid(heatmap_plot_c_1992, heatmap_plot_c_2005,heatmap_plot_c_1998, heatmap_plot_c_2010, heatmap_plot_c_2015,ncol = 2, align = 'hv', rel_widths = c(2, 2),  rel_heights = c(2, 2, 2))
+
+# Save the combined plot to a file
+ggsave(file = "figure/ch03_fig_02.jpg", 
+       plot = ch03_fig_02,
+       width = 17, 
+       height = 22, 
+       units = "in")
+```
+
+```{r plot-fig-02, echo=FALSE, out.width="100%", fig.cap="Percentage of cycling Trips Categorized by Origin and Destination", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_02.jpg")
+```
+
+In 2015, bicycles were clearly preferred as a primary mode of transportation, especially for commuting from 'home' to 'work or school,' accounting for 32.73% of all cycling trips. It underscores the bicycle's role in daily commutes, reflecting a commitment to environmental sustainability and fitness. The return journey from work or school to home also showed a significant volume, representing 30.38% of trips, indicating a balanced bidirectional commuting pattern. Besides commuting, cycling for errands and social visitations was notable, with trips to grocery stores and other retail destinations making up 5.41% and trips for social purposes to another's home at 3.66%. Leisure activities, including visits to restaurants, bars, or clubs, accounted for 2.06% of trips. Additionally, trips from home to home were reported at 4.58%, highlighting cycling's role in local mobility.
+
+Commuting remained a key cycling activity in 2010, with 27.97% of trips made from 'home' to 'work or school' and 25.38% in the opposite direction, reinforcing the bicycle's importance in daily travel. Social interactions played a significant role, with 8.71% of trips from 'home' to 'other's home' integrating bicycles into the social fabric of Canadian life. Errands and dining or entertainment purposes remained consistent with previous years, at 5.01% and 2.06%, respectively. Home-to-home trips accounted for 5.97%, underscoring the versatility of cycling for various personal needs.
+
+By 2005, the landscape of cycling trips showed a diverse usage pattern, with commuting still at 18.74% for trips from 'work or school' to 'home'. The data highlights the bicycle's vital role in Canadian daily life as a reliable mode of transport. Interestingly, trips from 'home' to 'home' constituted 7.85% of the total, indicating that a significant portion of cycling activity was dedicated to local and recreational mobility. Social and errand cycling, at 7.06% and 7.15%, respectively, along with recreational trips, at 2.07%, show the broadening scope of cycling beyond mere commuting.
+
+In 1998, the data presented a deep color saturation on the heat map for trips from 'work or school' to 'home' and vice versa, with 26.64% and 30.75% of trips, respectively, highlighting a strong bidirectional commuting behavior. The role of bicycles in social visitation was also significant, with 13.53% of trips from 'home' to 'other's home' and 20.74% for the return journey. Home-to-home trips were 4.18%, pointing to the growing trend of using bicycles for a mix of commuting, social, and recreational purposes.The bicycle's essential role in commuting was further reinforced in 1992 when data showed that 26.13% of cycling trips were made from "home" to "work or school," with a sizable return trip percentage of 20.33%. Social visitations also featured prominently, with 20.74% of trips from 'other's home' back to 'home', indicating the bicycle's role in facilitating community connectivity. Cycling trips within the 'home' category, indicating a variety of local uses, were at 15.03%.
+
+Over the years, the cycling trends in Canada have shown an evolving pattern, with a consistent emphasis on commuting while also demonstrating an increasing integration of bicycles into various aspects of urban life. In 2015, cycling was predominantly used for commuting, with 32.73% of trips from 'home' to 'work or school' and a nearly equal percentage for the return journey. This trend reflects a strong environmental and fitness consciousness in urban Canadian society. Comparatively, in 2010, while commuting still remained the primary use of bicycles (27.97% for going to work or school and 25.38% for returning), there was a noticeable increase in cycling for social visitations, accounting for 8.71% of trips. This shift indicates a broader adoption of cycling beyond utilitarian purposes, embedding it more deeply into the social fabric.
+
+In earlier years, such as 2005 and 1998, the emphasis on commuting was still apparent but with a slightly different focus. For instance 2005, the most prevalent cycling route was from work or school to home, constituting 18.74% of trips. This difference in the direction of the dominant route might suggest variations in cycling habits or available infrastructure at the time. In 1998, the data showed a balance between commuting and social interactions, with high percentages for trips from work or school to home (26.64%) and from 'home' to 'other's home' (13.53%). This balance demonstrates the role of bicycles in fostering community interactions and local mobility. Going back to 1992, cycling for commuting (26.13%) and social visitations (20.74%) were also significant, highlighting the bicycle's longstanding role in facilitating professional and interpersonal connectivity.
+
+Overall, these trends across different years illustrate a consistent reliance on bicycles for commuting in Canada, coupled with a growing appreciation of their role in social and recreational activities. The shifting percentages and patterns of use reflect changing urban lifestyles, advancements in cycling infrastructure, and an increasing recognition of the bicycle as a versatile, environmentally friendly, and health-conscious mode of transportation in Canadian cities
+
+### Impedance function analysis
+
+The impedance function figures presented in this section illuminate the changes in walking and cycling trip durations to various destinations across Canada over an extensive period from 1986 to 2015. These distance decay curves are pivotal to understanding impedance functions and are critical for travel behavior analysis. A fundamental idea of spatial interaction is represented by their depiction of the decreasing probability of selecting walking or cycling as a mode of transportation as the distance between the origin and the destination increases. This idea states that the likelihood of traveling between two points decreases with increasing distance. These curves also indicate the critical points at which a person's tendency to walk or cycle abruptly decreases.
+
+Our exploration of distance decay curves for walking and cycling trips to diverse destinations utilized the General Social Survey (GSS) dataset, enabling an examination of how these curves vary across transportation modes and destination types over time. The data shed light on the frequency and characteristics of walking and cycling trips, with the years 2005, 2010, and 2015 featuring a wide range of destinations, from homes to workplaces, schools, other people's homes, grocery stores, retail outlets, malls, outdoor spaces, restaurants, bars, clubs, libraries, museums, theaters, and places of worship. This breadth of destination types signifies a marked expansion from the data of earlier years (1986, 1992, and 1998), which cataloged trips primarily to homes, other people's homes, and work or school. This evolution in data collection reflects a growing understanding of the complex nature of urban mobility and the diverse purposes that motivate walking and cycling trips, providing a comprehensive foundation for analyzing distance decay and its implications for urban planning and sustainable transportation strategies.
+
+A methodical statistical approach was adopted to determine the appropriate distribution for modeling the distance decay curves for different destinations. The analysis began with generating Cullen and Frey graphs utilizing the fitdistrplus package in R, a graphical tool pivotal for suggesting plausible distributions by plotting the square of skewness against excess kurtosis. This step paved the way for selecting potential distributions for further assessment. Upon identifying potential distributions, an empirical evaluation was conducted to fit several candidate distributions to the data, specifically targeting distributions such as Gamma, Weibull, normal, lognormal, poisson, logistic, and Exponential, among others. Each distribution was fitted using maximum likelihood estimation (MLE), with the added complexity of weights incorporated into the fitting process. This was a crucial step as the dataset included a weight variable, which is a fundamental weighting element used for estimating the frequency of activities conducted by the Canadian population as recorded in the dataset. It aims to portray the broader behavioral patterns of the population accurately.
+
+To objectively assess the fit of each distribution, model selection criteria such as the Akaike Information Criterion (AIC), Bayesian Information Criterion (BIC), and log-likelihood (logLik) were employed. These criteria are critical in not only capturing the goodness of fit but also penalizing the complexity of the model to prevent overfitting. AIC and BIC provide a balance between the model's accuracy and complexity, where lower values are indicative of a more economical model. The log-likelihood directly measures the probability of observing the given data under the assumed statistical model, with higher values signaling a better fit. The distribution that manifested the lowest AIC and BIC, coupled with the highest log-likelihood, was deemed the most suitable for representing the distance decay curve for each specific destination in each year. This rigorous statistical procedure ensured that the chosen distribution was the most fitting given the empirical data, reflecting both the underlying process and the observed variations. The approach guarantees that the final model is not only statistically robust but also reliable for interpreting the distance decay effect within the study context. Despite initial considerations for traditional diagnostic methods such as residual analysis and Q-Q plots, these techniques proved incompatible with the complexities of weighted data. The variable "WGHT_EPI" in the dataset weighting variable is essential for representing the Canadian population's activity frequencies at the episode level. While the fitdistrplus package accommodates weights in estimation, it does not extend this functionality to diagnostic plots, which are typically unweighted. Consequently, the reliance on information criteria like AIC and BIC, adjusted for weighted data, became instrumental in guiding our selection of the most robust and representative model for our analysis, marking a methodological stride in our statistical practice.
+
+Following the detailed statistical analysis, we present four comprehensive tables that encapsulate AIC, BIC, and log-likelihood values of each destination by mode and year (Tables \ref{tab:table-04},\ref{tab:table-05}, \ref{tab:table-07}, and \ref{tab:table-08}). These tables summarize the fitting process for each distribution evaluated, illuminating the decision-making process for selecting the most suitable distribution for each destination category. The tables illustrate our model selection process, highlighting the distribution that emerged as the best fit for each specific context based on the lowest AIC and BIC values and the highest log-likelihood scores. The first table delineates the statistical metrics for walking trips, while the second table deals with trips made by bicycle. Each table is organized to showcase the comparison across different years, thus offering insights into the temporal dynamics of travel behavior and the evolution of distance decay characteristics. By presenting the diagnostics in this tabular format, we aim to provide a clear and accessible reference demonstrating the distributional trends and patterns discerned from the GSS dataset.
+
+```{r make-table-04, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+# Filter the dataframe to only include specific destinations
+desired_destinations <- c("Home", "work or school", "Other's home")
+walking_data_filtered <- walking_data[walking_data$Destinations %in% desired_destinations,]
+
+# Round the numeric columns to two decimal places
+numeric_columns <- c("logLik_1986", "AIC_1986", "BIC_1986",
+                     "logLik_1992", "AIC_1992", "BIC_1992", 
+                     "logLik_1998", "AIC_1998", "BIC_1998")
+walking_data_filtered[numeric_columns] <- round(walking_data_filtered[numeric_columns], 2)
+
+library(dplyr)
+library(tidyr)
+library(kableExtra)
+
+walking_data_filtered |> 
+  dplyr::select(Destinations, 
+                Impedance_Function, 
+                ends_with("_1986") | ends_with("_1992") | ends_with("_1998"), 
+                -starts_with("Selected_")) |>
+  pivot_longer(cols = -c(Destinations, Impedance_Function, starts_with("Selected")), 
+               names_to = c("fun", "year"), 
+               names_sep = "_") |>
+  pivot_wider(names_from = fun, values_from = value) |>
+  arrange(Destinations, year) |>
+  dplyr::select(-Destinations) |>
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = "\\label{tab:table-04}Impedance functions and selection criteria across destinations for walking trips (1986, 1992 and 1998)") |>
+  kable_styling(font_size = 12) |> 
+  pack_rows("Destination: Home", 1, 9) |>
+  pack_rows("Destination: Other's home", 10, 21) |>
+  pack_rows("Destination: Work or school", 22, 33) |>
+  row_spec(1, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(4, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(7, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(10, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(14, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(18, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(22, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(26, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(30, bold = TRUE, italic = TRUE, font_size = 10) 
+
+```
+
+```{r make-table-05, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+
+# Filter the dataframe to include the new specific destinations
+new_destinations <- c("Home", "work or school", "Other's home", "Restaurant")
+walking_data_filtered <- walking_data[walking_data$Destinations %in% new_destinations,]
+
+# Round the numeric columns to two decimal places for the years 2005, 2010, and 2015
+numeric_columns <- c("logLik_2005", "AIC_2005", "BIC_2005",
+                     "logLik_2010", "AIC_2010", "BIC_2010",
+                     "logLik_2015", "AIC_2015", "BIC_2015")
+walking_data_filtered[numeric_columns] <- round(walking_data_filtered[numeric_columns], 2)
+
+walking_data_filtered |> 
+  dplyr::select(Destinations, 
+                Impedance_Function, 
+                ends_with("_2005") | ends_with("_2010") | ends_with("_2015"), -starts_with("Selected_")) |>
+  pivot_longer(cols = -c(Destinations, Impedance_Function, starts_with("Selected")), 
+               names_to = c("fun", "year"), 
+               names_sep = "_") |>
+  pivot_wider(names_from = fun, values_from = value) |>
+  arrange(Destinations, year) |>
+  dplyr::select(-Destinations) |>
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = "\\label{tab:table-05}Impedance functions and selection criteria across destinations for walking trips (2005, 2010, 2015)") |>
+  kable_styling(font_size = 9) |> 
+  pack_rows("Destination: Home", 1, 9) |>
+  pack_rows("Destination: work or school", 10, 21) |>
+  pack_rows("Destination: Other's home", 22, 33) |>
+  pack_rows("Destination: Outdoors ", 34, 45) |>
+  row_spec(1, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(4, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(7, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(10, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(15, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(18, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(25, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(26, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(30, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(34, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(41, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(42, bold = TRUE, italic = TRUE, font_size = 10)
+
+
+```
+
+```{r make-table-06, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+
+
+# Filter the dataframe to include the new specific destinations
+new_destinations <- c("Grocery store","Outdoors ", "Library", "Place of worship")
+walking_data_filtered <- walking_data[walking_data$Destinations %in% new_destinations,]
+
+# Round the numeric columns to two decimal places for the years 2005, 2010, and 2015
+numeric_columns <- c("logLik_2005", "AIC_2005", "BIC_2005",
+                     "logLik_2010", "AIC_2010", "BIC_2010",
+                     "logLik_2015", "AIC_2015", "BIC_2015")
+walking_data_filtered[numeric_columns] <- round(walking_data_filtered[numeric_columns], 2)
+
+walking_data_filtered |> 
+  dplyr::select(Destinations, 
+                Impedance_Function, 
+                ends_with("_2005") | ends_with("_2010") | ends_with("_2015"), -starts_with("Selected_")) |>
+  pivot_longer(cols = -c(Destinations, Impedance_Function, starts_with("Selected")), 
+               names_to = c("fun", "year"), 
+               names_sep = "_") |>
+  pivot_wider(names_from = fun, values_from = value) |>
+  arrange(Destinations, year) |>
+  dplyr::select(-Destinations) |>
+  kable(format = "latex",
+        booktabs = TRUE) |>
+  kable_styling(font_size = 9) |> 
+  pack_rows("Destination: Grocery store", 1, 9) |>
+  pack_rows("Destination: Restaurant", 10, 27) |>
+  pack_rows("Destination: Library", 28, 39) |>
+  pack_rows("Destination: Place of worship", 40, 54)|>
+  row_spec(1, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(4, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(7, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(10, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(16, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(20, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(27, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(28, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(34, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(40, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(45, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(53, bold = TRUE, italic = TRUE, font_size = 10)
+
+```
+
+```{r make-table-07, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+
+## Filter the dataframe to only include specific destinations
+desired_destinations <- c("Home", "work or school", "Other's home")
+cycling_data_filtered <- cycling_data[cycling_data$Destinations %in% desired_destinations,]
+
+# Round the numeric columns to two decimal places
+numeric_columns <- c("logLik_1992", "AIC_1992", "BIC_1992", 
+                     "logLik_1998", "AIC_1998", "BIC_1998")
+cycling_data_filtered[numeric_columns] <- round(cycling_data_filtered[numeric_columns], 2)
+
+
+cycling_data_filtered |> 
+  dplyr::select(Destinations, 
+                Impedance_Function, 
+                 ends_with("_1992") | ends_with("_1998"), -starts_with("Selected_")) |>
+  pivot_longer(cols = -c(Destinations, Impedance_Function, starts_with("Selected")), 
+               names_to = c("fun", "year"), 
+               names_sep = "_") |>
+  pivot_wider(names_from = fun, values_from = value) |>
+  arrange(Destinations, year) |>
+  dplyr::select(-Destinations) |>
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = "\\label{tab:table-07}Impedance functions and selection criteria across destinations for cycling trips (1992 and 1998)") |>
+  kable_styling(font_size = 11) |> 
+  pack_rows("Destination: Home", 1, 6) |>
+  pack_rows("Destination: Other's home", 7, 16) |>
+  pack_rows("Destination: Work or school", 17, 26)|>
+ row_spec(1, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(4, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(11, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(16, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(17, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(22, bold = TRUE, italic = TRUE, font_size = 10) 
+```
+
+```{r make-table-08, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+
+# Filter the dataframe to only include specific destinations
+desired_destinations <- c("Home" , "Other's home", "work or school" )
+cycling_data_filtered <- cycling_data[cycling_data$Destinations %in% desired_destinations,]
+
+# Round the numeric columns to two decimal places for the years 2005, 2010, and 2015
+numeric_columns <- c("logLik_2005", "AIC_2005", "BIC_2005",
+                     "logLik_2010", "AIC_2010", "BIC_2010",
+                     "logLik_2015", "AIC_2015", "BIC_2015")
+cycling_data_filtered[numeric_columns] <- round(cycling_data_filtered[numeric_columns], 2)
+
+
+
+cycling_data_filtered |> 
+  dplyr::select(Destinations, 
+                Impedance_Function, 
+                 ends_with("_2005") | ends_with("_2010") | ends_with("_2015"), -starts_with("Selected_")) |>
+  pivot_longer(cols = -c(Destinations, Impedance_Function, starts_with("Selected")), 
+               names_to = c("fun", "year"), 
+               names_sep = "_") |>
+  pivot_wider(names_from = fun, values_from = value) |>
+  arrange(Destinations, year) |>
+  dplyr::select(-Destinations) |>
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = "\\label{tab:table-08}Impedance functions and selection criteria across destinations for cycling trips (2005, 2010 and 2015)") |>
+  kable_styling(font_size = 11) |> 
+  pack_rows("Destination: Home", 1, 9) |> 
+  pack_rows("Destination: Other's home", 10, 24)|>
+  pack_rows("Destination: work or school", 25, 39) |>
+  row_spec(1, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(4, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(7, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(10, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(15, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(20, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(25, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(30, bold = TRUE, italic = TRUE, font_size = 10) |>
+  row_spec(39, bold = TRUE, italic = TRUE, font_size = 10)  
+  
+```
+
+```{r make-table-09, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+# Filter the dataframe to only include specific destinations
+desired_destinations <- c("Outdoors " ,  "Grocery store", "Restaurant" )
+cycling_data_filtered <- cycling_data[cycling_data$Destinations %in% desired_destinations,]
+
+# Round the numeric columns to two decimal places for the years 2005, 2010, and 2015
+numeric_columns <- c("logLik_2005", "AIC_2005", "BIC_2005",
+                     "logLik_2010", "AIC_2010", "BIC_2010",
+                     "logLik_2015", "AIC_2015", "BIC_2015")
+cycling_data_filtered[numeric_columns] <- round(cycling_data_filtered[numeric_columns], 2)
+
+cycling_data_filtered |> 
+  dplyr::select(Destinations, 
+                Impedance_Function, 
+                 ends_with("_2005") | ends_with("_2010") | ends_with("_2015"), -starts_with("Selected_")) |>
+  pivot_longer(cols = -c(Destinations, Impedance_Function, starts_with("Selected")), 
+               names_to = c("fun", "year"), 
+               names_sep = "_") |>
+  pivot_wider(names_from = fun, values_from = value) |>
+  arrange(Destinations, year) |>
+  dplyr::select(-Destinations) |>
+  kable(format = "latex",
+        booktabs = TRUE) |>
+  kable_styling(font_size = 9) |> 
+  pack_rows("Destination: Outdoors ", 1, 18) |>
+  pack_rows("Destination: Grocery store", 19, 36)|>
+  pack_rows("Destination: Restaurant", 37, 48) |>
+  row_spec(1, bold = TRUE, italic = TRUE, font_size = 9) |>
+  row_spec(7, bold = TRUE, italic = TRUE, font_size = 9) |>
+  row_spec(15, bold = TRUE, italic = TRUE, font_size = 9) |>
+  row_spec(19, bold = TRUE, italic = TRUE, font_size = 9) |>
+  row_spec(26, bold = TRUE, italic = TRUE, font_size = 9) |>
+  row_spec(38, bold = TRUE, italic = TRUE, font_size = 9) |>
+  row_spec(45, bold = TRUE, italic = TRUE, font_size = 9) 
+```
+
+\newpage
+
+The figures below illustrate the frequency distribution of travel times for walking and cycling to various destinations, as modeled by impedance functions over a range of years. Each graph shows a curve representing the scaled frequency of trips against the trip duration in minutes for a specific year, with the peak of the curve indicating the most common trip duration. The red dots and dashed lines highlight the mode of the distribution, which is the most frequently observed trip duration. The multiple curves within each year show the variability or sensitivity of the model under different assumptions or parameters. From these figures, we can infer trends in travel behavior for walking and cycling over time. For instance, a shift in the peak towards the right over the years would suggest an increase in the average duration of trips, possibly due to several factors such as urban sprawl, changes in urban design, or evolving societal preferences. Conversely, a shift towards the left would suggest a decrease in trip duration, potentially indicating improved walking and cycling infrastructure, leading to shorter and possibly more convenient trips. These figures encapsulate a wealth of information about travel behavior and serve as a visual summary of the underlying data collected for walking and cycling trips to different destinations. They provide a snapshot of the changes in travel time preferences or requirements across the studied years, which is valuable for urban planners and policymakers aiming to understand and promote sustainable modes of transportation.
+
+```{r make-impedance_graph_walking_home ,cache=FALSE, message=FALSE, echo=FALSE, include=FALSE}
+
+walking_data_f <- walking_data_f %>% filter(!is.na(f_t))
+
+home_peaks <- walking_data_f %>%
+  filter(dest_label == "Home") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_duration = DURATION[which.max(f_t)],
+    peak_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+
+home_plot <- ggplot(walking_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = walking_data_f %>% filter(dest_label == "Home"), aes(group = YEAR, colour = "Home"), linewidth = 1.2) +
+  geom_segment(data = home_peaks, aes(x = peak_duration, y = peak_ft, xend = peak_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = home_peaks, aes(x = peak_duration, y = peak_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = home_peaks, aes(x = peak_duration, y = 0, label = peak_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for home destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Home" = "cyan3", "Other destinations" = "grey40", "Peaks" = "red"))
+
+
+```
+
+```{r make-impedance_graph_cycling_home ,cache=FALSE, message=FALSE, echo=FALSE, include=FALSE}
+# Assuming cycling_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+cycling_data_f <- cycling_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Home' destination for each year
+home_c_peaks <- cycling_data_f %>%
+  filter(dest_label == "Home") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_c_duration = DURATION[which.max(f_t)],
+    peak_c_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+home_c_plot <- ggplot(cycling_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = cycling_data_f %>% filter(dest_label == "Home"), aes(group = YEAR, colour = "Home"), linewidth = 1.2) +
+  geom_segment(data = home_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, xend = peak_c_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = home_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = home_c_peaks, aes(x = peak_c_duration, y = 0, label = peak_c_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for home destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # This will be the title of the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Home" = "cyan3", "Other destinations" = "grey40", "Peaks" = "red"))
+```
+
+```{r make-fig-03, cache = FALSE, include=FALSE}
+ch03_fig_03 <- cowplot::plot_grid(home_plot,home_c_plot, nrow = 2, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_03.jpg", 
+       plot = ch03_fig_03,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-03, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to home destinations", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_03.jpg")
+```
+
+Figure \ref{fig:plot-fig-03} illustrates the shifting patterns in walking trip behavior to home destinations over several years. The red dashed lines and points highlight the peak travel times that individuals are inclined to walk from their origins to home. A discernible trend of the peak point moving toward shorter durations indicates a diminishing willingness to engage in longer walking trips. For instance, the peak travel time in 1986 was around 10 minutes, which then steadily reduced in the following years, with the 2015 data showing the peak remaining at approximately 10 minutes. The walking trip graphs consistently show that the frequency of trips declines sharply with increased travel time, a characteristic of non-motorized transportation. The leftward shift in peak frequency points to a growing reluctance to extend walking durations, potentially due to factors such as urban expansion, increased use of private vehicles, enhancements in public transportation, or shifts in societal norms and lifestyle choices.
+
+Conversely, Figure \ref{fig:plot-fig-03} captures the progression of cycling trip behavior for home trips in Canada from 1992 to 2015. Unlike walking trips, the cycling data reveals an elongation in the peak travel time. In 1992, the average travel time was approximately five minutes. This number has gradually increased over time, with a peak of 15 minutes in 2015. This ascending trend underscores a heightened propensity to cycle for longer periods when returning home. The motivation behind this shift could be multifaceted, encompassing enhancements in cycling infrastructure, a heightened emphasis on physical fitness and environmental sustainability, and the gradual adoption of cycling as a favored means of transportation for increasingly longer distances. Walking trip patterns significantly differ from the cycling pattern, reflecting an expanding tolerance for extended travel times. This discrepancy might result from the inherent distinctions between the two forms of transportation. Because cycling is a faster mode of transportation, it has probably benefited from better pathways and social developments that support active travel. This has allowed cyclists to cover longer distances more comfortably and easily. The distribution of cycling trip frequencies, while still demonstrating a decrease as travel time lengthens, presents a less pronounced decline compared to walking trips. This suggests a wider acceptance of longer cycling durations. The progressive shift in peak travel times over the years could be attributed to amplified investments in cycling infrastructure, such as the introduction of bike lanes and the proliferation of bike-sharing initiatives, coupled with an overall rise in cycling's popularity.
+
+```{r make-impedance_graph_walking_work, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+# Filter out NA values if necessary
+walking_data_f <- walking_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'work or school' destination for each year
+work_w_peaks <- walking_data_f %>%
+  filter(dest_label == "Work or school") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_w_duration = DURATION[which.max(f_t)],
+    peak_w_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+
+# Plot the data
+work_w_plot <- ggplot(walking_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = walking_data_f %>% filter(dest_label == "Work or school"), aes(group = YEAR, colour = "Work or school"), linewidth = 1.2) +
+  geom_segment(data = work_w_peaks, aes(x = peak_w_duration, y = peak_w_ft, xend = peak_w_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = work_w_peaks, aes(x = peak_w_duration, y = peak_w_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = work_w_peaks, aes(x = peak_w_duration, y = 0, label = peak_w_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for work or school destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # This will be the title of the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  scale_colour_manual(values = c("Work or school" = "deeppink2", "Other destinations" = "grey40", "Peaks" = "red"),
+                      labels = c("Library", "Other", "Peaks")) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Work or school" = "deeppink2","Other destinations" = "grey40",  "Peaks" = "red"))
+```
+
+```{r make-impedance_graph_cycling_work, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+
+# Filter out NA values if necessary
+cycling_data_f <- cycling_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'work or school' destination for each year
+work_c_peaks <- cycling_data_f %>%
+  filter(dest_label == "Work or school") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_c_duration = DURATION[which.max(f_t)],
+    peak_c_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+
+# Plot the data
+work_c_plot <- ggplot(cycling_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = cycling_data_f %>% filter(dest_label == "Work or school"), aes(group = YEAR, colour = "Work or school"), linewidth = 1.2) +
+  geom_segment(data = work_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, xend = peak_c_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = work_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = work_c_peaks, aes(x = peak_c_duration, y = 0, label = peak_c_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for work or school destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # This will be the title of the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  scale_colour_manual(values = c("Work or school" = "deeppink2", "Other destinations" = "grey40", "Peaks" = "red"),
+                      labels = c("Library", "Other", "Peaks")) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Work or school" = "deeppink2","Other destinations" = "grey40",  "Peaks" = "red"))
+```
+
+```{r make-fig-04, cache = FALSE, include=FALSE}
+ch03_fig_04 <- cowplot::plot_grid(work_w_plot,work_c_plot, nrow = 2, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_04.jpg", 
+       plot = ch03_fig_04,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-04, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to work or school destinations", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_04.jpg")
+```
+
+Figure \ref{fig:plot-fig-04} captures the evolution of walking trip behavior to work or school destinations over selected years. The graphs reveal an interesting trend: while there is some fluctuation, there is a general decrease in the peak travel time duration. For instance, in 1986, the peak travel time was approximately 10 minutes; by 2015, it had reduced slightly, suggesting a preference for shorter walking commutes. This could indicate an adjustment in urban layouts that brings residences closer to work and school locations or a shift in employment or education patterns that favors proximity. The graphs show a sharp decrease in the frequency of walking trips as the travel time increases, indicating a strong preference for shorter commutes. The decreasing peak frequency over the years could reflect improved access to alternative modes of transport or an increase in the use of private vehicles, which could reduce the need for longer walking trips.
+
+Figure \ref{fig:plot-fig-04} presents the trends for cycling trips to work or school destinations. In contrast to walking, the peak travel times for cycling vary over the years. In 1992, the most frequent travel time was nearly 10 minutes, but by 2015, the peak shifted to around 15 minutes. This indicates a growing acceptance or necessity of cycling for slightly longer durations to reach work or school. The increase in peak travel times might be associated with several factors, including expanding city boundaries, making longer commutes more common, or improving cycling infrastructure that make longer distances more feasible and safe for cyclists. For both walking and cycling, the frequency of trips decreases markedly as the duration increases. However, cycling trips show a broader acceptance for longer durations, likely due to the increased speed and efficiency of travel by bike compared to walking. The data suggests a social shift towards embracing cycling for daily commutes, which investments in cycling-friendly city planning could support, the availability of bike-sharing programs, and initiatives to encourage active transportation for health and environmental benefits.
+
+```{r make-impedance_graph_walking_other, cache=FALSE,include=FALSE, message=FALSE, echo=FALSE}
+# Filter out NA values if necessary
+walking_data_f <- walking_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Other's home' destination for each year
+other_peaks <- walking_data_f %>%
+  filter(dest_label == "Other's home") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_duration = DURATION[which.max(f_t)],
+    peak_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+other_plot <- ggplot(walking_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = walking_data_f %>% filter(dest_label == "Other's home"), aes(group = YEAR, colour = "Other's home"), linewidth = 1.2) +
+  geom_segment(data = other_peaks, aes(x = peak_duration, y = peak_ft, xend = peak_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = other_peaks, aes(x = peak_duration, y = peak_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = other_peaks, aes(x = peak_duration, y = 0, label = peak_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for other's home destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # This will be the title of the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Other's home" = "darkorchid3","Other destinations" = "grey40", "Peaks" = "red"))
+
+```
+
+```{r make-impedance_graph_cycling_other, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+
+# Assuming cycling_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+cycling_data_f <- cycling_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Other's home' destination for each year
+other_c_peaks <- cycling_data_f %>%
+  filter(dest_label == "Other's home") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_c_duration = DURATION[which.max(f_t)],
+    peak_c_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+other_c_plot <- ggplot(cycling_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = cycling_data_f %>% filter(dest_label == "Other's home"), aes(group = YEAR, colour = "Other's home"), linewidth = 1.2) +
+  geom_segment(data = other_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, xend = peak_c_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = other_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = other_c_peaks, aes(x = peak_c_duration, y = 0, label = peak_c_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for other's home destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Other's home" = "darkorchid3","Other destinations" = "grey40", "Peaks" = "red"))
+
+```
+
+```{r make-fig-05, cache = FALSE, include=FALSE}
+ch03_fig_05 <- cowplot::plot_grid(other_plot ,other_c_plot , nrow = 2, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_05.jpg", 
+       plot = ch03_fig_05,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-05, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to work or school destinations", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_05.jpg")
+```
+
+Figure \ref{fig:plot-fig-05} maps the trends in walking trips to another person's home across a span of years. In 1986, the peak was observed at a travel time of roughly 10 minutes, suggesting a preference for short walking trips. Furthermore, most walking trips were completed in under 50 minutes during these years, emphasizing a strong inclination towards relatively short distances. There are noticeable fluctuations in the peak travel times from 1986 to 2015. For example, in 2005, the peak duration for walking trips to another's home contracts was less than 2 minutes, indicating a shift towards even shorter trips compared to previous years. This shift could reflect changes in urban design, such as more compact neighborhoods or increased use of other transportation modes. By 2010, the willingness to walk extended to trips under 40 minutes for all purposes, signaling a slight increase in the acceptance of longer walks. However, by 2015, the data shows a return to shorter durations for the peak times, with the most common walking trips hovering around 10 minutes again. Turning to cycling, Figure \ref{fig:plot-fig-05} reveals the evolution of cycling trip behavior to another's home. In contrast to walking, cycling trips exhibit a gradual increase in the peak travel time. From an average of approximately 5 minutes in 1992, there is a discernible upward trend, with trips averaging less than 25 minutes in 1998 and rising further to an average of less than 50 minutes by 2015. It suggests not only an increasing willingness to cycle for longer periods but also possibly a rise in the number of destinations becoming accessible via cycling, reflecting improvements in cycling infrastructure or a growing cultural trend towards embracing cycling for various trip purposes. In both walking and cycling modes, the trend towards shorter trips dominates, with a marked decrease in trip frequency as duration increases. Nonetheless, the data on cycling suggests a growing acceptance of cycling as a viable mode of transport for longer distances over the years, likely due to its efficiency and the positive influence of environmental sustainability movements that promote cycling.
+
+```{r make-impedance_graph_walking_grocery, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+# Assuming walking_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+walking_data_f <- walking_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Grocery store, other stores or mall' destination for each year
+grocery_peaks <- walking_data_f %>%
+  filter(dest_label == "Grocery store, other stores or mall") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_duration = DURATION[which.max(f_t)],
+    peak_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+grocery_plot <- ggplot(walking_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = walking_data_f %>% filter(dest_label == "Grocery store, other stores or mall"), aes(group = YEAR, colour = "Grocery store"), linewidth = 1.2) +
+  geom_segment(data = grocery_peaks, aes(x = peak_duration, y = peak_ft, xend = peak_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = grocery_peaks, aes(x = peak_duration, y = peak_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = grocery_peaks, aes(x = peak_duration, y = 0, label = peak_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for Grocery store, other stores or mall destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Grocery store" = "red3","Other destinations" = "grey40", "Peaks" = "red"))
+```
+
+```{r make-impedance_graph_cycling_grocery, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+# Assuming cycling_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+cycling_data_f <- cycling_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Grocery store, other stores or mall' destination for each year
+grocery_c_peaks <- cycling_data_f %>%
+  filter(dest_label == "Grocery store, other stores or mall") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_c_duration = DURATION[which.max(f_t)],
+    peak_c_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+grocery_c_plot <- ggplot(cycling_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = cycling_data_f %>% filter(dest_label == "Grocery store, other stores or mall"), aes(group = YEAR, colour = "Grocery store"), linewidth = 1.2) +
+  geom_segment(data = grocery_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, xend = peak_c_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = grocery_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = grocery_c_peaks, aes(x = peak_c_duration, y = 0, label = peak_c_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for Grocery store, other stores or mall destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Grocery store" = "red3","Other destinations" = "grey40", "Peaks" = "red"))
+
+```
+
+```{r make-fig-06, cache = FALSE, include=FALSE}
+ch03_fig_06 <- cowplot::plot_grid(grocery_plot  ,grocery_c_plot  , nrow = 2, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_06.jpg", 
+       plot = ch03_fig_06,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-06, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to work or school destinations", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_06.jpg")
+```
+
+The distance decay curves in Figure \ref{fig:plot-fig-06} and Figure \ref{fig:plot-fig-06} reflect the frequency of walking and cycling trips to grocery stores, other stores, or malls for the years where data is available, specifically 2005, 2010, and 2015. Analyzing the distance decay curves provided in Figure \ref{fig:plot-fig-06} for walking trips, we see a clear evolution in consumer behavior over a decade. In 2005, the peak frequency of walking trips to shopping destinations was approximately 4 minutes, reflecting a preference for very close proximity to these destinations. However, by 2010, the peak sharply decreases to a travel time of around 2 minutes, indicating an even stronger preference for shopping destinations within a very short walking distance. Notably, in 2015, the data illustrates a reversal in this trend, with the peak frequency rising to around 10 minutes. This increase suggests that by 2015, individuals were more inclined to walk longer distances to reach grocery stores, other stores, or malls, which could be due to changes in urban development or a renewed interest in walking as a form of exercise and sustainable travel.
+
+For cycling trips, shown in Figure \ref{fig:plot-fig-06}, we witness a different pattern of change. The peak frequency in 2005 shows that the most common travel time for cycling to shopping destinations was around 5 minutes, suitable for quick and convenient trips. This duration represents a mode of transport that is efficient for nearby stores but utilized less for farther distances. Moving forward to 2015, we observe a dramatic increase in the peak travel time to around 10 minutes. This significant rise indicates a marked shift towards the willingness to cycle longer to reach shopping destinations. In summary, the data from the provided graphs point to a change in the travel patterns of consumers over the years. While walking trips for shopping initially showed a trend towards extremely short distances, there was a notable shift towards longer durations by 2015. Conversely, cycling trips have expanded in terms of acceptable travel time, with a marked increase in the duration of trips by 2015, reflecting a broader acceptance and possibly encouragement of cycling as a preferred mode of transportation for shopping trips.
+
+```{r make-impedance_graph_walking_outdoors, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+# Assuming walking_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+walking_data_f <- walking_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'outdoors' destination for each year
+outdoors_peaks <- walking_data_f %>%
+  filter(dest_label == "Outdoors") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_duration = DURATION[which.max(f_t)],
+    peak_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+outdoors_plot <- ggplot(walking_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = walking_data_f %>% filter(dest_label == "Outdoors"), aes(group = YEAR, colour = "Outdoors"), linewidth = 1.2) +
+  geom_segment(data = outdoors_peaks, aes(x = peak_duration, y = peak_ft, xend = peak_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = outdoors_peaks, aes(x = peak_duration, y = peak_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = outdoors_peaks, aes(x = peak_duration, y = 0, label = peak_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for outdoors destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Outdoors" = "royalblue2","Other destinations" = "grey40", "Peaks" = "red"))
+
+```
+
+```{r make-impedance_graph_cycling_outdoors, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+# Assuming cycling_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+cycling_data_f <- cycling_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'outdoors' destination for each year
+outdoors_c_peaks <- cycling_data_f %>%
+  filter(dest_label == "Outdoors") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_c_duration = DURATION[which.max(f_t)],
+    peak_c_ft = max(f_t, na.rm = TRUE),
+    .groups = "drop" # Dropping groups after summarization
+  )
+
+# Plot the data
+outdoors_c_plot <- ggplot(cycling_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = cycling_data_f %>% filter(dest_label == "Outdoors"), aes(group = YEAR, colour = "Outdoors"), linewidth = 1.2) +
+  geom_segment(data = outdoors_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, xend = peak_c_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = outdoors_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = outdoors_c_peaks, aes(x = peak_c_duration, y = 0, label = peak_c_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for outdoors destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Outdoors" = "royalblue2","Other destinations" = "grey40", "Peaks" = "red"))
+
+```
+
+```{r make-fig-07, cache = FALSE, include=FALSE}
+ch03_fig_07 <- cowplot::plot_grid(outdoors_plot,outdoors_c_plot  , nrow = 2, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_07.jpg", 
+       plot = ch03_fig_07,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-07, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to work or school destinations", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_07.jpg")
+```
+
+In Figure \ref{fig:plot-fig-07}, for walking trips to outdoor destinations, the blue line in the 2005 graph exhibits a peak at approximately 3 minutes, indicating that the most common duration of walking trips was very short. This peak suggests that outdoor destinations were typically close to the starting point or that there was a preference for quick, accessible outdoor activities. In 2010, we saw a similar pattern with the peak around the 3-minute mark, demonstrating a consistent preference for short walking trips over time. By 2015, the peak shifts to around 10 minutes. This increase in the most common trip duration may reflect a change in the location of outdoor spaces relative to residential areas.Turning to cycling (Figure \ref{fig:plot-fig-07}), the blue line in the 2005 graph peaks at about 10 minutes. This suggests that the typical cycling trip to outdoor destinations was a moderate distance away, indicating that cycling was used for slightly longer but still relatively brief excursions. Across both walking and cycling trips to outdoor destinations, the observed peaks in the blue lines indicate a general trend of short-duration trips, with a notable increase in the willingness to travel longer distances by bike in recent years.
+
+```{r make-impedance_graph_walking_restaurant, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+# Assuming walking_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+walking_data_f <- walking_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Restaurant, bar or club' destination for each year
+restaurant_peaks <- walking_data_f %>%
+  filter(dest_label == "Restaurant, bar or club") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_duration = DURATION[which.max(f_t)],
+    peak_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+restaurant_plot <- ggplot(walking_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = walking_data_f %>% filter(dest_label == "Restaurant, bar or club"), aes(group = YEAR, colour = "Restaurant"), linewidth = 1.2) +
+  geom_segment(data = restaurant_peaks, aes(x = peak_duration, y = peak_ft, xend = peak_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = restaurant_peaks, aes(x = peak_duration, y = peak_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = restaurant_peaks, aes(x = peak_duration, y = 0, label = peak_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for Restaurant, bar or club destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Restaurant" = "yellow2","Other destinations" = "grey40", "Peaks" = "red"))
+
+```
+
+```{r make-impedance_graph_cycling_restaurant, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+
+# Assuming cycling_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+cycling_data_f <- cycling_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Restaurant, bar or club' destination for each year
+restaurant_c_peaks <- cycling_data_f %>%
+  filter(dest_label == "Restaurant, bar or club") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_c_duration = DURATION[which.max(f_t)],
+    peak_c_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+restaurant_c_plot <- ggplot(cycling_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = cycling_data_f %>% filter(dest_label == "Restaurant, bar or club"), aes(group = YEAR, colour = "Restaurant"), linewidth = 1.2) +
+  geom_segment(data = restaurant_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, xend = peak_c_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = restaurant_c_peaks, aes(x = peak_c_duration, y = peak_c_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = restaurant_c_peaks, aes(x = peak_c_duration, y = 0, label = peak_c_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for Restaurant, bar or club destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Restaurant" = "yellow2","Other destinations" = "grey40", "Peaks" = "red"))
+```
+
+```{r make-fig-08, cache = FALSE, include=FALSE}
+ch03_fig_08 <- cowplot::plot_grid(restaurant_plot,restaurant_c_plot  , nrow = 2, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_08.jpg", 
+       plot = ch03_fig_08,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-08, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to work or school destinations", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_08.jpg")
+```
+
+In the yellow line graph for 2005 (Figure \ref{fig:plot-fig-08}), there is a distinct peak at around 3 minutes, indicating that the most common duration for walking trips to these social destinations was very short. This peak suggests that such venues were often chosen within proximity to the starting point, reflecting a preference for convenience and accessibility when deciding to walk to restaurants, bars, or clubs. The 2015 graph reveals a more pronounced change, with the peak frequency occurring around 10 minutes. This suggests an increased willingness to walk further distances to these destinations compared to previous years, possibly due to changes in the locations of such venues or a shift towards healthier lifestyle choices that include more walking. In Figure \ref{fig:plot-fig-08}, for cycling trips in 2005, the peak in the yellow line graph is at approximately 15 minutes, indicating a preference for moderately distant venues when cycling. This duration suggests that cyclists were prepared to travel further than walkers to reach restaurants, bars, or clubs, possibly due to the speed and convenience of cycling over longer distances. The 2015 graph shows a significant shift in the peak frequency to around 15 minutes, which points to a clear trend of individuals being willing to cycle for longer periods to social destinations. Across the years, the yellow line graphs for walking and cycling to restaurants, bars, or clubs show a general pattern of trips most frequent at short to moderate durations.
+
+```{r make-impedance_graph_walking_place, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+# Assuming walking_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+walking_data_f <- walking_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Place of worship' destination for each year
+place_peaks <- walking_data_f %>%
+  filter(dest_label == "Place of worship") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_duration = DURATION[which.max(f_t)],
+    peak_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+place_plot <- ggplot(walking_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = walking_data_f %>% filter(dest_label == "Place of worship"), aes(group = YEAR, colour = "Place of worship"), linewidth = 1.2) +
+  geom_segment(data = place_peaks, aes(x = peak_duration, y = peak_ft, xend = peak_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = place_peaks, aes(x = peak_duration, y = peak_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = place_peaks, aes(x = peak_duration, y = 0, label = peak_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for place of worship destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Place of worship" = "darkorange1","Other destinations" = "grey40", "Peaks" = "red"))
+
+```
+
+```{r make-fig-09, cache = FALSE, include=FALSE}
+ch03_fig_09 <- place_plot
+
+
+ggsave(file = "figure/ch03_fig_09.jpg", 
+       plot = ch03_fig_09,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-09, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to work or school destinations"}
+
+knitr::include_graphics("figure/ch03_fig_09.jpg")
+```
+
+Figure \ref{fig:plot-fig-09} presents the frequency of walking trips to places of worship in 2005 and 2015. In 2005, the peak frequency occurred at approximately 5 minutes, demonstrating that the most common duration for walking trips to places of worship was short. This implies that, typically, such destinations were located within close proximity to individuals' origin points, or there was a preference for accessing nearby places of worship. By 2015, there is a noticeable shift in the peak frequency to around 10 minutes, indicating a change in the walking duration to places of worship over the decade. This increase suggests that people were willing to walk a bit longer to reach their places of worship, or it could indicate that these places have become more spread out within communities, requiring longer walk times. The absence of data for the intervening years and cycling trips leaves a gap in understanding the trend over time. However, the available data from 2005 to 2015 indicates a trend of increased walking time for visits to places of worship. This could reflect changes in urban development, with places of worship being farther from residential areas or a shift in individual preferences for walking as part of their religious or spiritual practices. It is important to note that there is no data on cycling trips to places of worship destinations, which limits our ability to analyze and compare the full spectrum of non-motorized travel to places of worship.
+
+```{r make-impedance_graph_walking_library, cache=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+# Assuming walking_data_f is already loaded and has 'YEAR', 'DURATION', 'dest_label', and 'f_t' columns
+
+# Filter out NA values if necessary
+walking_data_f <- walking_data_f %>% filter(!is.na(f_t))
+
+# Find the peaks for 'Library, museum or theatre' destination for each year
+library_peaks <- walking_data_f %>%
+  filter(dest_label == "Library, museum or theatre") %>%
+  group_by(YEAR) %>%
+  summarize(
+    peak_duration = DURATION[which.max(f_t)],
+    peak_ft = max(f_t, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Plot the data
+library_plot <- ggplot(walking_data_f, aes(x = DURATION, y = f_t)) +
+  geom_line(aes(group = interaction(dest_label, YEAR), colour = "Other destinations"), linewidth = 0.5) +
+  facet_wrap(~YEAR, scales = "free_y") +
+  geom_line(data = walking_data_f %>% filter(dest_label == "Library, museum or theatre"), aes(group = YEAR, colour = "Library"), linewidth = 1.2) +
+  geom_segment(data = library_peaks, aes(x = peak_duration, y = peak_ft, xend = peak_duration, yend = 0, colour = "Peaks"), linetype = "dashed", linewidth = 0.5) +
+  geom_point(data = library_peaks, aes(x = peak_duration, y = peak_ft, colour = "Peaks"), size = 3) +
+  geom_text(data = library_peaks, aes(x = peak_duration, y = 0, label = peak_duration), color = "red", size = 3, hjust = 1.5, vjust = -0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for Library, museum or theatre destination",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    colour = "Legend"  # Title for the legend
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.margin = unit(c(1, 1, 2, 1), "lines"),
+    axis.line = element_line(color = "grey40"),
+    axis.text.x = element_text(color = "grey40", size = 10),
+    axis.text.y = element_text(color = "grey40", size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    strip.text = element_text(color = "grey40"),
+    panel.grid.major = element_line(color = "grey85", size = 0.2),
+    panel.grid.minor = element_line(color = "grey85", size = 0.1),
+    panel.background = element_rect(fill = "white"),
+    strip.background = element_rect(fill = "white"),
+    panel.spacing = unit(0.5, "lines"),
+    aspect.ratio = 1/2
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  scale_colour_manual(values = c("Library" = "olivedrab4","Other destinations" = "grey40", "Peaks" = "red"))
+
+```
+
+```{r make-fig-010, cache = FALSE, include=FALSE}
+ch03_fig_10 <- library_plot
+
+
+ggsave(file = "figure/ch03_fig_10.jpg", 
+       plot = ch03_fig_10,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-10, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to work or school destinations"}
+
+knitr::include_graphics("figure/ch03_fig_10.jpg")
+```
+
+Figure \ref{fig:plot-fig-10} illustrates the walking trip frequency to libraries, museums, or theaters for 2005 and 2015, as indicated by the green line curves. In 2005, the peak frequency of walking trips to these cultural destinations was approximately 7 minutes. This suggests that such venues were commonly located within a short walking distance from the trip origin, or there was a preference for nearby cultural activities that could be quickly accessed by foot. By 2015, we see a significant shift in behavior, with the peak frequency now occurring at around 10 minutes. This change over the decade may reflect a broader willingness to walk slightly longer distances to reach libraries, museums, or theaters. It is essential to note the absence of cycling data trips, which indicates a lack of available information regarding the frequency of cycling trips to these destinations.
+
+The distance decay curves for walking (Figure \ref{fig:plot-fig-12} and cycling (Figure \ref{fig:plot-fig-14}) to different destinations and for different years from 1986 to 2015 were analyzed. The analysis revealed that the shape of the distance decay curves varied depending on the destination and the mode. The destinations for which these functions were estimated vary across different years, modes of transportation (walking and cycling), and the available data. For instance, in 2005, 2010, and 2015, the walking destinations encompassed a wide range, including home, work or school, other people's homes, grocery stores, other retail stores or malls, outdoor spaces, restaurants, bars or clubs, libraries, museums, theaters, and places of worship. In contrast, the destinations for 1986, 1992, and 1998 were limited to just three categories: home, other people's homes, and work or school.
+
+```{r make-impedance_walking_2015, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the walking_data for the year 2015 only
+walking_data_2015 <- walking_data_f %>%
+  filter(YEAR == 2015)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+
+# Calculate the peaks for each group
+peaks <- walking_data_2015 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 2015 with dashed lines and size 0.8
+walking_plot_2015 <- ggplot(walking_data_2015, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line( size = 0.8) +  # Set lines to dashed and size to 0.8
+  scale_color_manual(values = dest_colors) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for 2015",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")  
+  ) +
+  scale_x_continuous(breaks = seq(0, max(walking_data_2015$DURATION, na.rm = TRUE), by = 10)) 
+```
+
+```{r make-impedance_walking_2010, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the walking_data for the year 2010 only
+walking_data_2010 <- walking_data_f %>%
+  filter(YEAR == 2010)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+
+# Calculate the peaks for each group
+peaks <- walking_data_2010 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 2010
+walking_plot_2010 <- ggplot(walking_data_2010, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for 2010",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")    
+  ) +
+  scale_x_continuous(breaks = seq(0, max(walking_data_2010$DURATION, na.rm = TRUE), by = 10))  
+```
+
+```{r make-impedance_walking_2005, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the walking_data for the year 2005 only
+walking_data_2005 <- walking_data_f %>%
+  filter(YEAR == 2005)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+# Calculate the peaks for each group
+peaks <- walking_data_2005 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 2015
+walking_plot_2005 <- ggplot(walking_data_2005, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+   geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for 2005",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")  
+  )  +
+  scale_x_continuous(breaks = seq(0, max(walking_data_2005$DURATION, na.rm = TRUE), by = 10))  
+```
+
+```{r make-impedance_walking_1998, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the walking_data for the year 1998 only
+walking_data_1998 <- walking_data_f %>%
+  filter(YEAR == 1998)
+
+# Define the colors for each destination
+dest_colors <- c(
+ "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+
+# Calculate the peaks for each group
+peaks <- walking_data_1998 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 2015
+walking_plot_1998 <- ggplot(walking_data_1998, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+   geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for 1998",
+    x = "Duration (minutes)",
+    y = "Frequency (scaled)",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")   
+  ) +
+  scale_x_continuous(breaks = seq(0, max(walking_data_1998$DURATION, na.rm = TRUE), by = 10))  
+
+```
+
+```{r make-impedance_walking_1992, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the walking_data for the year 1998 only
+walking_data_1992 <- walking_data_f %>%
+  filter(YEAR == 1992)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+
+# Calculate the peaks for each group
+peaks <- walking_data_1992 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 1992
+walking_plot_1992 <- ggplot(walking_data_1992, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for 1992",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")     
+  ) +
+  scale_x_continuous(breaks = seq(0, max(walking_data_1992$DURATION, na.rm = TRUE), by = 10))  
+```
+
+```{r make-impedance_walking_1986, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the walking_data for the year 1986 only
+walking_data_1986 <- walking_data_f %>%
+  filter(YEAR == 1986)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+# Calculate the peaks for each group
+peaks <- walking_data_1986 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 1986
+walking_plot_1986 <- ggplot(walking_data_1986, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of walking for 1986",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "gray10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")  
+  ) +
+  scale_x_continuous(breaks = seq(0, max(walking_data_1986$DURATION, na.rm = TRUE), by = 10))  
+```
+
+```{r make-fig-11, cache = FALSE, include=FALSE}
+ch03_fig_11 <- cowplot::plot_grid(walking_plot_1986, walking_plot_1992, walking_plot_1998, nrow = 3, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_11.jpg", 
+       plot = ch03_fig_11,
+       width = 8.5,  
+       height = 11,  
+       dpi = 300,
+       device = 'jpg')
+
+ch03_fig_12 <- cowplot::plot_grid( walking_plot_2005, walking_plot_2010, walking_plot_2015, nrow = 3, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_12.jpg", 
+       plot = ch03_fig_12,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-11, echo=FALSE, cache=FALSE, out.width="100%", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_11.jpg")
+```
+
+```{r plot-fig-12, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking trips to various destinations", fig.align="center"}
+knitr::include_graphics("figure/ch03_fig_12.jpg")
+```
+
+Between 1986 and 1998, the highest frequency of walking trips occurred within the 5-10 minute range. Subsequently, from 1998 to 2010, the peak shifted to the 0-5 minute range, only to return to the 5-10 minute range during the period from 2010 to 2015. Based on the findings presented in Figures \ref{fig:plot-fig-12}, it is evident that in 2015, the majority of walking trips had a duration of less than 50 minutes. The graphical representations of walking trip patterns exhibit similar trends for destinations such as home, work or school, other people's homes, and grocery stores. However, when it comes to recreational destinations like outdoor locations, restaurants, bars or clubs, places of worship, and libraries, individuals tend to walk for a shorter duration, typically around 40 minutes. This observation underscores the discretionary nature of entertainment-related trips, which often do not adhere to strict time constraints within an individual's daily activity schedule. In 2010, individuals exhibited a willingness to engage in walking trips of less than 40 minutes duration, regardless of their intended purposes. However, this trend experienced a decline in 2005, with the average walking trip duration decreasing to approximately less than 30 minutes for all purposes. Furthermore, between 1986 and 1998, there was a notable decrease in people's willingness to engage in walking trips to reach destinations such as their own homes, others' homes, work, and school. Specifically, the average walking duration decreased from 70 minutes in 1986 to 40 minutes in 1998.
+
+```{r make-impedance_cycling_2015, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the walking_data for the year 2015 only
+cycling_data_2015 <- cycling_data_f %>%
+  filter(YEAR == 2015)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+
+# Calculate the peaks for each group
+peaks <- cycling_data_2015 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 2015
+cycling_plot_2015 <- ggplot(cycling_data_2015, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for 2015",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")  
+  )  +
+  scale_x_continuous(breaks = seq(0, max(cycling_data_2015$DURATION, na.rm = TRUE), by = 10))  
+```
+
+```{r make-impedance_cycling_2010, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the walking_data for the year 2010 only
+cycling_data_2010 <- cycling_data_f %>%
+  filter(YEAR == 2010)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+# Calculate the peaks for each group
+peaks <- cycling_data_2010 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 2015
+cycling_plot_2010 <- ggplot(cycling_data_2010, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for 2010",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  # Set legend text properties
+    legend.title = element_text(size = 10, color = "grey10"), # Set legend title properties
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")  
+  ) +
+  scale_x_continuous(breaks = seq(0, max(cycling_data_2010$DURATION, na.rm = TRUE), by = 10))  
+```
+
+```{r make-impedance_cycling_2005, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the cycling_data for the year 2005 only
+cycling_data_2005 <- cycling_data_f %>%
+  filter(YEAR == 2005)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+
+
+# Calculate the peaks for each group
+peaks <- cycling_data_2005 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+# Plotting code with modified x-axis breaks and added vertical lines
+cycling_plot_2005 <- ggplot(cycling_data_2005, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+  scale_x_continuous(breaks = seq(0, 90, by = 10)) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for 2005",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),
+    legend.title = element_text(size = 10, color = "grey10"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10") 
+  ) +
+  scale_x_continuous(breaks = seq(0, max(cycling_data_2005$DURATION, na.rm = TRUE), by = 10))
+
+```
+
+```{r make-impedance_cycling_1998, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+# Filter the cycling_data for the year 1998 only
+cycling_data_1998 <- cycling_data_f %>%
+  filter(YEAR == 1998)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+
+# Calculate the peaks for each group
+peaks <- cycling_data_1998 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 2015
+cycling_plot_1998 <- ggplot(cycling_data_1998, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+  scale_x_continuous(breaks = seq(0, 90, by = 10)) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for 1998",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA),
+    axis.line = element_line(color = "grey10")  
+  )+
+  scale_x_continuous(breaks = seq(0, max(cycling_data_1998$DURATION, na.rm = TRUE), by = 10))
+```
+
+```{r make-impedance_cycling_1992, echo=FALSE,include=FALSE, message=FALSE, warning=FALSE}
+
+# Filter the cycling_data for the year 1992 only
+cycling_data_1992 <- cycling_data_f %>%
+  filter(YEAR == 1992)
+
+# Define the colors for each destination
+dest_colors <- c(
+  "Place of worship" = "darkorange1",
+  "Outdoors" = "royalblue2",
+  "Library, museum or theatre" = "olivedrab4",
+  "Grocery store, other stores or mall" = "red3",
+  "Restaurant, bar or club" = "yellow2",
+  "Other's home" = "darkorchid3",
+  "Work or school" = "deeppink2",
+  "Home" = "cyan3"
+)
+
+# Calculate the peaks for each group
+peaks <- cycling_data_1992 %>%
+  group_by(dest_label) %>%
+  summarise(peak_duration = DURATION[which.max(f_t)], peak_f_t = max(f_t))
+
+
+# Plot the data for the year 1992
+cycling_plot_1992 <- ggplot(cycling_data_1992, aes(x = DURATION, y = f_t, group = dest_label, color = dest_label)) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = dest_colors) +
+  geom_segment(data = peaks, aes(x = peak_duration, y = 0, xend = peak_duration, yend = peak_f_t, color = dest_label),
+               linetype = "dashed", size = 0.5) +
+  labs(
+    title = "Modeling distance decay curves of cycling for 1992",
+    x = "Duration (minutes)",
+    y = "Frequency",
+    color = "Destination"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, color = "grey10"),
+    axis.title = element_text(color = "grey10"),
+    axis.text = element_text(color = "grey10"),
+    legend.text = element_text(size = 10, color = "grey10"),  
+    legend.title = element_text(size = 10, color = "grey10"), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white", colour = NA) ,
+    axis.line = element_line(color = "grey10")  
+  ) +
+  scale_x_continuous(breaks = seq(0, max(cycling_data_1992$DURATION, na.rm = TRUE), by = 10))  
+
+```
+
+```{r make-fig-13, cache = FALSE, include=FALSE}
+ch03_fig_13 <- cowplot::plot_grid(cycling_plot_1992,cycling_plot_1998, nrow = 2, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_13.jpg", 
+       plot = ch03_fig_13,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+
+ch03_fig_14 <- cowplot::plot_grid(cycling_plot_2005 , cycling_plot_2010, cycling_plot_2015, nrow = 3, align = 'v')
+
+
+ggsave(file = "figure/ch03_fig_14.jpg", 
+       plot = ch03_fig_14,
+       width = 8.5,  # Width in inches, adjust as needed for your specific layout
+       height = 11,  # Height in inches, adjust as needed for your specific layout
+       dpi = 300,
+       device = 'jpg')
+```
+
+```{r plot-fig-13, echo=FALSE, cache=FALSE, out.width="100%", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_13.jpg")
+```
+
+```{r plot-fig-14, echo=FALSE, cache=FALSE, out.width="100%", fig.cap="Modeling distance decay curves of walking and cycling to work or school destinations", fig.align="center"}
+
+knitr::include_graphics("figure/ch03_fig_14.jpg")
+```
+
+Apart from walking trips, cycling trips have shown variations in their choice of destinations between 1992 and 2015 (Figure \ref{fig:plot-fig-14}. However, due to the limited availability of data for cycling trips across different years, it was not feasible to calculate the impedance function for various destination categories. Consequently, we derived the impedance function for specific destinations, namely home, other people's homes, work or school, grocery stores, restaurants or bars, and outdoor locations, for the years 2005, 2010, and 2015. For the years 1992 and 1998, the impedance function was specifically computed for destinations such as home, other people's homes, and work or school. It's essential to highlight that data regarding cycling trips for the year 1986 was not accessible for analysis. In 1992, individuals exhibited a notable willingness to engage in cycling trips for an approximate duration of 90 minutes when traveling to their residences. This indicates that during that period, people were more inclined to use cycling for longer commutes to their homes. In contrast, for destinations such as others' homes and work or school,cycling was favored for shorter-distance trips to these destinations, possibly due to convenience or the availability of cycling infrastructure. By 1998, the inclination to cycle for all purposes reduced to around 70 minutes. This suggests a shift in preferences towards slightly shorter cycling trips. During this time, the willingness to cycle to reach various destinations appeared to converge, possibly indicating a more balanced use of cycling for different trip types.
+
+Furthermore, in 2005, individuals tended to cycle for approximately 70 minutes to reach their homes and work or school, while the duration for other destinations like grocery shopping, restaurants and bars, outdoor activities, and others was roughly 40 minutes. This might imply that, in 2005, cycling was primarily preferred for commuting to homes and workplaces or schools. The shorter durations for other destinations may be attributed to the availability of alternative modes of transportation or the proximity of these destinations. However, the willingness to cycle to reach homes and work or school decreased to 60 and 50 minutes in 2010, respectively. This reduction in cycling time may indicate a shift towards shorter commutes or a preference for alternative transportation methods during this period. Meanwhile, this duration increased to 80 minutes for cycling trips to reach homes and grocery shopping, possibly indicating an emphasis on active transportation for these essential activities. Conversely, the time required to reach work and school decreased to 60 minutes, possibly reflecting changes in commuting patterns.
+
+A significant observation from the study period of 1986 to 2015 is the predominance of the home as both the principal origin and destination for walking trips. During the initial years of the study, specifically in 1986, 1992, and 1998, the subsequent most frequented destinations were identified as the other's home and school or workplace settings, in that order of prevalence [@millward2013active]. However, a notable shift in this pattern emerged between 2005 and 2015. Despite the continued preeminence of the home as the foremost starting point for pedestrian journeys, there was a reordering in the popularity of destinations [@millward2013active;]. Educational institutions and workplaces became the second most common endpoints for these excursions, indicating changes in the societal or infrastructural dynamics influencing pedestrian movement. Concurrently, Grocery stores and malls emerged as the third most favored destination, while visits to the homes of others experienced a decline, positioning them as the fourth most common choice. Additionally, it should be noted that restaurants, bars, clubs, and outdoors have been identified as the next significant destinations for pedestrian trips during this period.
+
+Our investigation aligns with the body of existing research, which collectively illustrates that the duration of walking trips is characteristically shorter than those undertaken by cycling or driving. This observation is supported by Iacono et al. (2010), who delineated that walking trips are generally shorter in comparison to cycling excursions. Further reinforcing this notion, Vale et al. (2017) delineated that walking is predominantly adopted for utilitarian objectives rather than leisure, implying a tendency towards shorter, purpose-driven journeys.
+
+Likewise, Yang et al. (2012) explored the distance decay effect whereby the frequency of trips decreases as distance increases and found it more acute for walking than for cycling. This effect underscores the inherent limitations in walking distance that are not as pronounced in cycling, likely due to the physical exertion and time investment required for longer distances on foot. Expanding on the factors influencing walking trip duration and likelihood, Wu et al. (2019) highlighted the significant role of urban design elements. Their study elucidated that land use patterns, street connectivity, and the presence and quality of pedestrian infrastructure are pivotal in shaping the impedance function for walking trips, effectively determining the ease and appeal of walking as a mode of transportation.
+
+Moreover, Millward et al. (2013) contributed to this nuanced understanding by demonstrating that the duration of walking trips is also contingent upon the nature of the destination. Their findings suggest that utilitarian destinations, such as workplaces or stores, are typically associated with shorter walking trips, reflecting a pragmatic approach to pedestrian movement. These studies underscore a multifaceted understanding of pedestrian mobility, highlighting the influence of physical, urban, and socio-economic factors on the duration and purpose of walking trips. This body of research not only provides a comprehensive overview of pedestrian travel behavior but also offers critical insights for urban planners and policymakers aiming to promote walking as a sustainable and healthy mode of transportation.[@iacono2008access; @iacono2010; @millward2013active; @wu2019measuring; @yang2012walking].
+

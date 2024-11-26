@@ -742,11 +742,93 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/cycling_hm_fig.jp
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/walking_hm_fig.jpg"))
 ```
+
 For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common trip was from 'Home' to 'Work or school' (26%), followed by trips from 'Other's home'  to 'Home' (22%). In all following years, the most frequent trip were between 'Home' and 'Work or school' in both direction. This combination accounted for 65% of the trips in 1998, 40% in 2005, 52% in 2010, and 58% in 2015. Additionally and unlike walking trips, 'Home' to 'Home' trips were not a common cycling trip in any of the surveys. This suggests that leisure trips, such as activities around the home, are predominantly done by foot rather than by bicycle.
 
 ```{r cycling-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination", fig.align="center"}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_hm_fig.jpg"))
 ```
+
+## Calibrated impedance function
+
+This section presents the identified impedance functions for walking and cycling trips to various destinations across Canadian Metropolitan and Census Agglomeration Areas from 1992 to 2015. In general, the impedance functions aim to capture transportation behavior, illustrating that the likelihood of traveling between two points decreases as travel duration increases. Each impedance function follows one of the mathematical equations previously mentioned, enabling the plotting of PDF curves. These curves also highlight critical points at which a person's tendency to walk or cycle significantly decreases.
+
+<!-- 
+Nice paragraph to the GSS survey section. 
+
+This evolution in data collection reflects a growing understanding of the complex nature of urban mobility and the diverse purposes that motivate walking and cycling trips, providing a comprehensive foundation for analyzing distance decay and its implications for urban planning and sustainable transportation strategies.
+
+ -->
+
+As explained in the methodology section, we used the {fitdistrplus} package to calibrate the functions. We selected the best impedance function for each transportation mode, destination, and year based on the lowest AIC value. The AIC metric not only assesses the goodness of fit but also penalizes model complexity to prevent overfitting. AIC provides a balance between a model's accuracy and simplicity, with lower values indicating a more economical model. The distribution with the lowest AIC was considered the most suitable for representing the distance decay curve for each specific destination in each year. We chose AIC as the selection criterion because, while the {fitdistrplus} package accommodates weighted episodes during estimation, it does not extend this functionality to diagnostic plots, which are typically unweighted and traditionally used to select the best-fitting function.
+
+```{r selected_functions,echo=FALSE, cache=FALSE, warning=FALSE, include=FALSE}
+selected_functions <- gss_impedances %>% 
+  group_by(MODE, YEAR, dest_label) %>% 
+  summarise(Function = first(f_name), 
+            "Parameter 1" = first(est_1),
+            "Parameter 2" = first(est_2),
+            AIC = first(aic),
+            .groups = "drop") %>% 
+  mutate(Function = case_when(
+    Function == "lnorm" ~ "Lognormal",
+    Function == "gamma" ~ "Gamma",
+    Function == "unif" ~ "Uniform",
+    TRUE ~ Function), 
+    dest_label = case_when(
+    dest_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    dest_label == "Restaurant, bar or club" ~ "Restaurant",
+    dest_label == "Sports centre, field or arena" ~ "Sport area",
+    dest_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    dest_label == "In the neighbourhood" ~ "Neighbourhood",
+    dest_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ dest_label  # Keep all other values as they are
+  ), 
+  across(c("Parameter 1", "Parameter 2"), ~ round(., digits = 2)), 
+  across(c(AIC), ~ round(., digits = 0))) %>% 
+  rename(Mode = MODE, Year = YEAR, Destination = dest_label)
+
+walking_functions_table <- selected_functions %>%
+  filter(Mode == 'Walking') %>% 
+  select(Year, Destination, Function, "Parameter 1", "Parameter 2", AIC) %>%
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = paste0("\\label{walking_functions_table}Impedance functions and AIC for walking trips."), 
+        col.names = c("Year", "Destination", "Impedance function","Parameter 1*","Parameter 2*", "AIC")) %>% 
+    kable_styling(full_width = FALSE, 
+                latex_options=c("scale_down"),
+                font_size = 10) %>% 
+  row_spec(0, bold = TRUE, align = "c") %>% 
+  footnote(general = c("For 'lnorm' distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For the 'Gamma' distribution, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For the 'Uniform' distribution,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion."), threeparttable = T)
+
+biking_functions_table <- selected_functions %>%
+  filter(Mode == 'Walking') %>% 
+  select(Year, Destination, Function, "Parameter 1", "Parameter 2", AIC) %>%
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = paste0("\\label{biking_functions_table}Impedance functions and AIC for cycling trips."), 
+        col.names = c("Year", "Destination", "Impedance function","Parameter 1*","Parameter 2*", "AIC")) %>% 
+    kable_styling(full_width = FALSE, 
+                latex_options=c("scale_down"),
+                font_size = 10) %>% 
+  row_spec(0, bold = TRUE, align = "c") %>% 
+  footnote(general = c("For 'lnorm' distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For the 'Gamma' distribution, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For the 'Uniform' distribution,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion."), threeparttable = T)
+```
+
+In total, we fitted `r nrows(selected_functions)` impedance functions. Among the candidate distributions, only the lognormal, gamma, and uniform distributions were selected using our methodology, with the uniform distribution being chosen exclusively for certain cycling destinations. Table \ref{tab:walking_functions_table} displays the selected functions for walking trips, while Table \ref{tab:cycling_functions_table} presents the functions for cycling trips. Appendix A includes the AIC, BIC, and log-likelihood values for all candidate distributions.
+
+```{r walking_functions_table,echo=FALSE, cache=FALSE, warning=FALSE}
+
+walking_functions_table
+```
+
+```{r biking_functions_table,echo=FALSE, cache=FALSE, warning=FALSE}
+
+biking_functions_table
+```
+
+## Conclusion
+
 # References {#references .unnumbered}
 

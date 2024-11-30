@@ -57,9 +57,10 @@ output:
     keep_tex: true
     citation_package: default
 ---
+
 ```{r install-activeCA, include = FALSE}
-# install.packages("pak")
-# pak::pak("dias-bruno/ActiveCA")
+#install.packages("pak")
+#pak::pak("dias-bruno/ActiveCA")
 
 rm(list=ls())
 ```
@@ -83,18 +84,29 @@ library(stats)
 
 ```{r load-data, include = FALSE}
 # Load data
-data(walking_1992, 
-     walking_1998, 
-     walking_2005, 
-     walking_2010, 
-     walking_2015,
-     cycling_1992, 
-     cycling_1998, 
-     cycling_2005, 
-     cycling_2010, 
-     cycling_2015,
-     gss_episodes,
-     gss_impedances)
+data(gss_impedances)
+```
+
+```{r renaming-destinations, echo=FALSE, cache=FALSE, include=FALSE}
+# Renaming 'dest_label' and 'orig_label' values to reduce table space
+gss_impedances_renamed <- gss_impedances %>%
+  mutate(dest_label = case_when(
+    dest_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    dest_label == "Restaurant, bar or club" ~ "Restaurant",
+    dest_label == "Sports centre, field or arena" ~ "Sport area",
+    dest_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    dest_label == "In the neighbourhood" ~ "Neighbourhood",
+    dest_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ dest_label  # Keep all other values as they are
+  ), 
+  orig_label = case_when(
+    orig_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    orig_label == "Restaurant, bar or club" ~ "Restaurant",
+    orig_label == "Sports centre, field or arena" ~ "Sport area",
+    orig_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    orig_label == "In the neighbourhood" ~ "Neighbourhood",
+    orig_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ orig_label))
 ```
 
 # Introduction
@@ -247,33 +259,37 @@ For each selected cycle of the GSS surveys, we reviewed the episode files to ide
 
 Additionally, it was necessary to guarantee the data  consistency across the surveys, since they have employed a variety of variable coding schemes. The range of activities and destinations considered in the surveys changed from 1986 to 2015. In the first survey (in 1986), there were only three options of origin/destination location available to the respondent: their home, other's home and work or studt. In its turn, the most recent survey (2015) counts with more than 10 possible destination, including sport centre, restaurant, health clinics and more. In order to achieve uniformity, the activity categories from 2005, 2010, and 2015 were synchronised, and a similar process was employed for those from 1986, 1992, and 1998. For the preceding years (1986, 1992, and 1998), the trip origins and destinations were classified as "Home," "Other's home," and "Work or School." In the subsequent years (2005, 2010, and 2015), these categories were expanded to include "Business," "Restaurant, bar or club," "Place of worship," "Grocery store, other stores or mall," "In the neighbourhood," "Outdoors," "Library, museum or theatre," and "Sport centre, field or arena". It is also important to note that the 1986 dataset exclusively contains data on walking trips, with no records of cycling trips for that year. 
 
+Para avaliar a significancia estatistica de possiveis diferencas temporais entre as funcoes de impedancia de cada destino, we employed the Kruskal-Wallis test to determine whether the PDF medians differed among the year for every destination. We selected the Kruskal-Wallis test because this test do not assume that a normal distribution for the functions, which is important because we are still trying to determine the type of PDF for every destination, transport mode and year. If a median difference was identified between the groups, we then applied the pairwise Wilcoxon test to discern which specific group differed from the others. We adopted a significance level of 0.05 for both tests. 
+
 ## Estimating impedance function parameters
 
 The objective of this research was to compute the appropriate impedance functions for each destination, mode of transportation and survey year.  We applied the "fitdistrplus" package to calculate the best PDF for every destination, mode of transportation and survey year, between the options: uniform, negative exponential, gamma, normal, and lognormal distributions. 
 
 ```{r echo=FALSE, cache=FALSE, include=FALSE}
-less_than100 <- nrow(gss_episodes %>% filter(DURATION > 100 & YEAR > 1986))
+less_than100 <- nrow(gss_impedances_renamed %>% filter(DURATION > 100 & YEAR > 1986))
 
-all_episodes <- nrow(gss_episodes %>% filter(YEAR > 1986))
+all_episodes <- nrow(gss_impedances_renamed %>% filter(YEAR > 1986))
 ```
 
 In order to calculate the impedance functions, two filters were applied in the GSS data set. The first is that we excluded all trips with travel times higher than 100 minutes (1.5 hours). An exploratory data analysis showed that, taking into account all the walking and cycling episodes (`r all_episodes` in total), less than `r round(less_than100/all_episodes, 2)`% of the episodes have a trip duration higher than this limit. It was also possible to know that trips with a duration higher than 100 minutes are mainly composed of hiking and camping episodes. The second filter was realized to select only the population living in a larger urban population centre (a Census Metropolitan Area (CMA) or Census Agglomeration (CA)). We decided to apply this restriction because the travel behaviour of residents of CMA and CA areas tends to be very different from those outside these large urban centres in terms of active travel. 
 
-## Analyzing the active travel behaviour evolution 
+After calculate the impedance functions, we conducted an initial statistical test evaluate if the temporal differences in for destination was statitical significant throught the years. 
 
 # Results and discusion
 
 ## Descriptive analysis of walking and cycling trips from 1992 to 2015
 
 ```{r bulding table-01, echo=FALSE, cache=FALSE, include=FALSE}
-gss_episodes <- gss_episodes %>% 
-  filter(DURATION <= 100 & 
+max_duration <- 100
+
+gss_impedances_renamed <- gss_impedances_renamed %>% 
+  filter(DURATION <= max_duration & 
            DURATION > 0 & 
            YEAR > 1986 & 
            Pop_centre %in% c("CMA/CA", "CMA")) %>%
   mutate(WGHT_EPI = ifelse(is.na(WGHT_EPI), 1, WGHT_EPI)) 
 
-gss_summary <- gss_episodes %>%
+gss_summary <- gss_impedances_renamed %>%
      group_by(YEAR, MODE) %>%
      summarise(
          count = n(),
@@ -320,13 +336,13 @@ As highlighted in Figure \ref{fig:figure-destmodeyearperc}, over the 30 years st
 
 ```{r table-02, echo=FALSE, cache=FALSE}
 # Calculate the count of trips for each mode and year
-episodes_counts <- gss_episodes %>%
+episodes_counts <- gss_impedances_renamed %>%
   group_by(YEAR, MODE) %>%
   summarise(count = n(), .groups = "drop") %>%
   pivot_wider(names_from = YEAR, values_from = count)
 
 # Calculate min, mean, and max statictis (duration)
-stats_data <- gss_episodes %>%
+stats_data <- gss_impedances_renamed %>%
   group_by(YEAR, MODE) %>%
   summarise(
     min = min(DURATION),
@@ -366,31 +382,20 @@ styled_table_02 <- final_data %>%
 styled_table_02
 ```
 
-```{r renaming-destinations, echo=FALSE, cache=FALSE, include=FALSE}
-# Renaming 'dest_label' and 'orig_label' values to reduce table space
-gss_episodes_renamed <- gss_episodes %>%
-  mutate(dest_label = case_when(
-    dest_label == "Grocery store, other stores or mall" ~ "Grocery store",
-    dest_label == "Restaurant, bar or club" ~ "Restaurant",
-    dest_label == "Sports centre, field or arena" ~ "Sport area",
-    dest_label == "Medical, dental or other health clinic" ~ "Health clinic",
-    dest_label == "In the neighbourhood" ~ "Neighbourhood",
-    dest_label == "Library, museum or theatre" ~ "Cultural venues",
-    TRUE ~ dest_label  # Keep all other values as they are
-  ), 
-  orig_label = case_when(
-    orig_label == "Grocery store, other stores or mall" ~ "Grocery store",
-    orig_label == "Restaurant, bar or club" ~ "Restaurant",
-    orig_label == "Sports centre, field or arena" ~ "Sport area",
-    orig_label == "Medical, dental or other health clinic" ~ "Health clinic",
-    orig_label == "In the neighbourhood" ~ "Neighbourhood",
-    orig_label == "Library, museum or theatre" ~ "Cultural venues",
-    TRUE ~ orig_label))
-```
-
-
 ```{r destinations-percentual, echo=FALSE, cache=FALSE, include=FALSE}
-destination_percentual <- gss_episodes_renamed %>%
+# Define the order of destinations 
+destination_order <- c("Home", "Work or school", "Other's home", "Grocery store", 
+                       "Restaurant", "Health clinic", "Outdoors", "Neighbourhood",
+                       "Cultural venues", "Place of worship", 
+                       "Sport area", "Business")
+
+#my_colors <- kelly(length(destination_order))
+my_colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f",
+"#ff7f00", "#cab2d6","#6a3d9a","#ffff99","#b15928")
+
+names(my_colors) <- destination_order
+
+destination_percentual <- gss_impedances_renamed %>%
   group_by(MODE, dest_label, YEAR) %>%
   tally() %>%
   group_by(MODE, YEAR) %>%
@@ -404,10 +409,11 @@ destination_percentual <- gss_episodes_renamed %>%
   labs(y = "Proportion (%)",
        x = "Mode",
        fill = "Destination") +
+  theme_minimal() + 
   facet_wrap(~ as.factor(YEAR)) +
   geom_text(aes(label = label), 
             position = position_fill(vjust = 0.5), size = 3) +
-  scale_fill_brewer(palette = "Set3") 
+  scale_fill_manual(values = my_colors)
 
 ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_percentual.jpg"), 
        plot = destination_percentual,
@@ -421,7 +427,7 @@ Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each destinatio
 
 After 2005, the expansion of the destination highlights some new popular locations. For example, 'Grocery store' appears as the third most chosen destination, varying from 10% in 2005 to 6.5% in 2015 for cycling trips and from 13.3% to 12.6% for walking trips. When considering walking trips, 'Restaurants' appears as another well chosen destination and, in the case of cycling trips, 'Outdoors' appears as a well chosen destination.
 
-```{r figure-destmodeyearperc, echo=FALSE, out.width="100%", fig.cap="Percentage of walking and cycling trips categorized by destination and year", fig.align="center"}
+```{r figure-destmodeyearperc, echo=FALSE, out.width="100%", fig.cap="Percentage of walking and cycling trips categorized by destination and year"}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_percentual.jpg"))
 ```
@@ -432,7 +438,7 @@ start -->
 
 ```{r table-03X, echo=FALSE, cache=FALSE, warning=FALSE, results="asis", include = FALSE}
 # Filter for selected years and calculate statistics of trip duration
-episodes_stats_before <- gss_episodes %>%
+episodes_stats_before <- gss_impedances_renamed %>%
   filter(YEAR < 2005) %>%
   group_by(YEAR, dest_label, MODE) %>%
   summarise(
@@ -497,7 +503,7 @@ styled_table_03
 
 ```{r table-04X,echo=FALSE, cache=FALSE, warning=FALSE, include = FALSE}
 # Selecting surveys after 2000 and calculating trip duration statistics 
-episodes_stats_after <- gss_episodes_renamed %>%
+episodes_stats_after <- gss_impedances_renamed %>%
   filter(YEAR > 2000) %>%
   group_by(YEAR, dest_label, MODE) %>%
   summarise(
@@ -561,7 +567,7 @@ Decided to not include the following tables because I transformed them into figu
 start -->
 
 ```{r median_destinations, echo=FALSE, cache=FALSE, include=FALSE}
-destinations_median <- gss_episodes_renamed %>% 
+destinations_median <- gss_impedances_renamed %>% 
   group_by(MODE, dest_label, YEAR) %>%
   summarise(Median = median(DURATION), 
             .groups = "drop") %>% 
@@ -595,13 +601,13 @@ For destinations included in more than one survey, we can compare the temporal e
 For cycling trips, an increasing trend in travel times is evident for destinations such the destinations 'Grocery store' (rising from 10 to 15 minutes between 2005 and 2015), 'Outdoors' (increasing from 15 in 2005 to 20 minutes in 2015), and 'Home' (retuning to the 1992 typical travel time of 20 minutes after dropping to 10 minutes in 2010). However, travel times decreased for destinations like 'Other's home' and 'Place of worship', where the typical cycling travel time declined from 20 minutes in their first recorded surveys to 15 minutes by 2015. Other destinations remained with a constant travel time. 
 
 ```{r destination_boxplots, echo=FALSE, cache=FALSE, include=FALSE} 
-destination_boxplots <- gss_episodes_renamed %>% 
+destination_boxplots <- gss_impedances_renamed %>% 
   ggplot(aes(x = as.factor(YEAR), y = DURATION, fill = MODE)) +
   geom_boxplot(position = position_dodge(width = 1),
                 size = 0.1,
                 outlier.shape = NA,
                 outlier.size = 0) +  
-#theme_minimal() +   
+theme_bw() +   
 facet_wrap(~dest_label) + 
   scale_x_discrete(
     breaks = c(1992, 1998, 2005, 2010, 2015)) +
@@ -624,7 +630,7 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_boxpl
        dpi = 300)
 ```
 
-```{r figure-boxplot, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination", fig.align="center"}
+```{r figure-boxplot, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination"}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_boxplots.jpg"))
 ```
@@ -632,7 +638,7 @@ Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show walking and
 
 ```{r heatmaps, echo=FALSE, cache=FALSE, include=FALSE}
 # Creating heatmaps for the years of 1992 and 2015
-gss_heatmap <- gss_episodes_renamed
+gss_heatmap <- gss_impedances_renamed
 
 for(year in unique(gss_heatmap$YEAR)){
   
@@ -660,12 +666,6 @@ for(year in unique(gss_heatmap$YEAR)){
       # Melt the matrix for use with ggplot
       heatmap_melted <- melt(heatmap_matrix, varnames = c("Origin", "Destination"))
 
-      # Define the order of destinations 
-      destination_order <- c("Home", "Work or school", "Grocery store", 
-                             "Others' home", "Health clinic", "Outdoors", "Neighbourhood", 
-                             "Cultural venues", "Place of worship", 
-                             "Restaurant", "Sport area", "Business")
-
       # Heatmap for every combination of year and mode
       assign(paste0("heatmap_plot_", year, "_", mode),
              
@@ -676,9 +676,9 @@ for(year in unique(gss_heatmap$YEAR)){
                                        limits = c(0, ceiling(max(heatmap_melted$value, na.rm = TRUE))), 
                                        breaks =  c(0, ceiling(max(heatmap_melted$value, na.rm = TRUE))), 
                                        labels = c("0%", paste0(ceiling(max(heatmap_melted$value, na.rm = TRUE)), "%"))) +
-                  geom_text(data = subset(heatmap_melted, !is.na(value) & value >= 0), 
-                      aes(label = round(value)), 
-                      size = 4, color = "black") +
+                  # geom_text(data = subset(heatmap_melted, !is.na(value) & value >= 0), 
+                  #     aes(label = round(value)), 
+                  #     size = 4, color = "black") +
                   labs(x = "Destination", y = "Origin", fill = "Percentage", caption = year) +
                   theme_minimal() +
                   theme(
@@ -738,17 +738,18 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/cycling_hm_fig.jp
 ```
 
 
-```{r walking-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination", fig.align="center"}
+```{r walking-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination"}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/walking_hm_fig.jpg"))
 ```
 
 For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common trip was from 'Home' to 'Work or school' (26%), followed by trips from 'Other's home'  to 'Home' (22%). In all following years, the most frequent trip were between 'Home' and 'Work or school' in both direction. This combination accounted for 65% of the trips in 1998, 40% in 2005, 52% in 2010, and 58% in 2015. Additionally and unlike walking trips, 'Home' to 'Home' trips were not a common cycling trip in any of the surveys. This suggests that leisure trips, such as activities around the home, are predominantly done by foot rather than by bicycle.
 
-```{r cycling-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination", fig.align="center"}
+```{r cycling-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination"}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_hm_fig.jpg"))
-```
+``` 
+
 
 ## Calibrated impedance function
 
@@ -764,12 +765,14 @@ This evolution in data collection reflects a growing understanding of the comple
 As explained in the methodology section, we used the {fitdistrplus} package to calibrate the functions. We selected the best impedance function for each transportation mode, destination, and year based on the lowest AIC value. The AIC metric not only assesses the goodness of fit but also penalizes model complexity to prevent overfitting. AIC provides a balance between a model's accuracy and simplicity, with lower values indicating a more economical model. The distribution with the lowest AIC was considered the most suitable for representing the distance decay curve for each specific destination in each year. We chose AIC as the selection criterion because, while the {fitdistrplus} package accommodates weighted episodes during estimation, it does not extend this functionality to diagnostic plots, which are typically unweighted and traditionally used to select the best-fitting function.
 
 ```{r selected_functions,echo=FALSE, cache=FALSE, warning=FALSE, include=FALSE}
-selected_functions <- gss_impedances %>% 
+selected_functions <- gss_impedances_renamed %>% 
   group_by(MODE, YEAR, dest_label) %>% 
   summarise(Function = first(f_name), 
-            "Parameter 1" = first(est_1),
-            "Parameter 2" = first(est_2),
+            est_1 = first(est_1),
+            est_2 = first(est_2),
             AIC = first(aic),
+            f_name = first(f_name),
+            count = first(count),
             .groups = "drop") %>% 
   mutate(Function = case_when(
     Function == "lnorm" ~ "Lognormal",
@@ -785,17 +788,17 @@ selected_functions <- gss_impedances %>%
     dest_label == "Library, museum or theatre" ~ "Cultural venues",
     TRUE ~ dest_label  # Keep all other values as they are
   ), 
-  across(c("Parameter 1", "Parameter 2"), ~ round(., digits = 2)), 
+  across(c(est_1,est_2), ~ round(., digits = 2)), 
   across(c(AIC), ~ round(., digits = 0))) %>% 
   rename(Mode = MODE, Year = YEAR, Destination = dest_label)
 
 walking_functions_table <- selected_functions %>%
   filter(Mode == 'Walking') %>% 
-  select(Year, Destination, Function, "Parameter 1", "Parameter 2", AIC) %>%
+  select(Year, Destination, Function,est_1,est_2, AIC, count) %>%
   kable(format = "latex",
         booktabs = TRUE,
-        caption = paste0("\\label{walking_functions_table}Impedance functions and AIC for walking trips."), 
-        col.names = c("Year", "Destination", "Impedance function","Parameter 1*","Parameter 2*", "AIC")) %>% 
+        caption = paste0("\\label{walking-functions-tab}Impedance functions and AIC for walking trips."), 
+        col.names = c("Year", "Destination", "Impedance function","Parameter 1*","Parameter 2*", "AIC", "Count")) %>% 
     kable_styling(full_width = FALSE, 
                 latex_options=c("scale_down"),
                 font_size = 10) %>% 
@@ -803,12 +806,12 @@ walking_functions_table <- selected_functions %>%
   footnote(general = c("For 'lnorm' distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For the 'Gamma' distribution, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For the 'Uniform' distribution,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion."), threeparttable = T)
 
 biking_functions_table <- selected_functions %>%
-  filter(Mode == 'Walking') %>% 
-  select(Year, Destination, Function, "Parameter 1", "Parameter 2", AIC) %>%
+  filter(Mode == 'Cycling') %>% 
+  select(Year, Destination, Function, est_1, est_2, AIC, count) %>%
   kable(format = "latex",
         booktabs = TRUE,
-        caption = paste0("\\label{biking_functions_table}Impedance functions and AIC for cycling trips."), 
-        col.names = c("Year", "Destination", "Impedance function","Parameter 1*","Parameter 2*", "AIC")) %>% 
+        caption = paste0("\\label{cycling-functions-tab}Impedance functions and AIC for cycling trips."), 
+        col.names = c("Year", "Destination", "Impedance function","Parameter 1*","Parameter 2*", "AIC", "Count")) %>% 
     kable_styling(full_width = FALSE, 
                 latex_options=c("scale_down"),
                 font_size = 10) %>% 
@@ -816,7 +819,7 @@ biking_functions_table <- selected_functions %>%
   footnote(general = c("For 'lnorm' distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For the 'Gamma' distribution, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For the 'Uniform' distribution,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion."), threeparttable = T)
 ```
 
-In total, we fitted `r nrows(selected_functions)` impedance functions. Among the candidate distributions, only the lognormal, gamma, and uniform distributions were selected using our methodology, with the uniform distribution being chosen exclusively for certain cycling destinations. Table \ref{tab:walking_functions_table} displays the selected functions for walking trips, while Table \ref{tab:cycling_functions_table} presents the functions for cycling trips. Appendix A includes the AIC, BIC, and log-likelihood values for all candidate distributions.
+In total, we fitted `r nrow(selected_functions)` impedance functions. Among the candidate distributions, only the lognormal, gamma, and uniform distributions were selected using our methodology, with the uniform distribution being chosen exclusively for certain cycling destinations.  The absence of exponential functions, given the variety of destinations, year and mode of transport, indicates that the impendance functions applied in active accessibility studies may not be adequately measuring travel behavior. Table \ref{tab:walking-functions-tab} displays the selected functions for walking trips, while Table  \ref{tab:cycling-functions-table} presents the functions for cycling trips. Appendix A includes the AIC, BIC, and log-likelihood values for all candidate distributions.
 
 ```{r walking_functions_table,echo=FALSE, cache=FALSE, warning=FALSE}
 
@@ -827,6 +830,357 @@ walking_functions_table
 
 biking_functions_table
 ```
+
+Figure X presents the calibrated functions for the destination "Outdoors," along with a histogram of the empirical distribution of trips, split by year and transportation mode. Comparing functions from different categories can be tricky when analyzed for the first time, but by starting with the functions from the walking transportation mode, the calibrated functions from this example show a similar pattern. At a duration of around zero minutes, the probability of making the trip is low (with a density of zero for the years 2010 and 2015). After a few minutes, there is a peak in the maximum probability of traveling to reach "Outdoors," followed by a drop in willingness to zero for very high values of time, indicating a low probability of making the trip.
+
+For the years 2005 and 2010, the selected impedance functions are of the gamma type, with shapes of $\alpha = 1.24$ and $\alpha = 1.27$, respectively, and the same rate of $\sigma = 0.13$. The rate parameter ($\sigma$) mainly controls the speed of the curved drop, which is the same for both years. The shape parameter ($\mu$) controls how the density peak shifts in relation to the $x$-axis (the travel time). A larger shape value means that the probability peak occurs at larger values of time. Since the shape values for 2005 and 2010 are very close, the peak of the PDF curve in both cases occurs at 2 minutes. Although the difference in shape ($\mu$) between the two years is small and does not change the time at which the peak occurs, it is enough to cause a difference in the peak values themselves. In 2005, the walking trips had a higher density around 2 minutes (0.079) compared to 2010 (0.077).
+
+For 2015, the PDF that best represents the population's transport behavior is a lognormal distribution, with a mean of $\mu = 3.08$ and a standard deviation of $\sigma = 0.80$. In this year, the density peak (0.05) occurs when the journey has the duration of 7 minutes. Here, we can see that a lower density peak also corresponds to a more dispersed curve, with higher densities at larger values of time. In fact, while in 2005 and 2010 walking trips had densities close to zero for values over 50 minutes, in 2015 there is still a small density (0.002) at the 50-minute mark.
+
+For trips made by bicycle, in 2015 and 2010 the impedance functions are of the gamma type, with a shape of $\alpha = 2.99$ and $\alpha = 2.05$, respectively, and rates $\sigma = 0.17$ and $\sigma = 0.59$. Such configurations in the gamma function result in different peak values, where in 2005 the peak (0.046) of density occurred in 12 minutes, in 2010 the peak (0.102) occurs in 6 minutes, half the previous time. In 2005, the curve has a smaller peak and is more dispersed, while in 2010 the curve has a larger peak and is less dispersed, reinforced by its higher $\sigma$ rate. 
+
+In 2005, the PDF that best represented the curve was a uniform function with upper bound equals to 35 minutes and peak of (0.028). The presence of uniform functions means that it wasn't possible to parameterize more complex functions (like the other functions) and is explained by the low number of episodes in this category of destination, mode of transport and year (in this case, there were only 3 episodes identified). Overall, all the uniform functions have a maximum of 6 episodes and all of them are for the transportation mode cycling - which can be explained since this mode of transport doesn't have many episodes compared to the walking episodes. The figure also shows how cycling trips tend to have greater dispersion and higher typical values (dashed vertical lines) when compared to walking trips. 
+
+```{r theoretical_impedance_values, include = FALSE}
+theoretical_impedance <- function(df_functions, travel_cost) {
+  
+  # Initialize the main data frame to store results
+  result <- data.frame()
+  
+  # Create the 't' sequence
+  t_seq <- seq(1, travel_cost, 1)
+  
+  for (mode in unique(df_functions$Mode)){
+    
+    for (year in unique(df_functions[df_functions$Mode == mode, ]$Year)){ 
+      
+      for (destino in unique(df_functions[df_functions$Year == year & df_functions$Mode == mode, ]$Destination)){
+        
+      name_function <- df_functions[df_functions$Year == year & 
+                                      df_functions$Mode == mode & 
+                                      df_functions$Destination == destino, ]$f_name
+      
+      print(paste0("YEAR: ", year, " MODE: ", mode," Destination: ", destino))
+      
+      subset <- df_functions %>% 
+        filter(Year == year & Mode == mode & Destination == destino)
+      
+      # Temporary data frame for this iteration
+      temp_df <- data.frame(t = t_seq)
+      
+      # Add the appropriate distribution
+      if (name_function == "lnorm") {
+        temp_df$f <- dlnorm(temp_df$t,
+                            meanlog = subset$est_1[1],
+                            sdlog = subset$est_2[1])
+        
+      } else if (name_function == "gamma") {  
+        temp_df$f <- dgamma(temp_df$t,
+                            shape = subset$est_1[1],
+                            rate = subset$est_2[1])
+        
+      } else if (name_function == "norm") {  
+        temp_df$f <- dnorm(temp_df$t,
+                           mean = subset$est_1[1],
+                           sd = subset$est_2[1])
+        
+      } else if (name_function == "exp") {  
+        temp_df$f <- dexp(temp_df$t,
+                          rate = subset$est_1[1])
+        
+      } else if (name_function == "unif") {  
+        temp_df$f <- dunif(temp_df$t,
+                           min = subset$est_1[1],
+                           max = subset$est_2[1])
+      }
+      
+      # Add mode, year and destination columns
+      temp_df$MODE <- mode
+      temp_df$YEAR <- year
+      temp_df$dest_label <- destino
+        
+      # Append to the result data frame
+      result <- rbind(result, temp_df)
+    }
+  }
+}
+  return(result)
+}
+
+theoretical_values <- theoretical_impedance(selected_functions, travel_cost = max_duration)
+```
+
+
+```{r include = FALSE}
+
+for(destino in unique(gss_impedances_renamed$dest_label)){
+  
+  medianas <- gss_impedances_renamed %>%
+    filter(dest_label == destino) %>%
+    group_by(MODE) %>%
+    summarise(mediana_duracao = median(DURATION, na.rm = TRUE), .groups = 'drop')
+  
+  maximos <- theoretical_values %>%
+    filter(dest_label == destino) %>%
+    group_by(MODE, YEAR) %>%
+    filter(f == max(f)) %>%
+    slice(which.max(t)) %>%
+    ungroup()
+  
+combined_plot <- gss_impedances_renamed %>% 
+  filter(dest_label == destino) %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>%
+  ggplot(aes(x= DURATION)) +
+  geom_histogram(aes(y = ..density.., colour = MODE, fill = MODE), bins = 20, alpha=0.1, position="identity") + 
+  geom_line(data = theoretical_values[theoretical_values$dest_label == destino, ], aes(x = t, y = f, colour = MODE), size = 0.8) +   
+  geom_vline(data = medianas, aes(xintercept = mediana_duracao, color = MODE), linetype = "dashed") + 
+  geom_point(data = maximos, aes(x = t, y = f, colour = MODE), size = 3) + 
+  geom_label(data = maximos, aes(x = t, y = f, label = round(t, 2), colour = MODE), 
+            vjust = 0, size = 3) +
+  theme_minimal() +
+  facet_wrap(~YEAR) + 
+  labs(x = "Trip duration (in minutes)", y = "Density", colour = "Transportation Mode", fill = "Transportation Mode") +
+  theme(legend.position="right", 
+    strip.text = element_text(face = "bold", hjust = 0))
+
+  plots <- length(unique(gss_impedances_renamed[gss_impedances_renamed$dest_label == destino, ]$YEAR))
+ 
+  # Case of only one year 
+    if(plots == 1){
+      ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/impf_",destino,".jpg"), 
+       plot = combined_plot,
+       width = 7, 
+       height = 4, 
+       units = "in", 
+       dpi = 300)
+    
+    # Destination present in 3 surveys  
+    } else if(plots == 3){
+      ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/impf_",destino,".jpg"), 
+       plot = combined_plot,
+       width = 14, 
+       height = 4, 
+       units = "in", 
+       dpi = 300)
+      
+  # Destination present in 5 surveys  
+    }else {
+      ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/impf_",destino,".jpg"), 
+       plot = combined_plot,
+       width = 14, 
+       height = 9, 
+       units = "in", 
+       dpi = 300)
+    }
+}
+```
+
+```{r outdoors-impedance-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Empirical data and impedance functions fitted for walking trips with `work or school` as destination."), fig.align="center"}
+# selecting mode and destination to display impedance functions
+mode <- "Walking" 
+destino <- "Outdoors"
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/impf_",destino,".jpg"))
+```
+
+This temporal difference between the decay functions is also evident in Figure (temp-evolution-by-destination), which shows the calibrated functions for each year of analysis across all destination and transport mode categories for walking trips. For some locations, the impedance functions are of the same type and have similar parameters across all the years analyzed. For example, the "Cultural venues" destination consistently uses a gamma function to represent the population's transport behavior for all the years analyzed. On the other hand, the "Place of worship" destination exhibits temporal differences, with distinctly different peaks and density dispersions, reflecting the variations in the empirical data shown in Figure \ref{fig:figure-boxplot} and discussed above.
+
+```{r figure-walking-evolution, include = FALSE}
+year_order <- c(1992,1998,2005,2010,2015)
+
+#my_colors <- kelly(length(destination_order))
+my_colors_years <- c("#cbd9bf","#bae4bc","#7bccc4","#43a2ca","#0868ac")
+
+names(my_colors_years) <- year_order
+
+
+walking_temporal_evolution <- theoretical_values %>%
+  filter(MODE == 'Walking') %>%
+  ggplot(aes(x=t, y=f, color = as.factor(YEAR))) +
+  geom_line(size = 1) + 
+  theme_minimal() +
+  facet_wrap(~ dest_label) + 
+  scale_color_manual(values = my_colors_years) +
+  labs(x = "Walking trip duration", y = "Density", color = "Year") + 
+  theme(
+    strip.text = element_text(face = "bold", hjust = 0))
+
+
+Cycling_temporal_evolution <- theoretical_values %>%
+  filter(MODE == 'Cycling') %>%
+  ggplot(aes(x=t, y=f, color = as.factor(YEAR))) +
+  geom_line(size = 1) + 
+  theme_minimal() +
+  facet_wrap(~ dest_label) + 
+  scale_color_manual(values = my_colors_years) +
+  labs(x = "Cycling trip duration", y = "Density", color = "Year") + 
+  theme(
+    strip.text = element_text(face = "bold", hjust = 0))
+
+ggsave(paste0(here::here(),"/Journal-manuscript/figures/walking_temporal_evolution.jpg"), walking_temporal_evolution, 
+       width = 10, 
+       height = 7, 
+       units = "in", 
+       dpi = 300)
+
+
+ggsave(paste0(here::here(),"/Journal-manuscript/figures/cycling_temporal_evolution.jpg"), Cycling_temporal_evolution, 
+       width = 10, 
+       height = 7, 
+       units = "in", 
+       dpi = 300)
+```
+
+```{r walking-evolution-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Temporal evolution of walking impedance functions."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/walking_temporal_evolution.jpg"))
+```
+
+Only destinations that appear in more than one year can have their temporal evolution analyzed. Because of this, for the twelve possible destinations in the cycling mode, only seven locations can be temporally analyzed: “Cultural venues,” “Grocery store,” “Home,” “Other's home,” “Outdoors,” “Restaurant,” and “Work or school.” In the case of the walking trips, this transporation mode is present in more than one survey for the same locations as cycling mode, as well as for “Place of worship.”
+
+After performing the Kruskal-Wallis test (to assess whether there was a statistically significant difference between the distributions of empirical travel time values, considering the time differences for each destination) and the pairwise Wilcoxon test, we were able to identify the destinations where a statistically significant difference was detected. Table \ref{tab:result-stats} shows only the destinations where a statistically significant difference was found, considering the two modes of active transport analyzed.
+
+For cycling trips, the destinations “Home,” “Grocery store,” “Restaurant,” and “Work or school” had at least one year with a statistically significant difference. For example, for the “Home” destination, there was a statistically significant difference between 1992 and 2005 (p-value = 0.0046), 1992 and 2010 (p-value = 0.0003), 1998 and 2005 (p-value = 0.0390), 1998 and 2010 (p-value = 0.0412), 1998 and 2015 (p-value = 0.0196), 2005 and 2010 (p-value = 0.00017), and 2010 and 2015 (p-value = 0.01008). 
+
+For walking trips, among the destinations with a potential time difference, only “Cultural venues” did not show a statistically significant difference during the period analyzed. As a result, among the destinations appearing in more than one GSS survey, only “Cultural venues” showed no statistical evidence of temporal evolution for any of the modes of transport. Four destinations (“Home,” “Grocery store,” “Restaurant,” and “Work or school”) exhibited statistical differences for both modes of transport.
+
+```{r kruskal-walking, include = FALSE, warning= FALSE}
+result_kw <- data.frame()
+anos_possiveis <- c("1992", "1998", "2005", "2010", "2015")
+result_pw <- data.frame(matrix(ncol = length(anos_possiveis) + 2, nrow = 0))
+colnames(result_pw) <- c(anos_possiveis, "Mode", "Destination")
+
+# for(mode in unique(theoretical_values$MODE)){
+  
+#  for(destino in unique(theoretical_values[theoretical_values$MODE == mode, ]$dest_label)){
+    
+#    subset <- theoretical_values[theoretical_values$MODE == mode & theoretical_values$dest_label == destino, ]
+    
+for(mode in unique(gss_impedances_renamed$MODE)){
+  
+  for(destino in unique(gss_impedances_renamed[gss_impedances_renamed$MODE == mode, ]$dest_label)){
+    
+    subset <- gss_impedances_renamed[gss_impedances_renamed$MODE == mode & gss_impedances_renamed$dest_label == destino, ]
+    
+    if(length(unique(subset$YEAR)) > 1){
+      
+    kw <- kruskal.test(f ~ YEAR, data = subset)
+    
+    pv_analise <- ifelse(kw$p.value <= 0.05, 'Significant', 'Not significant')
+    
+    kw_df <- data.frame("Mode" = mode, "Destination" = destino, "KWpvalue" = kw$p.value, "pvalue" = pv_analise)
+    
+    result_kw <- rbind(result_kw, kw_df)  
+    
+    if(kw$p.value <= 0.05){
+      
+      pw <- pairwise.wilcox.test(subset$f, subset$YEAR, p.adjust.method = "bonferroni")
+      
+      pf_df <- as.data.frame(pw$p.value)
+
+      for (ano in anos_possiveis) {
+    if (!(ano %in% colnames(pf_df))) {
+      pf_df[[ano]] <- NA  
+    }
+  }
+  
+  pf_df <- pf_df[, anos_possiveis, drop = FALSE]
+  
+  pf_df$Mode <- mode
+  pf_df$Destination <- destino
+  
+  
+  result_pw <- rbind(result_pw, pf_df)
+    }
+      
+    }
+  }
+}
+
+result_pw$Year <- substr(rownames(result_pw), 1, 4)
+rownames(result_pw) <- NULL
+
+result_pw <- result_pw %>%
+  filter(rowSums(select(., `1992`:`2015`) <= 0.05, na.rm = TRUE) > 0) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 5)))
+
+result_pw <- result_pw[, colSums(!is.na(result_pw)) > 0]
+
+result_pw <- result_pw[,c("Mode","Destination","Year","1992","1998","2005","2010")]
+
+result_pw <- result_pw %>%
+  mutate(across(where(is.numeric), ~ ifelse(. > 0.05, NA, .)))
+```
+
+
+```{r stats-table, include=FALSE}
+table_stats <- result_pw %>% 
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = paste0("\\label{result-stats}P-values of the pairwise Wilcoxon test .")) %>% 
+    kable_styling(full_width = FALSE, 
+                latex_options=c("scale_down"),
+                font_size = 10)
+```
+
+```{r pvalues-table,echo=FALSE, cache=FALSE, warning=FALSE}
+
+table_stats
+```
+
+Finally, Figures \ref{fig:walking-function-by-year-fig} and \ref{fig:cycling-function-by-year-fig} present the impedance functions for different destination categories, grouped by year, for the walking and cycling modes of transport, respectively.
+
+```{r figure-walk-func-by-year, include = FALSE}
+walking_func_by_year <- theoretical_values %>%
+  filter(MODE == 'Walking') %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>%
+  ggplot(aes(x=t, y=f, color = dest_label)) +
+  theme_minimal() +
+  geom_line(size = 1) + 
+  facet_wrap(~YEAR   ) + 
+  scale_color_manual(values = my_colors) +
+  labs(x = "Walking trip duration", y = "Density", color = "Destination") + 
+  theme(
+    strip.text = element_text(face = "bold", hjust = 0))
+
+ggsave(paste0(here::here(),"/Journal-manuscript/figures/walking_functions_by_year.jpg"), walking_func_by_year, 
+       width = 10, 
+       height = 5, 
+       units = "in", 
+       dpi = 300)
+```
+
+```{r walking-function-by-year-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Walking functions grouped by year."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/walking_functions_by_year.jpg"))
+```
+
+
+```{r bike-figure-func-by-year, include = FALSE}
+functions_by_year <- theoretical_values %>%
+  filter(MODE == 'Walking') %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>%
+  ggplot(aes(x=t, y=f, color = dest_label)) +
+  theme_minimal() +
+  geom_line(size = 1) + 
+  facet_wrap(~YEAR   ) + 
+  scale_color_manual(values = my_colors) +
+  labs(x = "Walking trip duration", y = "Density", color = "Destination") + 
+  theme(
+    strip.text = element_text(face = "bold", hjust = 0))
+
+ggsave(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_year.jpg"), functions_by_year, 
+       width = 10, 
+       height = 5, 
+       units = "in", 
+       dpi = 300)
+```
+
+```{r cycling-function-by-year-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Cycling functions grouped by year."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_year.jpg"))
+```
+
 
 ## Conclusion
 

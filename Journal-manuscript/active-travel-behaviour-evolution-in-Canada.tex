@@ -681,6 +681,17 @@ other stores or mall,'' ``In the neighbourhood,'' ``Outdoors,''
 is also important to note that the 1986 dataset exclusively contains
 data on walking trips, with no records of cycling trips for that year.
 
+Para avaliar a significancia estatistica de possiveis diferencas
+temporais entre as funcoes de impedancia de cada destino, we employed
+the Kruskal-Wallis test to determine whether the PDF medians differed
+among the year for every destination. We selected the Kruskal-Wallis
+test because this test do not assume that a normal distribution for the
+functions, which is important because we are still trying to determine
+the type of PDF for every destination, transport mode and year. If a
+median difference was identified between the groups, we then applied the
+pairwise Wilcoxon test to discern which specific group differed from the
+others. We adopted a significance level of 0.05 for both tests.
+
 \hypertarget{estimating-impedance-function-parameters}{%
 \subsection{Estimating impedance function
 parameters}\label{estimating-impedance-function-parameters}}
@@ -696,7 +707,7 @@ In order to calculate the impedance functions, two filters were applied
 in the GSS data set. The first is that we excluded all trips with travel
 times higher than 100 minutes (1.5 hours). An exploratory data analysis
 showed that, taking into account all the walking and cycling episodes
-(17401 in total), less than 0.01\% of the episodes have a trip duration
+(12113 in total), less than 0\% of the episodes have a trip duration
 higher than this limit. It was also possible to know that trips with a
 duration higher than 100 minutes are mainly composed of hiking and
 camping episodes. The second filter was realized to select only the
@@ -706,12 +717,9 @@ apply this restriction because the travel behaviour of residents of CMA
 and CA areas tends to be very different from those outside these large
 urban centres in terms of active travel.
 
-\hypertarget{analyzing-the-active-travel-behaviour-evolution}{%
-\subsection{Analyzing the active travel behaviour
-evolution}\label{analyzing-the-active-travel-behaviour-evolution}}
-
-\hypertarget{results-and-discusion}{%
-\section{Results and discusion}\label{results-and-discusion}}
+After calculate the impedance functions, we conducted an initial
+statistical test evaluate if the temporal differences in for destination
+was statitical significant throught the years. \# Results and discusion
 
 \hypertarget{descriptive-analysis-of-walking-and-cycling-trips-from-1992-to-2015}{%
 \subsection{Descriptive analysis of walking and cycling trips from 1992
@@ -719,12 +727,12 @@ to
 2015}\label{descriptive-analysis-of-walking-and-cycling-trips-from-1992-to-2015}}
 
 After applying the filters to the GSS surveys, we obtained a total of
-\ensuremath{1.2115\times 10^{4}}. Table \ref{tab:table-01} contains the
+\ensuremath{1.2113\times 10^{4}}. Table \ref{tab:table-01} contains the
 number of episodes about walking and cycling trips between 1992 and
 2015, obtained from the GSS cycles. The year 2005 is the year with the
-most episodes, 4472, representing approximately 37\% of all active
+most episodes, 4471, representing approximately 37\% of all active
 travel episodes. The year 2005 is followed by 2010, with 3543 episodes
-(representing 29\% of the total), then 2015 (2900 episodes, 24\% of the
+(representing 29\% of the total), then 2015 (2899 episodes, 24\% of the
 total), 1998 643 episodes, 5\% of the total), and 1992, with only 557
 episodes, representing 5\% of the total.
 
@@ -745,9 +753,9 @@ stabilizing at around 7\% thereafter.
 \cmidrule(l{3pt}r{3pt}){2-7}
 Mode & 1992 & 1998 & 2005 & 2010 & 2015 & Total\\
 \midrule
-Cycling & 67 & 56 & 290 & 209 & 215 & 837\\
+Cycling & 67 & 56 & 289 & 209 & 214 & 835\\
 Walking & 490 & 587 & 4182 & 3334 & 2685 & 11278\\
-Total & 557 & 643 & 4472 & 3543 & 2900 & 12115\\
+Total & 557 & 643 & 4471 & 3543 & 2899 & 12113\\
 \bottomrule
 \end{longtable}
 \endgroup{}
@@ -808,7 +816,7 @@ Mode & Statistic & 1992 & 1998 & 2005 & 2010 & 2015\\
 \nopagebreak
 \multirow[t]{-5}{*}{\raggedright\arraybackslash \textbf{Walking}} & min & 5 & 1 & 1 & 1 & 5\\
 \cmidrule{1-7}\pagebreak[0]
- & count & 67 & 56 & 290 & 209 & 215\\
+ & count & 67 & 56 & 289 & 209 & 214\\
 \nopagebreak
  & max & 90 & 80 & 95 & 100 & 90\\
 \nopagebreak
@@ -846,12 +854,7 @@ and, in the case of cycling trips, `Outdoors' appears as a well chosen
 destination.
 
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{figures/destination_percentual} 
-
-}
-
-\caption{Percentage of walking and cycling trips categorized by destination and year}\label{fig:figure-destmodeyearperc}
+\includegraphics[width=1\linewidth]{figures/destination_percentual} \caption{Percentage of walking and cycling trips categorized by destination and year}\label{fig:figure-destmodeyearperc}
 \end{figure}
 
 Figure \ref{fig:figure-boxplot} present the box plot graphs showing the
@@ -888,12 +891,7 @@ minutes in their first recorded surveys to 15 minutes by 2015. Other
 destinations remained with a constant travel time.
 
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{figures/destination_boxplots} 
-
-}
-
-\caption{Percentage of walking trips categorized by origin and destination}\label{fig:figure-boxplot}
+\includegraphics[width=1\linewidth]{figures/destination_boxplots} \caption{Percentage of walking trips categorized by origin and destination}\label{fig:figure-boxplot}
 \end{figure}
 
 Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show
@@ -923,12 +921,7 @@ descriptive analysis, in 2015, the highest proportion of trips were from
 a notable destination for trips originating from `Home' (8\%).
 
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{figures/walking_hm_fig} 
-
-}
-
-\caption{Percentage of walking trips categorized by origin and destination}\label{fig:walking-heatmap}
+\includegraphics[width=1\linewidth]{figures/walking_hm_fig} \caption{Percentage of walking trips categorized by origin and destination}\label{fig:walking-heatmap}
 \end{figure}
 
 For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most
@@ -942,13 +935,357 @@ any of the surveys. This suggests that leisure trips, such as activities
 around the home, are predominantly done by foot rather than by bicycle.
 
 \begin{figure}
+\includegraphics[width=1\linewidth]{figures/cycling_hm_fig} \caption{Percentage of walking trips categorized by origin and destination}\label{fig:cycling-heatmap}
+\end{figure}
 
-{\centering \includegraphics[width=1\linewidth]{figures/cycling_hm_fig} 
+\hypertarget{calibrated-impedance-function}{%
+\subsection{Calibrated impedance
+function}\label{calibrated-impedance-function}}
+
+This section presents the identified impedance functions for walking and
+cycling trips to various destinations across Canadian Metropolitan and
+Census Agglomeration Areas from 1992 to 2015. In general, the impedance
+functions aim to capture transportation behavior, illustrating that the
+likelihood of traveling between two points decreases as travel duration
+increases. Each impedance function follows one of the mathematical
+equations previously mentioned, enabling the plotting of PDF curves.
+These curves also highlight critical points at which a person's tendency
+to walk or cycle significantly decreases.
+
+As explained in the methodology section, we used the \{fitdistrplus\}
+package to calibrate the functions. We selected the best impedance
+function for each transportation mode, destination, and year based on
+the lowest AIC value. The AIC metric not only assesses the goodness of
+fit but also penalizes model complexity to prevent overfitting. AIC
+provides a balance between a model's accuracy and simplicity, with lower
+values indicating a more economical model. The distribution with the
+lowest AIC was considered the most suitable for representing the
+distance decay curve for each specific destination in each year. We
+chose AIC as the selection criterion because, while the \{fitdistrplus\}
+package accommodates weighted episodes during estimation, it does not
+extend this functionality to diagnostic plots, which are typically
+unweighted and traditionally used to select the best-fitting function.
+
+In total, we fitted 64 impedance functions. Among the candidate
+distributions, only the lognormal, gamma, and uniform distributions were
+selected using our methodology, with the uniform distribution being
+chosen exclusively for certain cycling destinations. The absence of
+exponential functions, given the variety of destinations, year and mode
+of transport, indicates that the impendance functions applied in active
+accessibility studies may not be adequately measuring travel behavior.
+Table \ref{tab:walking-functions-tab} displays the selected functions
+for walking trips, while Table \ref{tab:cycling-functions-table}
+presents the functions for cycling trips. Appendix A includes the AIC,
+BIC, and log-likelihood values for all candidate distributions.
+
+\begin{table}
+\centering
+\caption{\label{tab:selected_functions}\label{walking-functions-tab}Impedance functions and AIC for walking trips.}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{10}{12}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{rllrrrr}
+\toprule
+\multicolumn{1}{c}{\textbf{Year}} & \multicolumn{1}{c}{\textbf{Destination}} & \multicolumn{1}{c}{\textbf{Impedance function}} & \multicolumn{1}{c}{\textbf{Parameter 1*}} & \multicolumn{1}{c}{\textbf{Parameter 2*}} & \multicolumn{1}{c}{\textbf{AIC}} & \multicolumn{1}{c}{\textbf{Count}}\\
+\midrule
+1992 & Home & Lognormal & 2.92 & 0.77 & 7761103 & 296\\
+1992 & Other's home & Lognormal & 2.15 & 0.84 & 1778150 & 81\\
+1992 & Work or school & Lognormal & 2.38 & 0.70 & 2319400 & 113\\
+1998 & Home & Lognormal & 2.07 & 0.92 & 5656275 & 302\\
+1998 & Other's home & Lognormal & 1.75 & 0.97 & 2892771 & 176\\
+\addlinespace
+1998 & Work or school & Gamma & 1.23 & 0.09 & 2318752 & 109\\
+2005 & Cultural venues & Gamma & 4.10 & 0.34 & 238506 & 25\\
+2005 & Grocery store & Gamma & 1.22 & 0.10 & 4776215 & 558\\
+2005 & Home & Gamma & 1.16 & 0.08 & 17291041 & 1831\\
+2005 & Other's home & Gamma & 1.03 & 0.11 & 3420742 & 436\\
+\addlinespace
+2005 & Outdoors & Gamma & 1.24 & 0.13 & 1272012 & 155\\
+2005 & Place of worship & Gamma & 2.07 & 0.19 & 228307 & 32\\
+2005 & Restaurant & Lognormal & 1.95 & 0.79 & 3727576 & 421\\
+2005 & Work or school & Lognormal & 2.13 & 0.79 & 8182691 & 724\\
+2010 & Cultural venues & Gamma & 3.60 & 0.34 & 304141 & 25\\
+\addlinespace
+2010 & Grocery store & Lognormal & 2.08 & 0.85 & 6369652 & 489\\
+2010 & Home & Gamma & 1.10 & 0.07 & 19584386 & 1424\\
+2010 & Other's home & Lognormal & 1.81 & 0.92 & 4035574 & 336\\
+2010 & Outdoors & Gamma & 1.27 & 0.13 & 2114346 & 167\\
+2010 & Place of worship & Lognormal & 1.95 & 0.70 & 285177 & 28\\
+\addlinespace
+2010 & Restaurant & Lognormal & 2.01 & 0.90 & 5187191 & 371\\
+2010 & Work or school & Lognormal & 2.21 & 0.78 & 7917431 & 494\\
+2015 & Business & Lognormal & 2.41 & 0.67 & 102286 & 8\\
+2015 & Cultural venues & Gamma & 4.57 & 0.34 & 543242 & 43\\
+2015 & Grocery store & Lognormal & 2.48 & 0.68 & 4001111 & 338\\
+\addlinespace
+2015 & Health clinic & Lognormal & 2.44 & 0.70 & 324578 & 27\\
+2015 & Home & Lognormal & 2.57 & 0.74 & 17235960 & 1202\\
+2015 & Neighbourhood & Lognormal & 2.41 & 0.77 & 981626 & 53\\
+2015 & Other's home & Lognormal & 2.43 & 0.80 & 2388598 & 186\\
+2015 & Outdoors & Lognormal & 2.54 & 0.79 & 1247963 & 72\\
+\addlinespace
+2015 & Place of worship & Gamma & 5.64 & 0.28 & 343187 & 24\\
+2015 & Restaurant & Lognormal & 2.38 & 0.74 & 3490082 & 231\\
+2015 & Sport area & Lognormal & 2.48 & 0.59 & 1199687 & 94\\
+2015 & Work or school & Lognormal & 2.55 & 0.64 & 6612061 & 407\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \textit{Note: } 
+\item For 'lnorm' distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For the 'Gamma' distribution, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For the 'Uniform' distribution,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion.
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}
+
+\begin{table}
+\centering
+\caption{\label{tab:selected_functions}\label{cycling-functions-tab}Impedance functions and AIC for cycling trips.}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{10}{12}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{rllrrrr}
+\toprule
+\multicolumn{1}{c}{\textbf{Year}} & \multicolumn{1}{c}{\textbf{Destination}} & \multicolumn{1}{c}{\textbf{Impedance function}} & \multicolumn{1}{c}{\textbf{Parameter 1*}} & \multicolumn{1}{c}{\textbf{Parameter 2*}} & \multicolumn{1}{c}{\textbf{AIC}} & \multicolumn{1}{c}{\textbf{Count}}\\
+\midrule
+1992 & Home & Gamma & 1.18 & 0.05 & 1018747 & 37\\
+1992 & Other's home & Lognormal & 2.57 & 0.82 & 373451 & 11\\
+1992 & Work or school & Gamma & 3.00 & 0.17 & 433582 & 19\\
+1998 & Home & Gamma & 1.70 & 0.07 & 715802 & 30\\
+1998 & Other's home & Lognormal & 2.79 & 0.80 & 113905 & 7\\
+\addlinespace
+1998 & Work or school & Gamma & 3.37 & 0.10 & 481536 & 19\\
+2005 & Cultural venues & Uniform & 0.00 & 15.13 & 6355 & 2\\
+2005 & Grocery store & Gamma & 1.93 & 0.14 & 320218 & 29\\
+2005 & Home & Gamma & 1.49 & 0.07 & 1794317 & 140\\
+2005 & Other's home & Gamma & 1.84 & 0.15 & 310058 & 27\\
+\addlinespace
+2005 & Outdoors & Gamma & 2.99 & 0.17 & 215894 & 17\\
+2005 & Restaurant & Gamma & 3.37 & 0.21 & 109072 & 10\\
+2005 & Work or school & Lognormal & 2.93 & 0.70 & 888655 & 64\\
+2010 & Cultural venues & Uniform & 0.00 & 32.58 & 38938 & 3\\
+2010 & Grocery store & Lognormal & 2.68 & 0.61 & 315037 & 20\\
+\addlinespace
+2010 & Home & Lognormal & 2.60 & 0.77 & 2006242 & 103\\
+2010 & Other's home & Lognormal & 2.40 & 0.63 & 338777 & 19\\
+2010 & Outdoors & Lognormal & 2.05 & 0.59 & 92699 & 8\\
+2010 & Restaurant & Uniform & 0.00 & 17.49 & 35370 & 3\\
+2010 & Work or school & Lognormal & 2.65 & 0.77 & 1292760 & 53\\
+\addlinespace
+2015 & Cultural venues & Lognormal & 2.71 & 0.00 & -Inf & 2\\
+2015 & Grocery store & Lognormal & 3.08 & 0.80 & 229413 & 14\\
+2015 & Health clinic & Lognormal & 2.93 & 0.86 & 80810 & 4\\
+2015 & Home & Lognormal & 3.08 & 0.61 & 1745846 & 98\\
+2015 & Neighbourhood & Uniform & 0.00 & 48.55 & 49924 & 3\\
+\addlinespace
+2015 & Other's home & Lognormal & 2.52 & 0.44 & 140210 & 12\\
+2015 & Outdoors & Uniform & 0.00 & 35.03 & 31463 & 3\\
+2015 & Restaurant & Lognormal & 3.11 & 0.60 & 115406 & 9\\
+2015 & Sport area & Uniform & 0.00 & 17.47 & 32969 & 6\\
+2015 & Work or school & Lognormal & 3.03 & 0.41 & 1162876 & 63\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \textit{Note: } 
+\item For 'lnorm' distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For the 'Gamma' distribution, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For the 'Uniform' distribution,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion.
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}
+
+Figure X presents the calibrated functions for the destination
+``Outdoors,'' along with a histogram of the empirical distribution of
+trips, split by year and transportation mode. Comparing functions from
+different categories can be tricky when analyzed for the first time, but
+by starting with the functions from the walking transportation mode, the
+calibrated functions from this example show a similar pattern. At a
+duration of around zero minutes, the probability of making the trip is
+low (with a density of zero for the years 2010 and 2015). After a few
+minutes, there is a peak in the maximum probability of traveling to
+reach ``Outdoors,'' followed by a drop in willingness to zero for very
+high values of time, indicating a low probability of making the trip.
+
+For the years 2005 and 2010, the selected impedance functions are of the
+gamma type, with shapes of \(\alpha = 1.24\) and \(\alpha = 1.27\),
+respectively, and the same rate of \(\sigma = 0.13\). The rate parameter
+(\(\sigma\)) mainly controls the speed of the curved drop, which is the
+same for both years. The shape parameter (\(\mu\)) controls how the
+density peak shifts in relation to the \(x\)-axis (the travel time). A
+larger shape value means that the probability peak occurs at larger
+values of time. Since the shape values for 2005 and 2010 are very close,
+the peak of the PDF curve in both cases occurs at 2 minutes. Although
+the difference in shape (\(\mu\)) between the two years is small and
+does not change the time at which the peak occurs, it is enough to cause
+a difference in the peak values themselves. In 2005, the walking trips
+had a higher density around 2 minutes (0.079) compared to 2010 (0.077).
+
+For 2015, the PDF that best represents the population's transport
+behavior is a lognormal distribution, with a mean of \(\mu = 3.08\) and
+a standard deviation of \(\sigma = 0.80\). In this year, the density
+peak (0.05) occurs when the journey has the duration of 7 minutes. Here,
+we can see that a lower density peak also corresponds to a more
+dispersed curve, with higher densities at larger values of time. In
+fact, while in 2005 and 2010 walking trips had densities close to zero
+for values over 50 minutes, in 2015 there is still a small density
+(0.002) at the 50-minute mark.
+
+For trips made by bicycle, in 2015 and 2010 the impedance functions are
+of the gamma type, with a shape of \(\alpha = 2.99\) and
+\(\alpha = 2.05\), respectively, and rates \(\sigma = 0.17\) and
+\(\sigma = 0.59\). Such configurations in the gamma function result in
+different peak values, where in 2005 the peak (0.046) of density
+occurred in 12 minutes, in 2010 the peak (0.102) occurs in 6 minutes,
+half the previous time. In 2005, the curve has a smaller peak and is
+more dispersed, while in 2010 the curve has a larger peak and is less
+dispersed, reinforced by its higher \(\sigma\) rate.
+
+In 2005, the PDF that best represented the curve was a uniform function
+with upper bound equals to 35 minutes and peak of (0.028). The presence
+of uniform functions means that it wasn't possible to parameterize more
+complex functions (like the other functions) and is explained by the low
+number of episodes in this category of destination, mode of transport
+and year (in this case, there were only 3 episodes identified). Overall,
+all the uniform functions have a maximum of 6 episodes and all of them
+are for the transportation mode cycling - which can be explained since
+this mode of transport doesn't have many episodes compared to the
+walking episodes. The figure also shows how cycling trips tend to have
+greater dispersion and higher typical values (dashed vertical lines)
+when compared to walking trips.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{figures/impf_Outdoors} 
 
 }
 
-\caption{Percentage of walking trips categorized by origin and destination}\label{fig:cycling-heatmap}
+\caption{Empirical data and impedance functions fitted for walking trips with `work or school` as destination.}\label{fig:outdoors-impedance-fig}
 \end{figure}
+
+This temporal difference between the decay functions is also evident in
+Figure (temp-evolution-by-destination), which shows the calibrated
+functions for each year of analysis across all destination and transport
+mode categories for walking trips. For some locations, the impedance
+functions are of the same type and have similar parameters across all
+the years analyzed. For example, the ``Cultural venues'' destination
+consistently uses a gamma function to represent the population's
+transport behavior for all the years analyzed. On the other hand, the
+``Place of worship'' destination exhibits temporal differences, with
+distinctly different peaks and density dispersions, reflecting the
+variations in the empirical data shown in Figure
+\ref{fig:figure-boxplot} and discussed above.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{figures/walking_temporal_evolution} 
+
+}
+
+\caption{Temporal evolution of walking impedance functions.}\label{fig:walking-evolution-fig}
+\end{figure}
+
+Only destinations that appear in more than one year can have their
+temporal evolution analyzed. Because of this, for the twelve possible
+destinations in the cycling mode, only seven locations can be temporally
+analyzed: ``Cultural venues,'' ``Grocery store,'' ``Home,'' ``Other's
+home,'' ``Outdoors,'' ``Restaurant,'' and ``Work or school.'' In the
+case of the walking trips, this transporation mode is present in more
+than one survey for the same locations as cycling mode, as well as for
+``Place of worship.''
+
+After performing the Kruskal-Wallis test (to assess whether there was a
+statistically significant difference between the distributions of
+empirical travel time values, considering the time differences for each
+destination) and the pairwise Wilcoxon test, we were able to identify
+the destinations where a statistically significant difference was
+detected. Table \ref{tab:result-stats} shows only the destinations where
+a statistically significant difference was found, considering the two
+modes of active transport analyzed.
+
+For cycling trips, the destinations ``Home,'' ``Grocery store,''
+``Restaurant,'' and ``Work or school'' had at least one year with a
+statistically significant difference. For example, for the ``Home''
+destination, there was a statistically significant difference between
+1992 and 2005 (p-value = 0.0046), 1992 and 2010 (p-value = 0.0003), 1998
+and 2005 (p-value = 0.0390), 1998 and 2010 (p-value = 0.0412), 1998 and
+2015 (p-value = 0.0196), 2005 and 2010 (p-value = 0.00017), and 2010 and
+2015 (p-value = 0.01008).
+
+For walking trips, among the destinations with a potential time
+difference, only ``Cultural venues'' did not show a statistically
+significant difference during the period analyzed. As a result, among
+the destinations appearing in more than one GSS survey, only ``Cultural
+venues'' showed no statistical evidence of temporal evolution for any of
+the modes of transport. Four destinations (``Home,'' ``Grocery store,''
+``Restaurant,'' and ``Work or school'') exhibited statistical
+differences for both modes of transport.
+
+\begin{table}
+\centering
+\caption{\label{tab:stats-table}\label{result-stats}P-values of the pairwise Wilcoxon test .}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{lllrrrr}
+\toprule
+Mode & Destination & Year & 1992 & 1998 & 2005 & 2010\\
+\midrule
+Walking & Restaurant & 2010 & NA & NA & 0.00003 & NA\\
+Walking & Restaurant & 2015 & NA & NA & 0.00003 & 0.00001\\
+Walking & Grocery store & 2010 & NA & NA & 0.00000 & NA\\
+Walking & Grocery store & 2015 & NA & NA & NA & 0.00159\\
+Walking & Home & 1998 & 0.00000 & NA & NA & NA\\
+\addlinespace
+Walking & Home & 2005 & 0.00000 & 0.00000 & NA & NA\\
+Walking & Home & 2010 & 0.00000 & 0.00000 & 0.00000 & NA\\
+Walking & Home & 2015 & 0.00000 & 0.00000 & 0.00000 & NA\\
+Walking & Work or school & 1998 & 0.00871 & NA & NA & NA\\
+Walking & Work or school & 2015 & NA & 0.00004 & 0.00483 & NA\\
+\addlinespace
+Walking & Other's home & 1998 & 0.00000 & NA & NA & NA\\
+Walking & Other's home & 2010 & 0.00003 & 0.01048 & 0.04166 & NA\\
+Walking & Other's home & 2015 & NA & 0.00000 & 0.00000 & 0.00000\\
+Walking & Place of worship & 2015 & NA & NA & 0.01946 & NA\\
+Walking & Outdoors & 2015 & NA & NA & 0.00000 & 0.00044\\
+\addlinespace
+Cycling & Restaurant & 2010 & NA & NA & 0.03883 & NA\\
+Cycling & Restaurant & 2015 & NA & NA & NA & 0.04323\\
+Cycling & Home & 2005 & 0.00460 & 0.03902 & NA & NA\\
+Cycling & Home & 2010 & 0.00030 & 0.04117 & 0.00017 & NA\\
+Cycling & Home & 2015 & NA & 0.01960 & NA & 0.01008\\
+\addlinespace
+Cycling & Work or school & 1998 & 0.02112 & NA & NA & NA\\
+Cycling & Work or school & 2005 & NA & 0.03558 & NA & NA\\
+Cycling & Work or school & 2015 & NA & 0.00190 & 0.00242 & 0.00290\\
+Cycling & Grocery store & 2015 & NA & NA & 0.00278 & NA\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Finally, Figures \ref{fig:walking-function-by-year-fig} and
+\ref{fig:cycling-function-by-year-fig} present the impedance functions
+for different destination categories, grouped by year, for the walking
+and cycling modes of transport, respectively.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{figures/walking_functions_by_year} 
+
+}
+
+\caption{Walking functions grouped by year.}\label{fig:walking-function-by-year-fig}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{figures/cycling_functions_by_year} 
+
+}
+
+\caption{Cycling functions grouped by year.}\label{fig:cycling-function-by-year-fig}
+\end{figure}
+
+\hypertarget{conclusion}{%
+\subsection{Conclusion}\label{conclusion}}
 
 \hypertarget{references}{%
 \section*{References}\label{references}}

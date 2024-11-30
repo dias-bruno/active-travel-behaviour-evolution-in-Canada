@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.11)  25 NOV 2024 18:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.26)  29 NOV 2024 19:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **active-travel-behaviour-evolution-in-Canada.tex
 (./active-travel-behaviour-evolution-in-Canada.tex
-LaTeX2e <2024-11-01>
+LaTeX2e <2024-11-01> patch level 1
 L3 programming layer <2024-11-02>
 (./elsarticle.cls
 Document Class: elsarticle 2020/11/20, 3.3: Elsevier Ltd
@@ -545,6 +545,9 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 
 LaTeX Warning: Label `tab:table-02' multiply defined.
 
+
+LaTeX Warning: Label `tab:selected_functions' multiply defined.
+
 )
 \openout1 = `active-travel-behaviour-evolution-in-Canada.aux'.
 
@@ -744,17 +747,19 @@ Overfull \hbox (4.35213pt too wide) in paragraph at lines 584--596
 
 [6]
 
-[7] [8]
-<figures/destination_percentual.jpg, id=140, 3613.5pt x 2409.0pt>
+[7]
+
+[8]
+<figures/destination_percentual.jpg, id=138, 867.24pt x 578.16pt>
 File: figures/destination_percentual.jpg Graphic file (type jpg)
 <use figures/destination_percentual.jpg>
-Package pdftex.def Info: figures/destination_percentual.jpg  used on input line 850.
-(pdftex.def)             Requested size: 468.0pt x 311.96797pt.
-<figures/destination_boxplots.jpg, id=142, 3613.5pt x 2409.0pt>
+Package pdftex.def Info: figures/destination_percentual.jpg  used on input line 857.
+(pdftex.def)             Requested size: 468.0pt x 311.99884pt.
+<figures/destination_boxplots.jpg, id=140, 867.24pt x 578.16pt>
 File: figures/destination_boxplots.jpg Graphic file (type jpg)
 <use figures/destination_boxplots.jpg>
-Package pdftex.def Info: figures/destination_boxplots.jpg  used on input line 892.
-(pdftex.def)             Requested size: 468.0pt x 311.96797pt.
+Package pdftex.def Info: figures/destination_boxplots.jpg  used on input line 894.
+(pdftex.def)             Requested size: 468.0pt x 311.99884pt.
 
 
 [9]
@@ -763,77 +768,159 @@ Package pdftex.def Info: figures/destination_boxplots.jpg  used on input line 89
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.924 
-       <./figures/destination_percentual.jpg>]
+l.895 \end{figure}
+                   <./figures/destination_percentual.jpg>]
+<figures/walking_hm_fig.jpg, id=152, 1228.59pt x 1734.48pt>
+File: figures/walking_hm_fig.jpg Graphic file (type jpg)
+<use figures/walking_hm_fig.jpg>
+Package pdftex.def Info: figures/walking_hm_fig.jpg  used on input line 924.
+(pdftex.def)             Requested size: 468.0pt x 660.69722pt.
+
+LaTeX Warning: Float too large for page by 71.75278pt on input line 925.
+
+
 
 [11
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.924 
+l.936 
        <./figures/destination_boxplots.jpg>]
-<figures/walking_hm_fig.jpg, id=161, 5119.125pt x 7227.0pt>
-File: figures/walking_hm_fig.jpg Graphic file (type jpg)
-<use figures/walking_hm_fig.jpg>
-Package pdftex.def Info: figures/walking_hm_fig.jpg  used on input line 927.
-(pdftex.def)             Requested size: 468.0pt x 660.65753pt.
 
-LaTeX Warning: Float too large for page by 59.71309pt on input line 932.
-
-<figures/cycling_hm_fig.jpg, id=163, 5119.125pt x 7227.0pt>
-File: figures/cycling_hm_fig.jpg Graphic file (type jpg)
-<use figures/cycling_hm_fig.jpg>
-Package pdftex.def Info: figures/cycling_hm_fig.jpg  used on input line 946.
-(pdftex.def)             Requested size: 468.0pt x 660.65753pt.
-
-LaTeX Warning: Float too large for page by 59.71309pt on input line 951.
-
-
-
-[12]
-
-[13
+[12
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1039 
-        <./figures/walking_hm_fig.jpg>]
+l.936 
+       <./figures/walking_hm_fig.jpg>]
+<figures/cycling_hm_fig.jpg, id=165, 1228.59pt x 1734.48pt>
+File: figures/cycling_hm_fig.jpg Graphic file (type jpg)
+<use figures/cycling_hm_fig.jpg>
+Package pdftex.def Info: figures/cycling_hm_fig.jpg  used on input line 938.
+(pdftex.def)             Requested size: 468.0pt x 660.69722pt.
+
+LaTeX Warning: Float too large for page by 71.75278pt on input line 939.
+
+
+LaTeX Warning: Reference `tab:walking-functions-tab' on page 13 undefined on input line 976.
+
+
+LaTeX Warning: Reference `tab:cycling-functions-table' on page 13 undefined on input line 977.
+
+
+
+[13]
 
 [14
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1039 
+l.1141 
         <./figures/cycling_hm_fig.jpg>]
 
-[15]
+[15
+pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1141 
+       ]
 
-[16]
+[16
+pdfTeX warning (ext4): destination with the same identifier (name{table.4}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1141 
+       ]
+<figures/impf_Outdoors.jpg, id=186, 1011.78pt x 289.08pt>
+File: figures/impf_Outdoors.jpg Graphic file (type jpg)
+<use figures/impf_Outdoors.jpg>
+Package pdftex.def Info: figures/impf_Outdoors.jpg  used on input line 1157.
+(pdftex.def)             Requested size: 468.0pt x 133.71504pt.
+<figures/walking_temporal_evolution.jpg, id=188, 722.7pt x 505.89pt>
+File: figures/walking_temporal_evolution.jpg Graphic file (type jpg)
+<use figures/walking_temporal_evolution.jpg>
+Package pdftex.def Info: figures/walking_temporal_evolution.jpg  used on input line 1179.
+(pdftex.def)             Requested size: 468.0pt x 327.59723pt.
 
-[17] (./active-travel-behaviour-evolution-in-Canada.aux)
+LaTeX Warning: Reference `tab:result-stats' on page 17 undefined on input line 1200.
+
+
+
+[17
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1221 
+        <./figures/impf_Outdoors.jpg>]
+
+[18
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1221 
+        <./figures/walking_temporal_evolution.jpg>]
+<figures/walking_functions_by_year.jpg, id=201, 722.7pt x 361.35pt>
+File: figures/walking_functions_by_year.jpg Graphic file (type jpg)
+<use figures/walking_functions_by_year.jpg>
+Package pdftex.def Info: figures/walking_functions_by_year.jpg  used on input line 1271.
+(pdftex.def)             Requested size: 468.0pt x 233.99803pt.
+<figures/cycling_functions_by_year.jpg, id=202, 722.7pt x 361.35pt>
+File: figures/cycling_functions_by_year.jpg Graphic file (type jpg)
+<use figures/cycling_functions_by_year.jpg>
+Package pdftex.def Info: figures/cycling_functions_by_year.jpg  used on input line 1280.
+(pdftex.def)             Requested size: 468.0pt x 233.99803pt.
+
+
+[19
+pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1325 \leavevmode
+                  \vadjust pre{\hypertarget{ref-church2003measuring}{}}%]
+
+[20
+pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1325 \leavevmode
+                  \vadjust pre{\hypertarget{ref-church2003measuring}{}}%
+pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1325 \leavevmode
+                  \vadjust pre{\hypertarget{ref-church2003measuring}{}}% <./figures/walking_functions_by_year.jpg> <./figures/cycling_functions_by_year.jpg>]
+
+[21]
+
+[22]
+
+[23] (./active-travel-behaviour-evolution-in-Canada.aux)
  ***********
-LaTeX2e <2024-11-01>
+LaTeX2e <2024-11-01> patch level 1
 L3 programming layer <2024-11-02>
  ***********
+
+LaTeX Warning: There were undefined references.
+
 
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `active-travel-behaviour-evolution-in-Canada.out' has not changed.
-(rerunfilecheck)             Checksum: AA75A299CF7216E71F7398289C57239E;2233.
+(rerunfilecheck)             Checksum: 4B626227A5068C5458805E65BE608DFD;2087.
  ) 
 Here is how much of TeX's memory you used:
- 13991 strings out of 475322
- 221502 string characters out of 5768591
- 630076 words of memory out of 5000000
- 36449 multiletter control sequences out of 15000+600000
+ 14078 strings out of 475290
+ 224172 string characters out of 5767280
+ 649628 words of memory out of 5000000
+ 36547 multiletter control sequences out of 15000+600000
  613949 words of font info for 77 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,10n,79p,506b,589s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,12n,79p,541b,548s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt8.pfb>
-Output written on active-travel-behaviour-evolution-in-Canada.pdf (17 pages, 8047456 bytes).
+Output written on active-travel-behaviour-evolution-in-Canada.pdf (23 pages, 4699503 bytes).
 PDF statistics:
- 386 PDF objects out of 1000 (max. 8388607)
- 316 compressed objects within 4 object streams
- 126 named destinations out of 1000 (max. 500000)
- 109 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 428 PDF objects out of 1000 (max. 8388607)
+ 348 compressed objects within 4 object streams
+ 139 named destinations out of 1000 (max. 500000)
+ 129 words of extra memory for PDF output out of 10000 (max. 10000000)
 

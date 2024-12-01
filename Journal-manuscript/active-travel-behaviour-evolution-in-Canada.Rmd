@@ -48,7 +48,7 @@ output:
 
 ```{r install-activeCA, include = FALSE}
 #install.packages("pak")
-#pak::pak("dias-bruno/ActiveCA")
+pak::pak("dias-bruno/ActiveCA")
 opts <- options(knitr.kable.NA = "")
 rm(list=ls())
 ```
@@ -109,7 +109,7 @@ The merit of negative exponential function is due to its ability to assign decre
 
 Having presented this context, this paper poses the questions: What is the typical travel time for active transportation modes (walking and cycling) in Canadian metropolitan regions, considering various destinations and years? Which impedance functions best represent active transportation travel behavior? To answer the research questions, this study has as two main objectives: first, to provide an overview of the active transportation in terms of main origins, destinations, and travel time; and second, to identify appropriate impedance functions for active transportation modes for different destinations and time periods in Canadian metropolitan areas. To do achieve both objectives, we utilize data provided by the `ActiveCA` R package [@dossantos2024ActiveCA], an open data product in the form of an R data package with information about active travel in Canada. This data product is based on Public Use Microdata Files of Statistics Canada's General Social Survey (GSS) program with a focus on the Time Use Survey cycles. To build this package, the authors extracted all walking and cycling episodes and their corresponding episode weights for GSS cycles, Cycles 2 (1986), 7 (1992), 12 (1998), 19 (2005), 24 (2010), and 29 (2015), spanning a period of almost thirty years. Origins and destinations were categorized, enabling the investigation of active travel for broad destination categories and purposes.
 
-We recognize that non-work travel encompasses a range of trip purposes and diverse traveler behaviors, which makes impedance functions essential analytical tools for studying non-work accessibility. Grengs [-@grengs2015nonwork] emphasizes the importance of elaborating distinct functions for each travel purpose, a principle that guides this analysis. Our investigation covers a variety of trip purposes, ranging from commutes to homes, workplaces, or educational institutions to social visits, outdoor activities, business trips, shopping, cultural outings to libraries, museums, or theaters, dining out, and engaging in religious practices. Our research aims to enhance the current knowledge about active travel behaviour and provide empirical data about frequency and duration of typical pedestrian and cycling trips for different purposes, by applying the methodology on a nationally representative samples of Canadian residents. Lastly, this comprehensive analysis seeks to contribute to the ongoing conversation on active transportation, highlighting its role in influencing transportation plans to a more sustainable alternative.
+We recognize that non-work travel encompasses a range of trip purposes and diverse traveler behaviors, which makes impedance functions essential analytical tools for studying non-work accessibility. Grengs [-@grengs2015nonwork] emphasizes the importance of elaborating distinct functions for each travel purpose, a principle that guides this analysis. Our investigation covers a variety of trip purposes, ranging from commutes to homes, workplaces, or educational institutions to social visits, outdoor activities, business trips, shopping, cultural outings to libraries, museums, or theaters, dining out, and engaging in religious practices. Our research aims to enhance the current knowledge about active travel behaviour and provide empirical data about frequency and duration of typical pedestrian and cycling trips for different purposes, by applying the methodology on a nationally representative samples of Canadian residents. Lastly, this analysis seeks to contribute to the ongoing conversation on active transportation, highlighting its role in influencing transportation plans to a more sustainable alternative.
 
 # Background
 
@@ -688,7 +688,7 @@ knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling
 
 For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common trip was from 'Home' to 'Work or school' (26%), followed by trips from 'Other's home' to 'Home' (22%). In all following years, the most frequent trip were between 'Home' and 'Work or school' in both direction. This combination accounted for 65% of the trips in 1998, 40% in 2005, 52% in 2010, and 58% in 2015. Additionally and unlike walking trips, 'Home' to 'Home' trips were not a common cycling trip in any of the surveys. This suggests that leisure trips, such as activities around the home, are predominantly done by foot rather than by bicycle.
 
-We analyzed whether the temporal differences in travel times for the destinations had statistical significance. Only destinations that appear in more than one year can have their temporal evolution analyzed. Therefore, for the twelve possible destinations in the cycling mode, only seven locations can be temporally analyzed: 'Cultural venues,' 'Grocery store,' 'Home,' 'Other's home,' 'Outdoors,' 'Restaurant,' and 'Work or school.' In the case of walking trips, it is possible to include 'Place of worship' to the previous destination list.
+We analyzed whether the temporal differences in travel times for the destinations had statistical significance. Only destinations that appear in more than one year can have their temporal evolution analyzed. Therefore, from the twelve possible destinations, in the cycling mode only seven locations can be temporally analyzed: 'Cultural venues,' 'Grocery store,' 'Home,' 'Other's home,' 'Outdoors,' 'Restaurant,' and 'Work or school.' In the case of walking trips, it is possible to include 'Place of worship' to the previous destination list.
 
 After performing the Kruskal-Wallis test (to assess whether there was a statistically significant difference between the distributions of empirical travel time values, considering the time differences for each destination) and the pairwise Wilcoxon test, we were able to identify the destinations where a statistically significant difference was detected. Table \ref{tab:result-stats} shows only the destinations where a statistically significant difference was found, considering the two modes of active transport analyzed.
 
@@ -857,6 +857,18 @@ For trips made by bicycle, in 2015 and 2010 the impedance functions are of the g
 
 In 2005, the PDF that best represented the curve was a uniform function with upper bound equals to 35 minutes and peak of (0.028). The presence of uniform functions means that it wasn't possible to parameterize more complex functions (like the other functions) and is explained by the low number of episodes in this category of destination, mode of transport and year (in this case, there were only 3 episodes identified). Overall, all the uniform functions have a maximum of 6 episodes and all of them are for the transportation mode cycling - which can be explained since this mode of transport doesn't have many episodes compared to the walking episodes (only 7% of active travel episodes). The figure also shows how cycling trips tend to have greater dispersion and higher typical values (dashed vertical lines) when compared to walking trips.
 
+```{r mean_functions, include = FALSE}
+mean_functions <- selected_functions %>% 
+  group_by(Function) %>%
+  summarise(mean = mean(count))
+
+mean_gamma <- round(mean_functions[mean_functions$Function == 'Gamma', ]$mean)
+mean_uniform <- round(mean_functions[mean_functions$Function == 'Uniform', ]$mean)
+mean_lognormal <- round(mean_functions[mean_functions$Function == 'Lognormal', ]$mean)
+```
+
+The complexity of the impedance function will depend of the amount of episodes available to perform the calibration. For instance, to fit a gamma type function was necessary an average of `r mean_gamma` episodes, and to fit a lognormal type function, it was necessary around `r mean_lognormal` episodes. In contrast, to fit an uniform function it was required only `r mean_uniform` in average.
+
 ```{r theoretical_impedance_values, include = FALSE}
 theoretical_impedance <- function(df_functions, travel_cost) {
   
@@ -998,7 +1010,7 @@ destino <- "Outdoors"
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/impf_",destino,".jpg"))
 ```
 
-This temporal difference between the decay functions is also evident in Figure \ref{fig:walking-evolution-fig}, which shows the calibrated functions for each year of analysis across all destination and transport mode categories for walking trips. For some locations, the impedance functions are of the same type and have similar parameters across all the years analyzed. For example, the "Cultural venues", the only destination present in more than one survey that did not displayed a statistically significant difference for the walking mode, consistently uses a gamma function to represent the population's transport behavior for all the years analyzed. On the other hand, the "Place of worship" destination exhibits temporal differences, with distinctly different peaks and density dispersions, reflecting the variations in the empirical data shown in Figure \ref{fig:figure-boxplot} and discussed above.
+The temporal difference between the decay functions is also evident in Figure \ref{fig:walking-evolution-fig}, which shows the calibrated functions for each year of analysis across all destination and transport mode categories for walking trips. For some locations, the impedance functions are of the same type and have similar parameters across all the years analyzed. For example, the "Cultural venues", the only destination present in more than one survey that did not displayed a statistically significant difference for the walking mode, consistently uses a gamma function to represent the population's transport behavior for all the years analyzed. On the other hand, the "Place of worship" destination exhibits temporal differences, with distinctly different peaks and density dispersions, reflecting the variations in the empirical data shown in Figure \ref{fig:figure-boxplot} and discussed above.
 
 ```{r figure-walking-evolution, include = FALSE}
 year_order <- c(1992,1998,2005,2010,2015)
@@ -1105,21 +1117,18 @@ ggsave(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_yea
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_year.jpg"))
 ```
 
-## Summary and conclusion
+# Summary and conclusion
 
-- walking trips start and finish at home (WRONG supposition)
+The main objectives of this study were to provide an overview of active transportation in Canadian metropolitan cities, focusing on primary origins, destinations, and travel times, and to identify appropriate impedance functions for active transportation modes across various destinations and time periods. By directly applying the `ActiveCA` R package [@dossantos2024ActiveCA], we analyzed over 12,000 episodes from the Time Use cycles of the General Social Survey (GSS) from 1992 to 2015, covering a wide range of destinations and considering walking and cycling as transportation modes.
 
-- include typical differences for cases with statistics proof 
+Although the study does not explain the reasons for fluctuations in travel times over the years, the findings confirmed, with statistical significance, that typical active travel times decreased for both transportation modes over the 30 years analyzed. For walking trips, typical travel times declined from 15 minutes in 1992 to 10 minutes in 2015. For cycling trips, the typical travel time decreased from 20 minutes to 15 minutes over the same period. The results also show that, in general, typical travel times for walking were consistently lower than for cycling.
 
-- Analyze all the functions together
+However, some destinations exhibited a trend of increasing travel times. For walking trips, travel times to ‘Restaurants’ and ‘Outdoors’ rose from 5 minutes in 2005 to 10 minutes in 2015, while travel to ‘Places of worship’ increased from 10 minutes in 2005 to 15 minutes in 2015, marking the highest typical travel time for walking trips. For cycling trips, travel times increased for destinations such as ‘Grocery store’ (from 10 to 15 minutes between 2005 and 2015), ‘Outdoors’ (from 15 to 20 minutes during the same period), and ‘Home’ (returning to 20 minutes in 2015 after a drop to 10 minutes in 2010).
 
+Conversely, for both transportation modes, the destination ‘Other’s home’ showed a reduction in travel time and a decline in the share of trips, reflecting changes in travel behavior as technological advances enabled people to maintain contact with friends and relatives without visiting in person. For walking trips, findings indicate that ‘Home’ remains the main hub, whether as an origin or destination. For cycling trips, the combination of ‘Home’ and ‘Work or school’ accounted for the largest share of trips.
 
-- 64 functions for different locations
+The study highlights the need to apply specific impedance functions for different destinations when measuring the cost decay effect in accessibility analyses. It successfully fitted 64 impedance functions for active transportation over more than 30 years, considering different types of destinations and transportation modes. The results indicate that none of the parameterized functions were exponential, suggesting that the impedance functions commonly used in active accessibility studies may not accurately capture travel behavior, especially for very short trips (0–3 minutes). Destinations with a high number of episodes were primarily fitted with gamma functions, followed by lognormal functions, while destinations with fewer episodes (fewer than six) were fitted with a uniform distribution.
 
-- exponential may no be the right function
-
-- temporal differences were identified for some destinations, change in transport behaviour
-reduction in travel time. 
-
+Given similarities in urbanization processes between Canada, the United States, Australia, and West Europe, these findings may also be applicable to metropolitan areas in those regions. Finally, this study contributes to the ongoing discussion on active transportation by emphasizing its importance in promoting sustainable transportation planning.
 
 # References {#references .unnumbered}

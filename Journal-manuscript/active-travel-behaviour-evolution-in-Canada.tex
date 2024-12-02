@@ -42,7 +42,7 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 \hypersetup{breaklinks=true,
             bookmarks=true,
             pdfauthor={},
-            pdftitle={A Historical Analysis of the Evolution of Active Travel Behaviour in Canada},
+            pdftitle={A historical analysis of the evolution of active travel behaviour in Canada},
             colorlinks=false,
             urlcolor=blue,
             linkcolor=magenta,
@@ -110,8 +110,8 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 
 \begin{frontmatter}
 
-  \title{A Historical Analysis of the Evolution of Active Travel
-Behaviour in Canada}
+  \title{A historical analysis of the evolution of active travel
+behaviour in Canada}
     \author[Some Institute of Technology]{Alice Anonymous%
   \corref{cor1}%
   \fnref{1}}
@@ -132,13 +132,37 @@ States},}
     \fntext[1]{These authors contributed equally to this work.}
   
   \begin{abstract}
-  This is the abstract.
-
-  It consists of two paragraphs.
+  Impedance functions are becoming a popular tool for representing
+  travel behaviour because of their potential to capture traveler
+  responses to geographic distance between origins and destinations.
+  Focusing our analysis on active transportation modes in Canadian
+  metropolitan regions, this study has as objectives to provide an
+  historical overview of active mobility in terms of main origins,
+  destinations and travel time of walking and cycling trips, and to
+  identify appropriate impedance functions for active transportation
+  modes considering a wide range of destinations and time periods. To
+  achieve these objectives, this paper analyzed more than 12,000 active
+  transportation episodes from the Canadian General Social Survey (GSS)
+  from 1992 to 2015. This study confirmed that the typical travel time
+  decreased from 15 to 10 minutes for walking trips and from 20 to 15
+  minutes for cycling trips during the period analyzed. For walking
+  trips, findings indicate that `Home' continues to be the main hub,
+  either as an origin or destination. For cycling trips, the combination
+  of `Home' and `Work or school' accounted for most of the trips.
+  Additionally, we fitted 64 impedance functions for twelve destinations
+  and over 20 years. The results indicate that none of the parameterized
+  functions were exponential, suggesting that the impedance functions
+  commonly used in active accessibility studies may not accurately
+  capture travel behavior, especially for very short trips, giving
+  shorter trips a higher probability of being made. The estimated
+  impedance functions can be employed in active accessibility analysis
+  to help to reduce the dependence on private vehicles and promote
+  healthier, more sustainable travel behaviour.
   \end{abstract}
     \begin{keyword}
-    keyword1 \sep 
-    keyword2
+    Active mobility \sep Walking \sep Cycling \sep Impedance
+function \sep 
+    Active accessibility
   \end{keyword}
   
  \end{frontmatter}
@@ -293,10 +317,9 @@ practices. Our research aims to enhance the current knowledge about
 active travel behaviour and provide empirical data about frequency and
 duration of typical pedestrian and cycling trips for different purposes,
 by applying the methodology on a nationally representative samples of
-Canadian residents. Lastly, this comprehensive analysis seeks to
-contribute to the ongoing conversation on active transportation,
-highlighting its role in influencing transportation plans to a more
-sustainable alternative.
+Canadian residents. Lastly, this analysis seeks to contribute to the
+ongoing conversation on active transportation, highlighting its role in
+influencing transportation plans to a more sustainable alternative.
 
 \hypertarget{background}{%
 \section{Background}\label{background}}
@@ -926,7 +949,7 @@ around the home, are predominantly done by foot rather than by bicycle.
 We analyzed whether the temporal differences in travel times for the
 destinations had statistical significance. Only destinations that appear
 in more than one year can have their temporal evolution analyzed.
-Therefore, for the twelve possible destinations in the cycling mode,
+Therefore, from the twelve possible destinations, in the cycling mode
 only seven locations can be temporally analyzed: `Cultural venues,'
 `Grocery store,' `Home,' `Other's home,' `Outdoors,' `Restaurant,' and
 `Work or school.' In the case of walking trips, it is possible to
@@ -963,7 +986,7 @@ differences for both modes of transport.
 
 \begin{table}
 \centering
-\caption{\label{tab:kruskal-walking}\label{result-stats}P-values of the pairwise Wilcoxon test .}
+\caption{\label{tab:kruskal-walking}\label{tab:result-stats}P-values of the pairwise Wilcoxon test .}
 \centering
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
 \fontsize{10}{12}\selectfont
@@ -1057,9 +1080,9 @@ distributions, only the lognormal, gamma, and uniform distributions were
 selected, with the uniform distribution being chosen exclusively for
 certain cycling destinations. The absence of exponential functions,
 given the variety of destinations, year and mode of transport, indicates
-that the impendance functions applied in active accessibility studies
-may not be adequately measuring travel behavior, especially for cases
-when the travel time is close to 0 minute. Table
+that the impedance functions applied in active accessibility studies may
+not be adequately measuring travel behavior, especially for cases when
+the travel time is close to 0 minute. Table
 \ref{tab:walking-functions-tab} displays the selected functions for
 walking trips, while Table \ref{tab:cycling-functions-tab} presents the
 functions for cycling trips. Appendix A includes the AIC, BIC, and
@@ -1291,6 +1314,12 @@ walking episodes (only 7\% of active travel episodes). The figure also
 shows how cycling trips tend to have greater dispersion and higher
 typical values (dashed vertical lines) when compared to walking trips.
 
+The complexity of the impedance function will depend of the amount of
+episodes available to perform the calibration. For instance, to fit a
+gamma type function was necessary an average of 246 episodes, and to fit
+a lognormal type function, it was necessary around 187 episodes. In
+contrast, to fit an uniform function it was required only 3 in average.
+
 \begin{figure}
 
 {\centering \includegraphics[width=1\linewidth]{figures/impf_Outdoors} 
@@ -1300,7 +1329,7 @@ typical values (dashed vertical lines) when compared to walking trips.
 \caption{Empirical data and impedance functions fitted for walking trips with `work or school` as destination.}\label{fig:outdoors-impedance-fig}
 \end{figure}
 
-This temporal difference between the decay functions is also evident in
+The temporal difference between the decay functions is also evident in
 Figure \ref{fig:walking-evolution-fig}, which shows the calibrated
 functions for each year of analysis across all destination and transport
 mode categories for walking trips. For some locations, the impedance
@@ -1347,8 +1376,69 @@ and cycling modes of transport, respectively.
 \caption{Cycling functions grouped by year.}\label{fig:cycling-function-by-year-fig}
 \end{figure}
 
-\hypertarget{conclusion}{%
-\subsection{Conclusion}\label{conclusion}}
+\hypertarget{summary-and-conclusion}{%
+\section{Summary and conclusion}\label{summary-and-conclusion}}
+
+The main objectives of this study were to provide an overview of active
+transportation in Canadian metropolitan cities, focusing on primary
+origins, destinations, and travel times, and to identify appropriate
+impedance functions for active transportation modes across various
+destinations and time periods. In this study we perform a direct
+application of \texttt{ActiveCA} R package (Dos Santos, Moghadasi, and
+Páez, n.d.), analyzing over 12,000 episodes from the Time Use cycles of
+the General Social Survey (GSS) from 1992 to 2015 that covered a wide
+range of destinations and considering walking and cycling as
+transportation modes.
+
+Although the study does not explain the reasons for fluctuations in
+travel times over the years, the findings confirmed, with statistical
+significance, that typical active travel times decreased for walking and
+cycling modes over the 30 years analyzed. For walking trips, typical
+travel times declined from 15 minutes in 1992 to 10 minutes in 2015. For
+cycling trips, the typical travel time decreased from 20 minutes to 15
+minutes over the same period. The results also show that, in general,
+typical travel times for walking were consistently lower than for
+cycling.
+
+However, some destinations exhibited a trend of increasing travel times.
+For walking trips, travel times to `Restaurants' and `Outdoors' rose
+from 5 minutes in 2005 to 10 minutes in 2015, while travel to `Places of
+worship' increased from 10 minutes in 2005 to 15 minutes in 2015,
+marking the highest typical travel time for walking trips. For cycling
+trips, travel times increased for destinations such as `Grocery store'
+(from 10 to 15 minutes between 2005 and 2015), `Outdoors' (from 15 to 20
+minutes during the same period), and `Home' (returning to 20 minutes in
+2015 after a drop to 10 minutes in 2010).
+
+Conversely, for both transportation modes, the destination `Other's
+home' showed a reduction in travel time and a decline in the share of
+trips, reflecting changes in travel behavior since the technological
+advances enabled people to maintain contact with friends and relatives
+without visiting in person. For walking trips, findings indicate that
+`Home' remains the main hub, whether as an origin or destination. For
+cycling trips, the combination of `Home' and `Work or school' accounted
+for the largest share of trips.
+
+The study highlights the need to apply specific impedance functions for
+different destinations when measuring the cost decay effect in
+accessibility analyses. Based on this, we fitted 64 impedance functions
+for active transportation over more than 30 years, considering different
+types of destinations and transportation modes. The results indicate
+that none of the parameterized functions were exponential, suggesting
+that the impedance functions commonly used in active accessibility
+studies may not accurately capture travel behavior, especially for very
+short trips (up to 3 minutes), by giving to shorter trips higher
+probability of being made. Destinations with a high number of episodes
+were primarily fitted with gamma functions, followed by lognormal
+functions, while destinations with fewer episodes (fewer than six) were
+fitted with a uniform distribution.
+
+Given similarities in urbanization processes between Canada, the United
+States, Australia, and West Europe, these findings may also be
+applicable to metropolitan areas in those regions. Finally, this study
+contributes to the ongoing discussion on active transportation,
+emphasizing its importance in promoting sustainable transportation
+planning.
 
 \hypertarget{references}{%
 \section*{References}\label{references}}

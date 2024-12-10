@@ -25,14 +25,17 @@ footnote:
   - code: 1
     text: "These authors contributed equally to this work."
 abstract: |
-    Impedance functions are becoming a popular tool for representing travel behaviour because of their potential to capture traveler responses to geographic distance between origins and destinations. Focusing our analysis on active transportation modes in Canadian metropolitan regions, this study has as objectives to provide an historical overview of active mobility in terms of main origins, destinations and travel time of walking and cycling trips, and to identify appropriate impedance functions for active transportation modes considering a wide range of destinations and time periods. To achieve these objectives, this paper analyzed more than 12,000 active transportation episodes from the Canadian General Social Survey (GSS) from 1992 to 2015. 
-    This study confirmed that the typical travel time decreased from 15 to 10 minutes for walking trips and from 20 to 15 minutes for cycling trips during the period analyzed. For walking trips, findings indicate that ‘Home’ continues to be the main hub, either as an origin or destination. For cycling trips, the combination of ‘Home’ and ‘Work or school’ accounted for most of the trips. Additionally, we fitted 64 impedance functions for twelve destinations and over 20 years. The results indicate that none of the parameterized functions were exponential, suggesting that the impedance functions commonly used in active accessibility studies may not accurately capture travel behavior, especially for very short trips, giving shorter trips a higher probability of being made. The estimated impedance functions can be employed in active accessibility analysis to help to reduce the dependence on private vehicles and promote healthier, more sustainable travel behaviour.
+    Impedance functions are used to represent travel behaviour due to their potential to capture traveler responses to geographic distance between origins and destinations. Focusing our analysis on active transportation modes in Canadian metropolitan regions, this study has as objectives to provide an historical overview of active mobility in terms of main origins, destinations and travel time of walking and cycling trips, and to identify appropriate impedance functions for active transportation modes considering a wide range of destinations and time periods. To achieve these objectives, this paper analyzed more than cases of 12,000 active transportation episodes, that represented more than 12 million episodes, from the Canadian General Social Survey (GSS) from 1992 to 2015. 
+    This study confirmed that for walking trips, typical travel times remained constant at 10 minutes since 2005, while for cycling trips, typical travel times fluctuated, declining from 20 minutes in 1992 to 10 minutes in 2010 before increasing to 20 minutes in 2015. For walking trips, findings indicate that ‘Home’ continues to be the main hub, either as an origin or destination. For cycling trips, the combination of ‘Home’ and ‘Work or school’ accounted for most of the trips. Additionally, we fitted 64 impedance functions for twelve destinations and over 20 years. The results indicate that none of the parameterized functions were exponential, suggesting that the impedance functions commonly used in active accessibility studies may not accurately capture travel behavior, especially for very short trips, giving shorter trips a higher probability of being made. The estimated impedance functions can be employed in active accessibility analysis to help to reduce the dependence on private vehicles and promote healthier, more sustainable travel behaviour.
 keywords: 
   - Active mobility
   - Walking
   - Cycling
   - Impedance function
-  - Active accessibility
+  - Active accessibility 
+  - Destination
+  - Temporal
+  - Evolution
 journal: "An awesome journal"
 date: "`r Sys.Date()`"
 linenumbers: false
@@ -52,6 +55,15 @@ output:
 #install.packages("pak")
 #pak::pak("dias-bruno/ActiveCA")
 opts <- options(knitr.kable.NA = "")
+
+knitr::knit_hooks$set(inline = function(x) {
+  if (is.numeric(x)) {
+    format(x, big.mark = ",", scientific = FALSE)
+  } else {
+    x
+  }
+})
+
 rm(list=ls())
 ```
 
@@ -70,11 +82,13 @@ library(gridExtra)
 library(ggpubr)
 library(grid)
 library(stats)
+library(Hmisc)
 ```
 
 ```{r load-data, include = FALSE}
 # Load data
 data(gss_impedances)
+data(gss_episodes)
 ```
 
 ```{r renaming-destinations, echo=FALSE, cache=FALSE, include=FALSE}
@@ -109,7 +123,7 @@ Since the beginning applications of the gravity-accessibility models, a range of
 
 The merit of negative exponential function is due to its ability to assign decreasing influences to more remote opportunities, giving a more accurate estimate for shorter trips [@iacono2010; @kanafani1983transportation; @fotheringham1989spatial]. However, in addition to determine the form of the impedance function, scholars also need to specify the variable used to measure impedance, which can be either time, distance, monetary cost, a combination these last variables or even a generalized cost concept. Among these options, the choice between time and distance as the impedance has been found to be most used based on previous studies [@iacono2010; @hull2012accessibility; @sun2012measuring; @lowry2012using; @vasconcelos2012evaluation], with distance being more adopted in non-motorized applications since extracting accurate travel times from existing network models can be challenging [@handy1997measuring; @iacono2010; @yang2012walking; @arranz2019measuring]. Additionally, estimate impedance function to active transportation modes requires appropriate travel survey data that captures pedestrian and cycle behaviour, resulting in researchers recurring to retrospective questionnaires to assess subjective aspects such as the frequency and duration of walking and cycling activities. Notably, regional household travel surveys that include trips made by non-motorized modes have been employed for this purpose [@iacono2010; @millward2013active]. In opposition to these specific surveys, some data sets provides a nationwide perspective, including travel for different purposes and detailing the trip with valuable information, named episodes, regarding the origins, destinations, and time-based lengths. Besides this type of data can provides a deeper comprehension about the active transportation behaviour, only few studies have examined travel behaviour nationally.
 
-Having presented this context, this paper poses the questions: What is the typical travel time for active transportation modes (walking and cycling) in Canadian metropolitan regions, considering various destinations and years? Which impedance functions best represent active transportation travel behavior? To answer the research questions, this study has as two main objectives: first, to provide an overview of the active transportation in terms of main origins, destinations, and travel time; and second, to identify appropriate impedance functions for active transportation modes for different destinations and time periods in Canadian metropolitan areas. To do achieve both objectives, we utilize data provided by the `ActiveCA` R package [@dossantos2024ActiveCA], an open data product in the form of an R data package with information about active travel in Canada. This data product is based on Public Use Microdata Files of Statistics Canada's General Social Survey (GSS) program with a focus on the Time Use Survey cycles. To build this package, the authors extracted all walking and cycling episodes and their corresponding episode weights for GSS cycles, Cycles 2 (1986), 7 (1992), 12 (1998), 19 (2005), 24 (2010), and 29 (2015), spanning a period of almost thirty years. Origins and destinations were categorized, enabling the investigation of active travel for broad destination categories and purposes.
+Having presented this context, this paper poses the questions: What is the typical travel time for active transportation modes (walking and cycling) in Canadian metropolitan regions, considering various destinations and years? Which impedance functions best represent active transportation travel behavior? To answer the research questions, this study has as two main objectives: first, to provide an overview of the active transportation in terms of main origins, destinations, and travel time; and second, to identify appropriate impedance functions for active transportation modes for different destinations and time periods in Canadian metropolitan areas. To do achieve both objectives, we utilize data provided by the `ActiveCA` R package [@dossantos2024ActiveCA], an open data product in the form of an R data package with information about active travel in Canada. This data product is based on Public Use Microdata Files of Statistics Canada's General Social Survey (GSS) program with a focus on the Time Use Survey cycles. To build this package, the authors extracted all walking and cycling episodes and their corresponding episode weights for GSS cycles, Cycles 7 (1992), 12 (1998), 19 (2005), 24 (2010), and 29 (2015), spanning a period of almost thirty years. Origins and destinations were categorized, enabling the investigation of active travel for broad destination categories and purposes.
 
 We recognize that non-work travel encompasses a range of trip purposes and diverse traveler behaviors, which makes impedance functions essential analytical tools for studying non-work accessibility. Grengs [-@grengs2015nonwork] emphasizes the importance of elaborating distinct functions for each travel purpose, a principle that guides this analysis. Our investigation covers a variety of trip purposes, ranging from commutes to homes, workplaces, or educational institutions to social visits, outdoor activities, business trips, shopping, cultural outings to libraries, museums, or theaters, dining out, and engaging in religious practices. Our research aims to enhance the current knowledge about active travel behaviour and provide empirical data about frequency and duration of typical pedestrian and cycling trips for different purposes, by applying the methodology on a nationally representative samples of Canadian residents. Lastly, this analysis seeks to contribute to the ongoing conversation on active transportation, highlighting its role in influencing transportation plans to a more sustainable alternative.
 
@@ -228,13 +242,11 @@ These surveys encompass an array of socio-demographic inquiries combined with qu
 
 # Materials and Methods
 
-<!--# I have doubts about how to include the methodology, since the we already preprocessed everything for the ActiveCA. I fear that just mention that we are only analyzing the open-data product will reduce the potential of the paper. -->
-
 To investigate the historical active travel behavior in Canada, we analyzed five GSS Time Use cycles: Cycles 7 (1992), 12 (1998), 19 (2005), 24 (2010), and 29 (2015). We excluded Cycle 2 (1986) from our analysis because this survey did not specify whether the respondent lived in a metropolitan area and did not present cycling as a mode of transportation option, although this cycle is notable for having been the first national random sample to examine Canadian time-use patterns. This paper is a direct application of the ready-to-use data set provided by the `ActiveCA` data package [-@dossantos2024ActiveCA], which is based on the Main and Episode files from the GSS Public Use Microdata Files. The Main file contains questionnaire responses and associated data from participants, while the Episode files provided detailed information about every activity episode reported by the respondents. It is important to mention that this study did not analyze the last Time Use survey released (Cycle 37 of 2022, released in June 2024) because, at the time of publication of the study, the Public Use Microdata Files had not been published.
 
-This methodology involves two main steps, each designed to achieve one of our primary objectives. The first step employs descriptive analysis of active transportation episodes to identify typical travel times across destinations and years. The second step analyzes impedance functions for each combination of cycle, destination, and active travel mode, comparing their temporal evolution and identifying differences in active transportation episodes through statistical tests.
+This methodology involves two main steps, each designed to achieve one of our primary objectives. The first step employs descriptive analysis of active transportation episodes to identify typical travel times across destinations and years, comparing their temporal evolution and identifying differences in active transportation episodes through statistical tests. The second step calculates and analyzes impedance functions for each combination of cycle, destination, and active travel mode.
 
-To facilitate collaboration and further analysis, the Rmarkdown code required to obtain these outputs from the raw data files is available on our GitHub repository *(include after the review)*, in line with the best practices of spatial data science [@arribas-bel2021; @páez2021]. These contributions improve our understanding of active travel behaviour in Canada and provide a basis for future research and policy-making.
+To facilitate collaboration and further analysis, we updated the `ActiveCA` R Package to include the methodology to obtain impedance functions from the raw data files. Additionally, we created this paper using literate programming in which the R markdown code to fully reproduce this article is available on our GitHub repository *(include after the review)*, and we also updated the  ,  in line with the best practices of spatial data science [@arribas-bel2021; @páez2021]. These contributions improve our understanding of active travel behaviour in Canada and provide a basis for future research and policy-making.
 
 ## Analyzing active travel episodes
 
@@ -247,12 +259,22 @@ Statistical analysis was used to characterize active travel episodes using cross
 ## Estimating impedance function parameters
 
 ```{r echo=FALSE, cache=FALSE, include=FALSE}
-less_than100 <- nrow(gss_impedances_renamed %>% filter(DURATION > 100 & YEAR > 1986))
+less_than100 <- gss_episodes %>% 
+  filter(DURATION > 100 & YEAR > 1986) %>%
+  summarise(total_eps = n(),
+            total_WGHT_EPI = sum(WGHT_EPI, na.rm = TRUE))
 
-all_episodes <- nrow(gss_impedances_renamed %>% filter(YEAR > 1986))
+
+all_episodes <- gss_episodes %>% 
+  filter(YEAR > 1986) %>%
+  summarise(total_eps = n(),
+            total_WGHT_EPI = sum(WGHT_EPI, na.rm = TRUE))
+  
 ```
 
-We applied the `fitdistrplus` package [@delignette2015fitdistrplus] to calculate the best PDF for every destination, mode of transportation and survey year, between the options: uniform, negative exponential, gamma, normal, and lognormal distributions. In order to calculate the impedance functions, two filters were applied in the GSS data set. The first is that we excluded all trips with travel times higher than 100 minutes (1.5 hours). An exploratory data analysis showed that, taking into account all the walking and cycling episodes (`r all_episodes` in total), less than `r round(less_than100/all_episodes, 2)`% of the episodes have a trip duration higher than this limit. It was also possible to know that trips with a duration higher than 100 minutes are mainly composed of hiking and camping episodes. The second filter was realized to select only the population living in a larger urban population centre (a Census Metropolitan Area (CMA) or Census Agglomeration (CA)). We decided to apply this restriction because the travel behaviour of residents of CMA and CA areas tends to be very different from those outside these large urban centres in terms of active travel.
+We applied the `fitdistrplus` package [@delignette2015fitdistrplus] to calculate the best PDF for every destination, mode of transportation and survey year, between the options: uniform, negative exponential, gamma, normal, and lognormal distributions. In order to calculate the impedance functions, two filters were applied in the GSS data set. The first is that we excluded all trips with travel times higher than 100 minutes (1.5 hours). An exploratory data analysis showed that, taking into account all the walking and cycling episodes (`r all_episodes$total_eps` in total), less than `r round(less_than100$total_eps/all_episodes$total_eps * 100, 2)`% of the episodes have a trip duration higher than this limit. When considering the weights of this episodes, travel times higher than 100 minutes represented `r round(less_than100$total_WGHT_EPI /all_episodes$total_WGHT_EPI * 100, 2)`% of the episodes. 
+
+It was also possible to know that trips with a duration higher than 100 minutes are mainly composed of hiking and camping episodes. The second filter was realized to select only the population living in a larger urban population centre (a Census Metropolitan Area (CMA) or Census Agglomeration (CA)). We decided to apply this restriction because the travel behaviour of residents of CMA and CA areas tends to be very different from those outside these large urban centres in terms of active travel.
 
 # Results and discusion
 
@@ -270,8 +292,8 @@ gss_impedances_renamed <- gss_impedances_renamed %>%
 
 gss_summary <- gss_impedances_renamed %>%
      group_by(YEAR, MODE) %>%
-     summarise(
-         count = n(),
+     dplyr::summarise(
+         count = sum(WGHT_EPI),
          .groups = "drop") %>%
   rename(Mode = MODE) %>%
   pivot_wider(names_from = YEAR, values_from = count) %>% 
@@ -280,7 +302,7 @@ gss_summary <- gss_impedances_renamed %>%
 gss_summary <- bind_rows(
   gss_summary,
   gss_summary %>%
-    summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE))) %>%  
+    dplyr::summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE))) %>%  
     mutate(Mode = "Total")
 ) 
 
@@ -311,16 +333,18 @@ gss_summary[gss_summary$Mode == 'Total', ]$"2015 (%)" <- round(gss_summary[gss_s
 
 gss_totals_table <- gss_summary %>%
   kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
-        caption = "\\label{tab:episodes-count-percentages}Number of episodes identified in each active transportation mode by year",  
+        caption = "\\label{tab:episodes-count-percentages}Weighted number of episodes identified in each active transportation mode by year",  
         align = c('l', rep('c', ncol(gss_summary) - 1)), 
     col.names = c("Mode","","(%)","","(%)","","(%)","","(%)","","(%)","","(%)")) %>% 
-  kable_styling(full_width = FALSE, font_size = 10) %>%
+  kable_styling(full_width = FALSE, font_size = 8) %>%
   add_header_above(c(" " = 1, "1992" = 2, "1998" = 2, "2005" = 2, "2010" = 2, "2015"=2, "Total" = 2))
 ```
 
-After applying the filters to the GSS surveys, we obtained a total of `r gss_summary[gss_summary$Mode == 'Total',]$Total` episodes. Table \ref{tab:episodes-count-percentages} contains the number of episodes about walking and cycling trips between 1992 and 2015, obtained from the GSS cycles. The year 2005 is the year with the most episodes, `r gss_summary[gss_summary$Mode == 'Total',]$'2005'`, representing approximately `r round(gss_summary[gss_summary$Mode == 'Total',]$'2005'/gss_summary[gss_summary$Mode == 'Total',]$Total*100)`% of all active travel episodes. The year 2005 is followed by 2010, with `r gss_summary[gss_summary$Mode == 'Total',]$'2010'` episodes (representing `r round(gss_summary[gss_summary$Mode == 'Total',]$'2010'/gss_summary[gss_summary$Mode == 'Total',]$Total*100)`% of the total), then 2015 (`r gss_summary[gss_summary$Mode == 'Total',]$'2015'` episodes, `r round(gss_summary[gss_summary$Mode == 'Total',]$'2015'/gss_summary[gss_summary$Mode == 'Total',]$Total*100)`% of the total), 1998 `r gss_summary[gss_summary$Mode == 'Total',]$'1998'` episodes, (`r round(gss_summary[gss_summary$Mode == 'Total',]$'1998'/gss_summary[gss_summary$Mode == 'Total',]$Total*100)`% of the total), and 1992, with only `r gss_summary[gss_summary$Mode == 'Total',]$'1992'` episodes, representing `r round(gss_summary[gss_summary$Mode == 'Total',]$'1992'/gss_summary[gss_summary$Mode == 'Total',]$Total*100)`% of the total.
+After applying the filters to the GSS surveys, we obtained a total of 12,113 lines with active travel episodes. However, GSS surveys apply a probability sampling methodology, in which each episode or person selected in the sample represents several other episodes or persons not in the sample. The number of episodes and persons represented by a episode or person is determined by the weight or weighting factor. Because of this, every estimates of the number of episodes or persons need to be calculated applying the corresponding weighting factors.
 
-When analyzing the two active transportation modes, walking episodes account for `r round(gss_summary[gss_summary$Mode == 'Walking',]$Total/gss_summary[gss_summary$Mode == 'Total',]$Total * 100)`%, while the remaining `r 100 - round(gss_summary[gss_summary$Mode == 'Walking',]$Total/gss_summary[gss_summary$Mode == 'Total',]$Total * 100)`% are cycling episodes. However, it is worth mentioning that, while in 2015 cycling episodes represented only `r round(gss_summary[gss_summary$Mode == 'Cycling',]$'2015'/gss_summary[gss_summary$Mode == 'Total',]$'2015' * 100)`% of the active travel episodes for that year, in 1992 the cycling episodes represented `r round(gss_summary[gss_summary$Mode == 'Cycling',]$'1992'/gss_summary[gss_summary$Mode == 'Total',]$'1992' * 100)`% - the highest share of this mode across all years. In the next survey (1998), it drops to around `r round(gss_summary[gss_summary$Mode == 'Cycling',]$'1998'/gss_summary[gss_summary$Mode == 'Total',]$'1998' * 100)`%, stabilizing at around 6% thereafter.
+Considering the weights - and from this point onward, all counts estimates presented in this paper account for them - the 12,113 episodes represent a total of `r format(gss_summary[gss_summary$Mode == 'Total',]$Total, big.mark = ",", scientific = FALSE)` episodes. Table \ref{tab:episodes-count-percentages} contains the weighted number of episodes about walking and cycling trips between 1992 and 2015, obtained from the GSS cycles. The year 2010 is the year with the most episodes, with `r gss_summary[gss_summary$Mode == 'Total',]$'2010'` episodes (representing `r gss_summary[gss_summary$Mode == 'Total',]$'2010 (%)'`% of the total). The year 2010 is followed by 2005 with `r gss_summary[gss_summary$Mode == 'Total',]$'2005'`, representing approximately `r gss_summary[gss_summary$Mode == 'Total',]$'2005 (%)'`% of all active travel episodes; followed by 2015 (`r gss_summary[gss_summary$Mode == 'Total',]$'2015'` episodes, `r gss_summary[gss_summary$Mode == 'Total',]$'2015 (%)'`% of the total), 1998 `r gss_summary[gss_summary$Mode == 'Total',]$'1998'` episodes, (`r gss_summary[gss_summary$Mode == 'Total',]$'1998 (%)'`% of the total), and 1992, with only `r gss_summary[gss_summary$Mode == 'Total',]$'1992'` episodes, representing `r gss_summary[gss_summary$Mode == 'Total',]$'1992 (%)'`% of the total.
+
+When analyzing the two active transportation modes, walking episodes account for `r gss_summary[gss_summary$Mode == 'Walking',]$'Total (%)'`%, while the remaining `r gss_summary[gss_summary$Mode == 'Cycling',]$'Total (%)'`% are cycling episodes. However, it is worth mentioning that, while in 2015 cycling episodes represented only `r gss_summary[gss_summary$Mode == 'Cycling',]$'2015 (%)'`% of the active travel episodes for that year, in 1992 the cycling episodes represented `r gss_summary[gss_summary$Mode == 'Cycling',]$'1992 (%)'`% - the highest share of this mode across all years. In 2005, it drops to the lowest representation level with `r gss_summary[gss_summary$Mode == 'Cycling',]$'2005 (%)'`%, stabilizing at around 8% thereafter.
 
 ```{=html}
 <!-- 
@@ -332,17 +356,18 @@ start -->
 gss_totals_table
 ```
 
-Tables \ref{tab:table-02} presents statistic on travel time by active transportation mode. The maximum time spent on walking trips varied between 90 and 100 minutes across the years. It is important to remember that trips with duration greater than 100 minutes were excluded from the analysis. The mean walking time also varies, starting at 21 minutes in 1992, dropping to 12 minutes between 1992 to 2010, and increasing again to 16 minutes in 2015. However, it is known that the mean is a statistic that is highly influenced by extreme values. For this reason, we analyze the median travel time, as it is more representative of the typical travel time. The median time spent walking is 15 minutes in 1992, then drops to 5 minutes in 1998 and remains constant at 10 minutes from 2005 to 2015.
+Tables \ref{tab:table-02} presents statistic on travel time by active transportation mode. The maximum time spent on walking trips varied between 90 and 100 minutes across the years. It is important to remember that trips with duration greater than 100 minutes were excluded from the analysis. The mean walking time also varies, starting at 20 minutes in 1992, dropping to 12 minutes between 1992 to 2005, and increasing again to 13 minutes in 2010 and to 16 minutes in 2015. However, it is known that the mean is a statistic that is highly influenced by extreme values. For this reason, we analyze the median travel time, as it is more representative of the typical travel time. The median time spent walking was 10 minutes in 1992, dropped to 5 minutes in 1998, and remained constant at 10 minutes from 2005 to 2015. The weighted median estimates for walking trips indicates that there is no difference in the typical walking travel time when compared the most recent survey analyzed (2015) with the oldest survey analyzed (1998). 
+
 
 ```{r table-02, echo=FALSE, cache=FALSE}
 
 # Calculate min, mean, and max statistic (duration)
 stats_data <- gss_impedances_renamed %>%
   group_by(YEAR, MODE) %>%
-  summarise(
+  dplyr::summarise(
     min = min(DURATION),
-    mean = mean(DURATION),
-    median = median(DURATION),
+    mean = sum(DURATION * WGHT_EPI)/sum(WGHT_EPI),
+    median =  Hmisc::wtd.quantile(DURATION, weights = WGHT_EPI, probs = 0.5),
     max = max(DURATION),
     std = sd(DURATION),
     .groups = "drop"
@@ -375,7 +400,7 @@ styled_table_02 <- stats_data %>%
   kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
         caption = "\\label{tab:table-02}Descriptive statistics for episodes with active transport records",  
         align = c('l', 'l', rep('c', ncol(stats_data) - 2))) %>%
-  kable_styling(full_width = FALSE, font_size = 10) %>%
+  kable_styling(full_width = FALSE, font_size = 8) %>%
   column_spec(1, bold = TRUE) %>%
   add_header_above(c(" " = 2, "Year" = ncol(stats_data) - 2)) %>%
   collapse_rows(columns = 1, valign = "top", latex_hline = "major")
@@ -384,48 +409,10 @@ styled_table_02 <- stats_data %>%
 styled_table_02
 ```
 
-The analysis of travel time statistics alone does not fully explain the reasons behind these fluctuations in travel time over the years. We can affirm, however, that there was a reduction in the time spent walking during the analyzed period, with a one-third reduction in the median walking travel time since 1992.
 
-For cycling trips, the maximum travel time varies from 90 to 100 minutes, similar to walking, except in 1998 when the maximum travel time recorded was 80 minutes. The average cycling travel time is more constant, ranging from 19 minutes in 2005 to 25 minutes in 1992 and 1998. Again, when we analyze the median travel time, we see that the typical cycling travel time dropped from 20 minutes in 1992 to 15 minutes in 2005, 2010, and 2015, possibly reflecting advancements in bicycle technology or changes in cyclists' behaviors.
+For cycling trips, the maximum travel time varies from 90 to 100 minutes, similar to walking, except in 1998 when the maximum travel time recorded was 80 minutes. The average cycling travel time varied a lot, ranging from 18 minutes in 2010 to 28 minutes 1998. In this case, when we analyze the median travel time, we see that the typical cycling travel time fluctuated between 1992 to 2015. It started at 20 minutes for 1992, increased to 25 minutes in 1998 - the  highest median travel time identified across all survey cycles - then dropped to 15 minutes in 2005 and to 10 minutes in 2010, before returning to 20 minutes in 2015, the same value as in 1992 when the surveys started. The analysis of travel time statistics alone does not fully explain the reasons behind these fluctuations in travel time over the years. However, it is likely that these variations reflect changes in bicycle technology or  cyclist behavior.
 
-As highlighted in Figure \ref{fig:figure-boxplot}, over the 30 years studied, the typical duration of walking trips was consistently lower than that of cycling trips. As already mentioned, both medians decayed when compared to 1992, and various factors might have precipitated this trend, such as urban sprawl, increased reliance on motorized transport, or societal preferences for faster modes of transportation.
-
-```{r destination_boxplots, echo=FALSE, cache=FALSE, include=FALSE}
-destination_boxplots <- gss_impedances_renamed %>% 
-  ggplot(aes(x = as.factor(YEAR), y = DURATION, fill = MODE)) +
-  geom_boxplot(position = position_dodge(width = 1),
-                size = 0.1,
-                outlier.shape = NA,
-                outlier.size = 0) +  
-theme_bw() +   
-facet_wrap(~dest_label) + 
-  scale_x_discrete(
-    breaks = c(1992, 1998, 2005, 2010, 2015)) +
-  labs(
-    fill = "Mode",                      
-    x = "Year",                          
-    y = "Travel time (in minutes)") +
-    theme(legend.position="bottom", 
-          axis.title.x = element_text(size = 10), 
-          axis.title.y = element_text(size = 10),
-          legend.title = element_text(size = 10),
-          strip.text = element_text(size = 10))
-
-
-ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_boxplots.jpg"), 
-       plot = destination_boxplots,
-       width = 12, 
-       height = 8, 
-       units = "in", 
-       dpi = 300)
-```
-
-```{r figure-boxplot, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination"}
-
-knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_boxplots.jpg"))
-```
-
-Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each destination by year and by mode of transport. For all the years analyzed, 'Home' is the most common travel destination, regardless of whether the mode of transport considered is walking or cycling, with levels above 42%. After that, 'Work or school' appears as the second most common destination, especially for journeys by bicycle, with a peak of almost 34% of trips by bicycle in 1998, a high drop to 22% in 2005, rising again to levels close to 30% in 2015. Along with the two destinations already mentioned, 'Other's home' is the only other destination present in the GSS surveys since 1992. This last destination seems to be a destination with a higher share when it comes to walking trips, but for both modes of transportation it seems that respondents are going less and less to other people's homes - a fact that can be explained by new communication technologies, in which a person doesn't need to visit another person's home to keep in touch with them.
+Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each destination by year and by mode of transport. For all the years analyzed, 'Home' is the most common travel destination, regardless of whether the mode of transport considered is walking or cycling, with levels above 40%. After that, 'Work or school' appears as the second most common destination, especially for journeys by bicycle, with a peak of almost 36% of trips by bicycle in 1998, a high drop to 23% in 2005, rising again to levels close to 35% in 2015. Along with the two destinations already mentioned, 'Other's home' is the only other destination present in the GSS surveys since 1992. This last destination seems to be a destination with a higher share when it comes to walking trips, but for both modes of transportation it seems that respondents are going less and less to other people's homes - a fact that can be explained by new communication technologies, in which a person doesn't need to visit another person's home to keep in touch with them.
 
 ```{r destinations-percentual, echo=FALSE, cache=FALSE, include=FALSE}
 # Define the order of destinations 
@@ -442,7 +429,7 @@ names(my_colors) <- destination_order
 
 destination_percentual <- gss_impedances_renamed %>%
   group_by(MODE, dest_label, YEAR) %>%
-  tally() %>%
+  dplyr::summarise(n = sum(WGHT_EPI), .groups = "drop") %>%
   group_by(MODE, YEAR) %>%
   mutate(percentage = n / sum(n) * 100) %>%
   ungroup() %>%
@@ -473,7 +460,7 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_perce
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_percentual.jpg"))
 ```
 
-After 2005, the expansion of the destination highlights some new popular locations. For example, 'Grocery store' appears as the third most chosen destination, varying from 10% in 2005 to 6.5% in 2015 for cycling trips and from 13.3% to 12.6% for walking trips. When considering walking trips, 'Restaurants' appears as another well chosen destination and, in the case of cycling trips, 'Outdoors' appears as a well chosen destination.
+After 2005, the expansion of the destination highlights some new popular locations. For example, 'Grocery store' appears as the third most chosen destination, varying from almost 10% in 2005 to 5.6% in 2015 for cycling trips and from 12% to 10.6% for walking trips. When considering walking trips, 'Restaurants' appears as another well chosen destination and, in the case of cycling trips, 'Outdoors' appears as a well chosen destination.
 
 ```{=html}
 <!-- 
@@ -486,10 +473,10 @@ start -->
 episodes_stats_before <- gss_impedances_renamed %>%
   filter(YEAR < 2005) %>%
   group_by(YEAR, dest_label, MODE) %>%
-  summarise(
-    count = n(),
+  dplyr::summarise(
+    count = sum(WGHT_EPI),
     min = min(DURATION),
-    median = median(DURATION),
+    median =  Hmisc::wtd.quantile(DURATION, weights = WGHT_EPI, probs = 0.5),
     max = max(DURATION),
     .groups = "drop"
   )
@@ -514,13 +501,12 @@ wide_data <- episodes_stats_before %>%
   arrange(MODE, dest_label, desc(Percentage_1998))
 
 wide_data <- wide_data %>%
-  group_by(MODE) %>%
-  mutate(MODE = if_else(row_number() == 2, as.character(MODE), "")) %>%
-  ungroup() %>%
  dplyr::select(
-    dest_label, MODE, min_1992, median_1992, max_1992, Percentage_1992,
+    MODE, dest_label,
+    min_1992, median_1992, max_1992, Percentage_1992,
     min_1998, median_1998, max_1998, Percentage_1998
-  )
+  ) %>% 
+  arrange(MODE, dest_label)
 
 # Latex table
 styled_table_03 <- wide_data %>%
@@ -529,8 +515,8 @@ styled_table_03 <- wide_data %>%
     booktabs = TRUE, 
     longtable = TRUE, 
     align = c(rep("c", ncol(wide_data))),
-    caption = "\\label{tab:table-03}Comparison of travel statistics by mode and destination: 1986, 1992, 1998",
-    col.names = c("Destination", "Mode*","Min*","Med*","Max*", "(%)*",  "Min","Med","Max", "(%)")
+    caption = "\\label{tab:table-03}Comparison of travel statistics by mode and destination: 1992, 1998",
+     col.names = c("Destination", "Mode*","Min*","Med*","Max*", "(%)*", "Min","Med","Max", "(%)")
   ) %>%
   kable_styling(full_width = FALSE, 
                 #latex_options=c("striped", "scale_down"), 
@@ -540,8 +526,8 @@ styled_table_03 <- wide_data %>%
   # column_spec(2:14, width = "0.5cm") %>%  # Set width of remaining columns to 0.7cm
   add_header_above(c(" " = 2, "1992" = 4, "1998" = 4)) %>%
   row_spec(0, bold = TRUE, align = "c") %>%
-  column_spec(6, border_right = TRUE) %>%
-  footnote(general = c("* The symbols used in this table represent the following: `Min` denotes the minimum time to reach the destination; `Max` denotes the maximum time to reach the destination; `(%)` indicates a percentage of the total time to reach the destination; `Med` refers to the median time to reach the destination"), threeparttable = T)
+  collapse_rows(columns = 1, valign = "top", latex_hline = "major") %>% 
+  footnote(general = c("* The symbols used in this table represent the following: 'Min' denotes the minimum time to reach the destination; 'Max' denotes the maximum time to reach the destination; '(%)' indicates a percentage of the total time to reach the destination; 'Med' refers to the median time to reach the destination"), threeparttable = T)
 
 styled_table_03 
 ```
@@ -551,10 +537,10 @@ styled_table_03
 episodes_stats_after <- gss_impedances_renamed %>%
   filter(YEAR > 2000) %>%
   group_by(YEAR, dest_label, MODE) %>%
-  summarise(
-    count = n(),
+  dplyr::summarise(
+    count = sum(WGHT_EPI),
     min = min(DURATION),
-    median = median(DURATION),
+    median =  Hmisc::wtd.quantile(DURATION, weights = WGHT_EPI, probs = 0.5),
     max = max(DURATION),
     .groups = "drop"
   )
@@ -572,15 +558,13 @@ wide_data <- episodes_stats_after %>%
     values_from = c(min, median, max, Percentage)
   ) %>%
  dplyr::select(
-    dest_label, MODE,
+    MODE, dest_label,
     min_2005, median_2005, max_2005, Percentage_2005,
     min_2010, median_2010, max_2010, Percentage_2010,
     min_2015, median_2015, max_2015, Percentage_2015
   ) %>% 
-  arrange(MODE, dest_label, desc(Percentage_2015)) %>%
-   group_by(MODE) %>%
-   mutate(MODE = if_else(row_number() == 2, as.character(MODE), "")) %>%
-   ungroup()
+  arrange(MODE, dest_label)
+
 
 # Latex table
 styled_table_04 <- wide_data %>%
@@ -590,43 +574,124 @@ styled_table_04 <- wide_data %>%
     longtable = TRUE, 
     align = c(rep("c", ncol(wide_data))),
     caption = "\\label{tab:table-04}Comparison of travel statistics by mode and destination: 2005, 2010, 2015",
-    col.names = c("Destination", "Mode*","Min*","Med*","Max*", "(%)*", "Min","Med","Max", "(%)", "Min","Med","Max", "(%)")
+   col.names = c("Destination", "Mode","Min*","Med*","Max*", "(%)*", "Min","Med","Max", "(%)", "Min","Med","Max", "(%)")
   ) %>%
   kable_styling(full_width = FALSE, 
                 #latex_options=c("striped", "scale_down"), 
                 latex_options=c("scale_down"),
                 font_size = 6) %>%
-  column_spec(1, width = "2cm") %>%  # Set width of 'Dest' column to 1.5cm
-  column_spec(2:14, width = "0.4cm") %>%  # Set width of remaining columns to 0.7cm
+  #column_spec(1, width = "2cm") %>%  # Set width of 'Dest' column to 1.5cm
+  #column_spec(2:14, width = "0.4cm") %>%  # Set width of remaining columns to 0.7cm
   add_header_above(c(" " = 2, "2005" = 4, "2010" = 4, "2015" = 4)) %>%
   row_spec(0, bold = TRUE, align = "c") %>%
   column_spec(6, border_right = TRUE) %>%
   column_spec(10, border_right = TRUE) %>% 
-  footnote(general = c("* The symbols used in this table represent the following: `Min` denotes the minimum time to reach the destination; `Max` denotes the maximum time to reach the destination; `(%)` indicates a percentage of the total time to reach the destination; `Med` refers to the median time to reach the destination"), threeparttable = T)
+  collapse_rows(columns = 1, valign = "top", latex_hline = "major") %>% 
+  footnote(general = c("* The symbols used in this table represent the following: 'Min' denotes the minimum time to reach the destination; 'Max' denotes the maximum time to reach the destination; '(%)' indicates a percentage of the total time to reach the destination; 'Med' refers to the median time to reach the destination"), threeparttable = T)
 
 styled_table_04
 ```
+
+
+```{r include = FALSE}
+styled_table_03
+
+styled_table_04
+```
+
 
 ```{=html}
 <!-- 
 Decided to not include the following tables because I transformed them into figures 
 start -->
 ```
-Figure \ref{fig:figure-boxplot} present the box plot graphs showing the travel time distribution for active transportation modes over the years, categorized by destination. Some destinations are presented in only one survey, such as 'Sport area', 'Neighbourhood,' and 'Business'. These new destination exhibit typical walking travel times 10 minutes. For cycling trips, 'Business' recorded no trips, while 'Sport area' and 'Neighbourhood' registered typical travel times of 30 and 15 minutes, respectively.
 
-For destinations included in more than one survey, we can compare the temporal evolution of travel times. Starting with the walking trips, we can note that there is a tendency of increasing travel times for 'Restaurants' and 'Outdoors' (both increasing from 5 in 2005 to 10 minutes in 2015) and 'Place of worship' (rising from 10 in 2005 to 15 minutes in 2015). In contrast, some destinations presented a decline in travel times, where the case of 'Cultural venues,' which had a median travel time of 2005 and drop to 5 minutes in 2015, and 'Home' which start the time series with a minutes in 1992 and dropped to 10 minutes by 2015. Other destinations maintained an almost constant travel time. In general, while 'Place of worship' displayed the maximum median travel time of 15 minutes, the general median walking time cuttoff appears to be 10 minutes, with most of trips occurring below this limit.
+Figure \ref{fig:figure-boxplot} present the box plot graphs showing the travel time distribution for active transportation modes over the years, categorized by destination. Over the period studied, the typical duration of walking trips was consistently lower than that of cycling trips. Some destinations are presented in only one survey, such as 'Business', 'Health clinic', 'Neighbourhood,' and 'Sport area'. These new destination exhibit typical walking travel times 10 minutes. For cycling trips, 'Business' recorded no trips, and while 'Neighbourhood' registered a typical travel times of 30 minutes, the others cited destinations obtained a typical travel time of 15 minutes.
 
-For cycling trips, an increasing trend in travel times is evident for destinations such the destinations 'Grocery store' (rising from 10 to 15 minutes between 2005 and 2015), 'Outdoors' (increasing from 15 in 2005 to 20 minutes in 2015), and 'Home' (retuning to the 1992 typical travel time of 20 minutes after dropping to 10 minutes in 2010). However, travel times decreased for destinations like 'Other's home' and 'Place of worship', where the typical cycling travel time declined from 20 minutes in their first recorded surveys to 15 minutes by 2015. Other destinations remained with a constant travel time.
+```{r include = FALSE}
+# I created this version to visualize only the medians across destinations, years and mode to facilitate the explanation of the boxplots
+destination_medians <- gss_impedances_renamed %>%
+  uncount(weights = round(WGHT_EPI)) %>%
+  group_by(YEAR, dest_label, MODE) %>%
+  summarise(median_duration = median(DURATION), .groups = "drop") %>%
+  ggplot(aes(x = as.factor(YEAR), y = median_duration, color = MODE, group = interaction(dest_label, MODE))) +
+  geom_line() +  
+  geom_point() + 
+  geom_text(aes(label = round(median_duration, 1)), 
+            vjust = -0.5,  
+            size = 3,      
+            color = "black") + 
+  theme_bw() +   
+  facet_wrap(~dest_label) + 
+  scale_x_discrete(
+    breaks = c(1992, 1998, 2005, 2010, 2015)) +
+  labs(
+    color = "Mode",                      
+    x = "Year",                          
+    y = "Travel time (in minutes)") +
+  theme(legend.position = "bottom", 
+        axis.title.x = element_text(size = 10), 
+        axis.title.y = element_text(size = 10),
+        legend.title = element_text(size = 10),
+        strip.text = element_text(size = 10))
 
-Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show walking and cycling trips from 1992 to 2015 through heat maps. These maps use color gradients to represent the percentage of trips between origins and destinations, with darker colors indicating higher percentages and lighter colors representing less frequent routes. In 1992, walking trips with 'Home' as both the origin and destination made up the majority, accounting for almost 31% of all walking trips. These trips often involved leisure activities, like short walks or dog walking. Following this, trips from 'Home' to 'Work or school' comprised 18% of walking trips. Overall, 'Home' is the principal hub, either as an origin or destination, with only 5% of trips not involving 'Home.' By 1998, more than half of walking trips were between 'Home' and 'Other's home,' with 'Home' to 'Other's home' and 'Other's home' to 'Home' each representing 26% of trips. During this year, 'Home' to 'Home' accounted for only 10% of trips. In 2005, trips with origins or destinations involving 'Home' and 'Work or school' remained as the most common, but the introduction of new destinations led to a more dispersed trip distribution. Together, these two combinations accounted for 25% of all trips. In 2010, trips between 'Home' and 'Work or school' continued as the most common type, representing 18% of trips, tied with trips from 'Grocery store' to 'Home' (9%). Finishing the walking trip descriptive analysis, in 2015, the highest proportion of trips were from 'Home' to 'Work or school' (12%) and vice versa (11%). Trips from 'Home' to 'Home' accounted for 8% of trips, and 'Grocery store' became a notable destination for trips originating from 'Home' (8%).
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_medians_weighted.jpg"), 
+       plot = destination_medians,
+       width = 12, 
+       height = 8, 
+       units = "in", 
+       dpi = 300)
+```
+
+
+```{r destination_boxplots, echo=FALSE, cache=FALSE, include=FALSE}
+destination_boxplots <- gss_impedances_renamed %>%
+  uncount(weights = round(WGHT_EPI)) %>% 
+  ggplot(aes(x = as.factor(YEAR), y = (DURATION), fill = MODE)) +
+  geom_boxplot(position = position_dodge(width = 1),
+                size = 0.1,
+                outlier.shape = NA,
+                outlier.size = 0) +  
+theme_bw() +   
+facet_wrap(~dest_label) + 
+  scale_x_discrete(
+    breaks = c(1992, 1998, 2005, 2010, 2015)) +
+  labs(
+    fill = "Mode",                      
+    x = "Year",                          
+    y = "Travel time (in minutes)") +
+    theme(legend.position="bottom", 
+          axis.title.x = element_text(size = 10), 
+          axis.title.y = element_text(size = 10),
+          legend.title = element_text(size = 10),
+          strip.text = element_text(size = 10))
+
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_boxplots.jpg"), 
+       plot = destination_boxplots,
+       width = 12, 
+       height = 8, 
+       units = "in", 
+       dpi = 300)
+```
+
+
+```{r figure-boxplot, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_boxplots.jpg"))
+```
+
+For destinations included in more than one survey, we can compare the temporal evolution of travel times. Starting with walking trips, we note a trend of increasing travel times for 'Restaurants' and 'Outdoors' (both increasing from 5 minutes in 2005 to 10 minutes in 2015), 'Other's home' (rising to 10 minutes in 2015 after being 5 minutes since 1992), 'Cultural venues' (from 10 minutes in 2005 and 2010 to 15 minutes in 2015), and 'Place of worship' (increasing from 10 minutes in 2005 to 20 minutes in 2015). Other destinations remained constant over time for this active travel mode, such as 'Home', which, after a decline compared to 1992, remained constant at 10 minutes from 2005 onward as the typical travel time. 'Work or school' and 'Grocery store' also remained constant at 10 minutes each since their first appearance in the GSS surveys. In general, while 'Place of worship' displayed the highest median travel time of 20 minutes, the general median walking time cutoff appears to be 10 minutes, with most trips occurring below this limit. In this case, no destination shows a decrease in typical travel (median) time. 
+
+For cycling trips, only 'Cultural venues' did not show an increase in typical travel time when comparing 2015 to 2010. In this case, the travel time dropped from 25 minutes in 2010 to 15 minutes in 2015, although it is still higher than the value measured in 2005 (10 minutes). An increasing trend in travel times is evident for destinations such as 'Grocery store' (rising from 10 to 15 minutes between 2005 and 2015) and 'Restaurant' (15 minutes in 2005 and 2010, rising to 20 minutes in 2015). Other destinations seem to follow a similar pattern, where higher travel times were recorded in the earlier survey cycles, dropping over time, and then rising again in the most recent surveys, especially in 2015. This is the case for 'Home,' which returned to the 1992 typical travel time of 20 minutes after dropping to 10 minutes in 2010. It is also worth mentioning 'Work or school,' which had a typical cycling travel time of 15 minutes in 1992, peaked at 30 minutes in 1998, dropped back to 15 minutes in 2005 and 2010, and then increased to 20 minutes in 2015. In this case, no destination shows a decrease in typical (median) travel time. 'Outdoors' presented the longest typical travel time for cycling, reaching a median of 30 minutes in 2015.
+
+Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show walking and cycling trips from 1992 to 2015 through heat maps. These maps use color gradients to represent the percentage of trips between origins and destinations, with darker colors indicating higher percentages and lighter colors representing less frequent routes. In 1992, walking trips with 'Home' as both the origin and destination made up the majority, accounting for almost 31% of all walking trips. These trips often involved leisure activities, like short walks or dog walking. Following this, trips from 'Home' to 'Work or school' comprised 18% of walking trips. Overall, 'Home' is the principal hub, either as an origin or destination, with only 7% of trips not involving 'Home.' By 1998, more than half of walking trips were between 'Home' and 'Other's home,' with 'Home' to 'Other's home' and 'Other's home' to 'Home' each representing 26% of trips. During this year, 'Home' to 'Home' accounted for only 10% of trips. In 2005, trips with origins or destinations involving 'Home' and 'Work or school' remained as the most common, but the introduction of new destinations led to a more dispersed trip distribution. Together, these two combinations accounted for 25% of all trips. In 2010, trips between 'Home' and 'Work or school' continued as the most common type, representing 18% of trips, tied with trips from 'Grocery store' to 'Home' (9%). Finishing the walking trip descriptive analysis, in 2015, the highest proportion of trips were from 'Home' to 'Work or school' (12%) and vice versa (11%). Trips from 'Home' to 'Home' accounted for 8% of trips, and 'Grocery store' became a notable destination for trips originating from 'Home' (8%).
 
 ```{r make-figs-heatmaps, include=FALSE}
 # Walking heat map
 walking_hm_fig <- gss_impedances_renamed %>%
   filter(MODE == 'Walking') %>%
   group_by(orig_label, dest_label, YEAR) %>%
-  summarize(n = n(),
-  .groups = "drop") %>%
+  dplyr::summarise(n = sum(WGHT_EPI), .groups = "drop") %>%
   group_by(YEAR) %>%
   mutate(percentage = n / sum(n) * 100) %>%
   ungroup() %>%
@@ -636,6 +701,7 @@ walking_hm_fig <- gss_impedances_renamed %>%
     labs(x = "Destination",
     y = "Origin",
     fill = "Percentage (%)") + 
+    #geom_text(aes(label = round(percentage)), color = "black", size = 3) + 
     theme_bw() + 
     scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "YlOrRd")) +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
@@ -653,7 +719,7 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/walking_hm_fig.jp
 cycling_hm_fig <- gss_impedances_renamed %>%
   filter(MODE == 'Cycling') %>%
   group_by(orig_label, dest_label, YEAR) %>%
-  summarize(n = n(),
+  dplyr::summarise(n = sum(WGHT_EPI),
   .groups = "drop") %>%
   group_by(YEAR) %>%
   mutate(percentage = n / sum(n) * 100) %>%
@@ -664,6 +730,7 @@ cycling_hm_fig <- gss_impedances_renamed %>%
     labs(x = "Destination",
     y = "Origin",
     fill = "Percentage (%)") + 
+    #geom_text(aes(label = round(percentage)), color = "black", size = 3) + 
     theme_bw() + 
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
     scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "YlOrRd")) +
@@ -692,11 +759,9 @@ For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common t
 
 We analyzed whether the temporal differences in travel times for the destinations had statistical significance. Only destinations that appear in more than one year can have their temporal evolution analyzed. Therefore, from the twelve possible destinations, in the cycling mode only seven locations can be temporally analyzed: 'Cultural venues,' 'Grocery store,' 'Home,' 'Other's home,' 'Outdoors,' 'Restaurant,' and 'Work or school.' In the case of walking trips, it is possible to include 'Place of worship' to the previous destination list.
 
-After performing the Kruskal-Wallis test (to assess whether there was a statistically significant difference between the distributions of empirical travel time values, considering the time differences for each destination) and the pairwise Wilcoxon test, we were able to identify the destinations where a statistically significant difference was detected. Table \ref{tab:result-stats} shows only the destinations where a statistically significant difference was found, considering the two modes of active transport analyzed.
+After performing the Kruskal-Wallis test (to assess whether there was a statistically significant difference between the distributions of empirical travel time values, considering the time differences for each destination and the weight of each episode) and the pairwise Wilcoxon test, we were able to identify the destinations where a statistically significant difference was detected. Table \ref{tab:result-stats} shows only the destinations where a statistically significant difference was found, considering the two modes of active transport analyzed.
 
-For cycling trips, the destinations "Home," "Grocery store," "Restaurant," and "Work or school" had at least one year with a statistically significant difference. For example, for the "Home" destination, there was a statistically significant difference between 1992 and 2005 (p-value = 0.0046), 1992 and 2010 (p-value = 0.0003), 1998 and 2005 (p-value = 0.0390), 1998 and 2010 (p-value = 0.0412), 1998 and 2015 (p-value = 0.0196), 2005 and 2010 (p-value = 0.00017), and 2010 and 2015 (p-value = 0.01008). This result indicates that the previously discussed decrease in the typical cycling travel time for home destinations is statistically significant.
-
-For walking trips, among the destinations with a potential time difference, only "Cultural venues" did not show a statistically significant difference during the period analyzed. As a result, among the destinations appearing in more than one GSS survey, only "Cultural venues" showed no statistical evidence of temporal evolution for any of the modes of transport. Four destinations ("Home," "Grocery store," "Restaurant," and "Work or school") exhibited statistical differences for both modes of transport.
+For both active transportation modes, the possible destinations had at least two year with statistically significant difference in travel times. Considering the cycling mode and, for instance, the "Home" destination, there was a statistically significant difference (p-value < 2.2e-16) for every possible combination of two survey cycles. This result indicates that the previously discussed increase in typical cycling travel time for home destinations when compared 2015 to 2010 is statistically significant. As identified for cycling trips, all destinations presented at least two years with statistically significant difference in travel times for walking trips (p-value < 2.2e-16).
 
 ```{r kruskal-walking, include = FALSE, warning= FALSE}
 result_kw <- data.frame()
@@ -718,7 +783,10 @@ for(mode in unique(gss_impedances_renamed$MODE)){
     
     if(length(unique(subset$YEAR)) > 1){
       
-    kw <- kruskal.test(f ~ YEAR, data = subset)
+    subset <- subset %>% 
+      uncount(weights = round(WGHT_EPI))
+
+    kw <- kruskal.test(DURATION ~ YEAR, data = subset)
     
     pv_analise <- ifelse(kw$p.value <= 0.05, 'Significant', 'Not significant')
     
@@ -728,7 +796,7 @@ for(mode in unique(gss_impedances_renamed$MODE)){
     
     if(kw$p.value <= 0.05){
       
-      pw <- pairwise.wilcox.test(subset$f, subset$YEAR, p.adjust.method = "bonferroni")
+      pw <- pairwise.wilcox.test(subset$DURATION, subset$YEAR, p.adjust.method = "bonferroni")
       
       pf_df <- as.data.frame(pw$p.value)
 
@@ -755,8 +823,7 @@ result_pw$Year <- substr(rownames(result_pw), 1, 4)
 rownames(result_pw) <- NULL
 
 result_pw <- result_pw %>%
-  filter(rowSums(select(., `1992`:`2015`) <= 0.05, na.rm = TRUE) > 0) %>%
-  mutate(across(where(is.numeric), ~ round(.x, 5)))
+  filter(rowSums(select(., `1992`:`2015`) <= 0.05, na.rm = TRUE) > 0)
 
 result_pw <- result_pw[, colSums(!is.na(result_pw)) > 0]
 
@@ -788,7 +855,7 @@ As explained in the methodology section, we used the `fitdistrplus` package [@de
 ```{r selected_functions,echo=FALSE, cache=FALSE, warning=FALSE, include=FALSE}
 selected_functions <- gss_impedances_renamed %>% 
   group_by(MODE, YEAR, dest_label) %>% 
-  summarise(Function = first(f_name), 
+  dplyr::summarise(Function = first(f_name), 
             est_1 = first(est_1),
             est_2 = first(est_2),
             AIC = first(aic),
@@ -862,7 +929,7 @@ In 2005, the PDF that best represented the curve was a uniform function with upp
 ```{r mean_functions, include = FALSE}
 mean_functions <- selected_functions %>% 
   group_by(Function) %>%
-  summarise(mean = mean(count))
+  dplyr::summarise(mean = mean(count))
 
 mean_gamma <- round(mean_functions[mean_functions$Function == 'Gamma', ]$mean)
 mean_uniform <- round(mean_functions[mean_functions$Function == 'Uniform', ]$mean)
@@ -947,7 +1014,7 @@ for(destino in unique(gss_impedances_renamed$dest_label)){
   medianas <- gss_impedances_renamed %>%
     filter(dest_label == destino) %>%
     group_by(MODE) %>%
-    summarise(mediana_duracao = median(DURATION, na.rm = TRUE), .groups = 'drop')
+    dplyr::summarise(mediana_duracao = Hmisc::wtd.quantile(DURATION, weights = WGHT_EPI, probs = 0.5), .groups = 'drop')
   
   maximos <- theoretical_values %>%
     filter(dest_label == destino) %>%
@@ -1121,13 +1188,13 @@ knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling
 
 # Summary and conclusion
 
-The main objectives of this study were to provide an overview of active transportation in Canadian metropolitan cities, focusing on primary origins, destinations, and travel times, and to identify appropriate impedance functions for active transportation modes across various destinations and time periods. In this study we perform a direct application of `ActiveCA` R package [@dossantos2024ActiveCA], analyzing over 12,000 episodes from the Time Use cycles of the General Social Survey (GSS) from 1992 to 2015 that covered a wide range of destinations and considering walking and cycling as transportation modes.
+The main objectives of this study were to provide an overview of active transportation in Canadian metropolitan cities, focusing on primary origins, destinations, and travel times, and to identify appropriate impedance functions for active transportation modes across various destinations and time periods. In this study we perform a direct application of `ActiveCA` R package [@dossantos2024ActiveCA], analyzing over 12,000 cases of active travel trips that represented `r format(gss_summary[gss_summary$Mode == 'Total',]$Total, big.mark = ",", scientific = FALSE)` episodes, from the Time Use cycles of the General Social Survey (GSS) from 1992 to 2015, covering a twelve different type of destinations and considering walking and cycling as transportation modes.
 
-Although the study does not explain the reasons for fluctuations in travel times over the years, the findings confirmed, with statistical significance, that typical active travel times decreased for walking and cycling modes over the 30 years analyzed. For walking trips, typical travel times declined from 15 minutes in 1992 to 10 minutes in 2015. For cycling trips, the typical travel time decreased from 20 minutes to 15 minutes over the same period. The results also show that, in general, typical travel times for walking were consistently lower than for cycling.
+Although the study does not explain the reasons for fluctuations in travel times over the years, the findings confirmed with statistical significance, that typical active travel times remained constant for walking mode, and increased after a dropped since 1998 for cycling mode. For walking trips, typical travel times remained constant at 10 minutes since 2005. For cycling trips, the typical travel time fluctuated from 20 minutes in 1992 to 25 minutes in 1998, dropped to 15 minutes in 2005, dropped again to 10 minutes in 2010, and returned to increase to 20 minutes in 2015. The results also show that, in general, typical travel times for walking were consistently lower than for cycling.
 
-However, some destinations exhibited a trend of increasing travel times. For walking trips, travel times to ‘Restaurants’ and ‘Outdoors’ rose from 5 minutes in 2005 to 10 minutes in 2015, while travel to ‘Places of worship’ increased from 10 minutes in 2005 to 15 minutes in 2015, marking the highest typical travel time for walking trips. For cycling trips, travel times increased for destinations such as ‘Grocery store’ (from 10 to 15 minutes between 2005 and 2015), ‘Outdoors’ (from 15 to 20 minutes during the same period), and ‘Home’ (returning to 20 minutes in 2015 after a drop to 10 minutes in 2010).
+For walking trips, travel times to ‘Restaurants’ and ‘Outdoors’ rose from 5 minutes in 2005 to 10 minutes in 2015, while travel to ‘Places of worship’ increased from 10 minutes in 2005 to 20 minutes in 2015, marking the highest typical travel time for walking trips. The walking travel time for 'Home' and 'Work or school' remained constant at 10 minutes since at least the three last GSS cycles. For cycling trips, the year of 2015 displayed a trend of increasing travel times for almost all destinations. This trend is perceptible and statistically significant for ‘Grocery store’ (rising from 10 to 15 minutes between 2005 and 2015), ‘Outdoors’ (from 15 to 30 minutes during the same period), and 'Restaurant' (from 15 minutes in 2005 to 20 minutes in 2015). ‘Home’ returned to 20 minutes in 2015 after a drop to 10 minutes in 2010. 
 
-Conversely, for both transportation modes, the destination ‘Other’s home’ showed a reduction in travel time and a decline in the share of trips, reflecting changes in travel behavior since the technological advances enabled people to maintain contact with friends and relatives without visiting in person. For walking trips, findings indicate that ‘Home’ remains the main hub, whether as an origin or destination. For cycling trips, the combination of ‘Home’ and ‘Work or school’ accounted for the largest share of trips.
+For both transportation modes, the destination ‘Other’s home’ showed a decline in the share of trips, reflecting changes in travel behavior since the technological advances enabled people to maintain contact with friends and relatives without visiting in person. For walking trips, findings indicate that ‘Home’ remains the main hub, whether as an origin or destination. For cycling trips, the combination of ‘Home’ and ‘Work or school’ accounted for the largest share of trips.
 
 The study highlights the need to apply specific impedance functions for different destinations when measuring the cost decay effect in accessibility analyses. Based on this, we fitted 64 impedance functions for active transportation over more than 30 years, considering different types of destinations and transportation modes. The results indicate that none of the parameterized functions were exponential, suggesting that the impedance functions commonly used in active accessibility studies may not accurately capture travel behavior, especially for very short trips (up to 3 minutes), by giving to shorter trips higher probability of being made. Destinations with a high number of episodes were primarily fitted with gamma functions, followed by lognormal functions, while destinations with fewer episodes (fewer than six) were fitted with a uniform distribution.
 

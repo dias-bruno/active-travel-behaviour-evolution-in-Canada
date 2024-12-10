@@ -132,37 +132,39 @@ States},}
     \fntext[1]{These authors contributed equally to this work.}
   
   \begin{abstract}
-  Impedance functions are becoming a popular tool for representing
-  travel behaviour because of their potential to capture traveler
-  responses to geographic distance between origins and destinations.
-  Focusing our analysis on active transportation modes in Canadian
-  metropolitan regions, this study has as objectives to provide an
-  historical overview of active mobility in terms of main origins,
-  destinations and travel time of walking and cycling trips, and to
-  identify appropriate impedance functions for active transportation
-  modes considering a wide range of destinations and time periods. To
-  achieve these objectives, this paper analyzed more than 12,000 active
-  transportation episodes from the Canadian General Social Survey (GSS)
-  from 1992 to 2015. This study confirmed that the typical travel time
-  decreased from 15 to 10 minutes for walking trips and from 20 to 15
-  minutes for cycling trips during the period analyzed. For walking
-  trips, findings indicate that `Home' continues to be the main hub,
-  either as an origin or destination. For cycling trips, the combination
-  of `Home' and `Work or school' accounted for most of the trips.
-  Additionally, we fitted 64 impedance functions for twelve destinations
-  and over 20 years. The results indicate that none of the parameterized
-  functions were exponential, suggesting that the impedance functions
-  commonly used in active accessibility studies may not accurately
-  capture travel behavior, especially for very short trips, giving
-  shorter trips a higher probability of being made. The estimated
-  impedance functions can be employed in active accessibility analysis
-  to help to reduce the dependence on private vehicles and promote
-  healthier, more sustainable travel behaviour.
+  Impedance functions are used to represent travel behaviour due to
+  their potential to capture traveler responses to geographic distance
+  between origins and destinations. Focusing our analysis on active
+  transportation modes in Canadian metropolitan regions, this study has
+  as objectives to provide an historical overview of active mobility in
+  terms of main origins, destinations and travel time of walking and
+  cycling trips, and to identify appropriate impedance functions for
+  active transportation modes considering a wide range of destinations
+  and time periods. To achieve these objectives, this paper analyzed
+  more than cases of 12,000 active transportation episodes, that
+  represented more than 12 million episodes, from the Canadian General
+  Social Survey (GSS) from 1992 to 2015. This study confirmed that for
+  walking trips, typical travel times remained constant at 10 minutes
+  since 2005, while for cycling trips, typical travel times fluctuated,
+  declining from 20 minutes in 1992 to 10 minutes in 2010 before
+  increasing to 20 minutes in 2015. For walking trips, findings indicate
+  that `Home' continues to be the main hub, either as an origin or
+  destination. For cycling trips, the combination of `Home' and `Work or
+  school' accounted for most of the trips. Additionally, we fitted 64
+  impedance functions for twelve destinations and over 20 years. The
+  results indicate that none of the parameterized functions were
+  exponential, suggesting that the impedance functions commonly used in
+  active accessibility studies may not accurately capture travel
+  behavior, especially for very short trips, giving shorter trips a
+  higher probability of being made. The estimated impedance functions
+  can be employed in active accessibility analysis to help to reduce the
+  dependence on private vehicles and promote healthier, more sustainable
+  travel behaviour.
   \end{abstract}
     \begin{keyword}
     Active mobility \sep Walking \sep Cycling \sep Impedance
-function \sep 
-    Active accessibility
+function \sep Active accessibility \sep Destination \sep Temporal \sep 
+    Evolution
   \end{keyword}
   
  \end{frontmatter}
@@ -299,8 +301,8 @@ based on Public Use Microdata Files of Statistics Canada's General
 Social Survey (GSS) program with a focus on the Time Use Survey cycles.
 To build this package, the authors extracted all walking and cycling
 episodes and their corresponding episode weights for GSS cycles, Cycles
-2 (1986), 7 (1992), 12 (1998), 19 (2005), 24 (2010), and 29 (2015),
-spanning a period of almost thirty years. Origins and destinations were
+7 (1992), 12 (1998), 19 (2005), 24 (2010), and 29 (2015), spanning a
+period of almost thirty years. Origins and destinations were
 categorized, enabling the investigation of active travel for broad
 destination categories and purposes.
 
@@ -639,18 +641,22 @@ of the study, the Public Use Microdata Files had not been published.
 This methodology involves two main steps, each designed to achieve one
 of our primary objectives. The first step employs descriptive analysis
 of active transportation episodes to identify typical travel times
-across destinations and years. The second step analyzes impedance
+across destinations and years, comparing their temporal evolution and
+identifying differences in active transportation episodes through
+statistical tests. The second step calculates and analyzes impedance
 functions for each combination of cycle, destination, and active travel
-mode, comparing their temporal evolution and identifying differences in
-active transportation episodes through statistical tests.
+mode.
 
-To facilitate collaboration and further analysis, the Rmarkdown code
-required to obtain these outputs from the raw data files is available on
-our GitHub repository \emph{(include after the review)}, in line with
-the best practices of spatial data science (Arribas-Bel et al. 2021;
-Páez 2021). These contributions improve our understanding of active
-travel behaviour in Canada and provide a basis for future research and
-policy-making.
+To facilitate collaboration and further analysis, we updated the
+\texttt{ActiveCA} R Package to include the methodology to obtain
+impedance functions from the raw data files. Additionally, we created
+this paper using literate programming in which the R markdown code to
+fully reproduce this article is available on our GitHub repository
+\emph{(include after the review)}, and we also updated the , in line
+with the best practices of spatial data science (Arribas-Bel et al.
+2021; Páez 2021). These contributions improve our understanding of
+active travel behaviour in Canada and provide a basis for future
+research and policy-making.
 
 \hypertarget{analyzing-active-travel-episodes}{%
 \subsection{Analyzing active travel
@@ -716,16 +722,19 @@ exponential, gamma, normal, and lognormal distributions. In order to
 calculate the impedance functions, two filters were applied in the GSS
 data set. The first is that we excluded all trips with travel times
 higher than 100 minutes (1.5 hours). An exploratory data analysis showed
-that, taking into account all the walking and cycling episodes (12113 in
-total), less than 0\% of the episodes have a trip duration higher than
-this limit. It was also possible to know that trips with a duration
-higher than 100 minutes are mainly composed of hiking and camping
-episodes. The second filter was realized to select only the population
-living in a larger urban population centre (a Census Metropolitan Area
-(CMA) or Census Agglomeration (CA)). We decided to apply this
-restriction because the travel behaviour of residents of CMA and CA
-areas tends to be very different from those outside these large urban
-centres in terms of active travel.
+that, taking into account all the walking and cycling episodes (17,401
+in total), less than 0.7\% of the episodes have a trip duration higher
+than this limit. When considering the weights of this episodes, travel
+times higher than 100 minutes represented 0.79\% of the episodes.
+
+It was also possible to know that trips with a duration higher than 100
+minutes are mainly composed of hiking and camping episodes. The second
+filter was realized to select only the population living in a larger
+urban population centre (a Census Metropolitan Area (CMA) or Census
+Agglomeration (CA)). We decided to apply this restriction because the
+travel behaviour of residents of CMA and CA areas tends to be very
+different from those outside these large urban centres in terms of
+active travel.
 
 \hypertarget{results-and-discusion}{%
 \section{Results and discusion}\label{results-and-discusion}}
@@ -736,36 +745,47 @@ to
 2015}\label{descriptive-analysis-of-walking-and-cycling-trips-from-1992-to-2015}}
 
 After applying the filters to the GSS surveys, we obtained a total of
-\ensuremath{1.2113\times 10^{4}} episodes. Table
-\ref{tab:episodes-count-percentages} contains the number of episodes
-about walking and cycling trips between 1992 and 2015, obtained from the
-GSS cycles. The year 2005 is the year with the most episodes, 4471,
-representing approximately 37\% of all active travel episodes. The year
-2005 is followed by 2010, with 3543 episodes (representing 29\% of the
-total), then 2015 (2899 episodes, 24\% of the total), 1998 643 episodes,
-(5\% of the total), and 1992, with only 557 episodes, representing 5\%
-of the total.
+12,113 lines with active travel episodes. However, GSS surveys apply a
+probability sampling methodology, in which each episode or person
+selected in the sample represents several other episodes or persons not
+in the sample. The number of episodes and persons represented by a
+episode or person is determined by the weight or weighting factor.
+Because of this, every estimates of the number of episodes or persons
+need to be calculated applying the corresponding weighting factors.
+
+Considering the weights - and from this point onward, all counts
+estimates presented in this paper account for them - the 12,113 episodes
+represent a total of 22,731,111 episodes. Table
+\ref{tab:episodes-count-percentages} contains the weighted number of
+episodes about walking and cycling trips between 1992 and 2015, obtained
+from the GSS cycles. The year 2010 is the year with the most episodes,
+with 7,116,460 episodes (representing 31.31\% of the total). The year
+2010 is followed by 2005 with 6,152,778, representing approximately
+27.07\% of all active travel episodes; followed by 2015 (5,921,772
+episodes, 26.05\% of the total), 1998 1,773,061 episodes, (7.8\% of the
+total), and 1992, with only 1,767,041 episodes, representing 7.77\% of
+the total.
 
 When analyzing the two active transportation modes, walking episodes
-account for 93\%, while the remaining 7\% are cycling episodes. However,
-it is worth mentioning that, while in 2015 cycling episodes represented
-only 7\% of the active travel episodes for that year, in 1992 the
-cycling episodes represented 12\% - the highest share of this mode
-across all years. In the next survey (1998), it drops to around 9\%,
-stabilizing at around 6\% thereafter.
+account for 91.67\%, while the remaining 8.33\% are cycling episodes.
+However, it is worth mentioning that, while in 2015 cycling episodes
+represented only 8.03\% of the active travel episodes for that year, in
+1992 the cycling episodes represented 13.03\% - the highest share of
+this mode across all years. In 2005, it drops to the lowest
+representation level with 7.68\%, stabilizing at around 8\% thereafter.
 
-\begingroup\fontsize{10}{12}\selectfont
+\begingroup\fontsize{8}{10}\selectfont
 
 \begin{longtable}[t]{lcccccccccccc}
-\caption{\label{tab:bulding table-01}\label{tab:episodes-count-percentages}Number of episodes identified in each active transportation mode by year}\\
+\caption{\label{tab:bulding table-01}\label{tab:episodes-count-percentages}Weighted number of episodes identified in each active transportation mode by year}\\
 \toprule
 \multicolumn{1}{c}{ } & \multicolumn{2}{c}{1992} & \multicolumn{2}{c}{1998} & \multicolumn{2}{c}{2005} & \multicolumn{2}{c}{2010} & \multicolumn{2}{c}{2015} & \multicolumn{2}{c}{Total} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9} \cmidrule(l{3pt}r{3pt}){10-11} \cmidrule(l{3pt}r{3pt}){12-13}
 Mode &  & (\%) &  & (\%) &  & (\%) &  & (\%) &  & (\%) &  & (\%)\\
 \midrule
-Cycling & 67 & 12.03 & 56 & 8.71 & 289 & 6.46 & 209 & 5.90 & 214 & 7.38 & 835 & 6.89\\
-Walking & 490 & 87.97 & 587 & 91.29 & 4182 & 93.54 & 3334 & 94.10 & 2685 & 92.62 & 11278 & 93.11\\
-Total & 557 & 4.60 & 643 & 5.31 & 4471 & 36.91 & 3543 & 29.25 & 2899 & 23.93 & 12113 & 100.00\\
+Cycling & 230316.9 & 13.03 & 156123.1 & 8.81 & 472839.5 & 7.68 & 559295.6 & 7.86 & 475626.6 & 8.03 & 1894202 & 8.33\\
+Walking & 1536723.8 & 86.97 & 1616937.8 & 91.19 & 5679938.1 & 92.32 & 6557164.6 & 92.14 & 5446144.9 & 91.97 & 20836909 & 91.67\\
+Total & 1767040.7 & 7.77 & 1773060.9 & 7.80 & 6152777.6 & 27.07 & 7116460.2 & 31.31 & 5921771.5 & 26.05 & 22731111 & 100.00\\
 \bottomrule
 \end{longtable}
 \endgroup{}
@@ -774,16 +794,19 @@ Tables \ref{tab:table-02} presents statistic on travel time by active
 transportation mode. The maximum time spent on walking trips varied
 between 90 and 100 minutes across the years. It is important to remember
 that trips with duration greater than 100 minutes were excluded from the
-analysis. The mean walking time also varies, starting at 21 minutes in
-1992, dropping to 12 minutes between 1992 to 2010, and increasing again
-to 16 minutes in 2015. However, it is known that the mean is a statistic
-that is highly influenced by extreme values. For this reason, we analyze
-the median travel time, as it is more representative of the typical
-travel time. The median time spent walking is 15 minutes in 1992, then
-drops to 5 minutes in 1998 and remains constant at 10 minutes from 2005
-to 2015.
+analysis. The mean walking time also varies, starting at 20 minutes in
+1992, dropping to 12 minutes between 1992 to 2005, and increasing again
+to 13 minutes in 2010 and to 16 minutes in 2015. However, it is known
+that the mean is a statistic that is highly influenced by extreme
+values. For this reason, we analyze the median travel time, as it is
+more representative of the typical travel time. The median time spent
+walking was 10 minutes in 1992, dropped to 5 minutes in 1998, and
+remained constant at 10 minutes from 2005 to 2015. The weighted median
+estimates for walking trips indicates that there is no difference in the
+typical walking travel time when compared the most recent survey
+analyzed (2015) with the oldest survey analyzed (1998).
 
-\begingroup\fontsize{10}{12}\selectfont
+\begingroup\fontsize{8}{10}\selectfont
 
 \begin{longtable}[t]{>{}llccccc}
 \caption{\label{tab:table-02}\label{tab:table-02}Descriptive statistics for episodes with active transport records}\\
@@ -794,9 +817,9 @@ Mode & Statistic & 1992 & 1998 & 2005 & 2010 & 2015\\
 \midrule
  & Maximum & 90 & 100 & 100 & 90 & 95\\
 \nopagebreak
- & Mean & 21 & 12 & 12 & 12 & 16\\
+ & Mean & 20 & 12 & 12 & 13 & 16\\
 \nopagebreak
- & Median & 15 & 5 & 10 & 10 & 10\\
+ & Median & 10 & 5 & 10 & 10 & 10\\
 \nopagebreak
  & Minimum & 5 & 1 & 1 & 1 & 5\\
 \nopagebreak
@@ -804,9 +827,9 @@ Mode & Statistic & 1992 & 1998 & 2005 & 2010 & 2015\\
 \cmidrule{1-7}\pagebreak[0]
  & Maximum & 90 & 80 & 95 & 100 & 90\\
 \nopagebreak
- & Mean & 25 & 25 & 19 & 20 & 23\\
+ & Mean & 21 & 28 & 20 & 18 & 24\\
 \nopagebreak
- & Median & 20 & 18 & 15 & 15 & 15\\
+ & Median & 20 & 25 & 15 & 10 & 20\\
 \nopagebreak
  & Minimum & 5 & 2 & 1 & 2 & 5\\
 \nopagebreak
@@ -815,40 +838,29 @@ Mode & Statistic & 1992 & 1998 & 2005 & 2010 & 2015\\
 \end{longtable}
 \endgroup{}
 
-The analysis of travel time statistics alone does not fully explain the
-reasons behind these fluctuations in travel time over the years. We can
-affirm, however, that there was a reduction in the time spent walking
-during the analyzed period, with a one-third reduction in the median
-walking travel time since 1992.
-
 For cycling trips, the maximum travel time varies from 90 to 100
 minutes, similar to walking, except in 1998 when the maximum travel time
-recorded was 80 minutes. The average cycling travel time is more
-constant, ranging from 19 minutes in 2005 to 25 minutes in 1992 and
-1998. Again, when we analyze the median travel time, we see that the
-typical cycling travel time dropped from 20 minutes in 1992 to 15
-minutes in 2005, 2010, and 2015, possibly reflecting advancements in
-bicycle technology or changes in cyclists' behaviors.
-
-As highlighted in Figure \ref{fig:figure-boxplot}, over the 30 years
-studied, the typical duration of walking trips was consistently lower
-than that of cycling trips. As already mentioned, both medians decayed
-when compared to 1992, and various factors might have precipitated this
-trend, such as urban sprawl, increased reliance on motorized transport,
-or societal preferences for faster modes of transportation.
-
-\begin{figure}
-\includegraphics[width=1\linewidth]{figures/destination_boxplots} \caption{Percentage of walking trips categorized by origin and destination}\label{fig:figure-boxplot}
-\end{figure}
+recorded was 80 minutes. The average cycling travel time varied a lot,
+ranging from 18 minutes in 2010 to 28 minutes 1998. In this case, when
+we analyze the median travel time, we see that the typical cycling
+travel time fluctuated between 1992 to 2015. It started at 20 minutes
+for 1992, increased to 25 minutes in 1998 - the highest median travel
+time identified across all survey cycles - then dropped to 15 minutes in
+2005 and to 10 minutes in 2010, before returning to 20 minutes in 2015,
+the same value as in 1992 when the surveys started. The analysis of
+travel time statistics alone does not fully explain the reasons behind
+these fluctuations in travel time over the years. However, it is likely
+that these variations reflect changes in bicycle technology or cyclist
+behavior.
 
 Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each
 destination by year and by mode of transport. For all the years
 analyzed, `Home' is the most common travel destination, regardless of
 whether the mode of transport considered is walking or cycling, with
-levels above 42\%. After that, `Work or school' appears as the second
+levels above 40\%. After that, `Work or school' appears as the second
 most common destination, especially for journeys by bicycle, with a peak
-of almost 34\% of trips by bicycle in 1998, a high drop to 22\% in 2005,
-rising again to levels close to 30\% in 2015. Along with the two
+of almost 36\% of trips by bicycle in 1998, a high drop to 23\% in 2005,
+rising again to levels close to 35\% in 2015. Along with the two
 destinations already mentioned, `Other's home' is the only other
 destination present in the GSS surveys since 1992. This last destination
 seems to be a destination with a higher share when it comes to walking
@@ -863,44 +875,63 @@ need to visit another person's home to keep in touch with them.
 
 After 2005, the expansion of the destination highlights some new popular
 locations. For example, `Grocery store' appears as the third most chosen
-destination, varying from 10\% in 2005 to 6.5\% in 2015 for cycling
-trips and from 13.3\% to 12.6\% for walking trips. When considering
-walking trips, `Restaurants' appears as another well chosen destination
-and, in the case of cycling trips, `Outdoors' appears as a well chosen
-destination.
+destination, varying from almost 10\% in 2005 to 5.6\% in 2015 for
+cycling trips and from 12\% to 10.6\% for walking trips. When
+considering walking trips, `Restaurants' appears as another well chosen
+destination and, in the case of cycling trips, `Outdoors' appears as a
+well chosen destination.
 
 Figure \ref{fig:figure-boxplot} present the box plot graphs showing the
 travel time distribution for active transportation modes over the years,
-categorized by destination. Some destinations are presented in only one
-survey, such as `Sport area', `Neighbourhood,' and `Business'. These new
-destination exhibit typical walking travel times 10 minutes. For cycling
-trips, `Business' recorded no trips, while `Sport area' and
-`Neighbourhood' registered typical travel times of 30 and 15 minutes,
-respectively.
+categorized by destination. Over the period studied, the typical
+duration of walking trips was consistently lower than that of cycling
+trips. Some destinations are presented in only one survey, such as
+`Business', `Health clinic', `Neighbourhood,' and `Sport area'. These
+new destination exhibit typical walking travel times 10 minutes. For
+cycling trips, `Business' recorded no trips, and while `Neighbourhood'
+registered a typical travel times of 30 minutes, the others cited
+destinations obtained a typical travel time of 15 minutes.
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{figures/destination_boxplots} \caption{Percentage of walking trips categorized by origin and destination}\label{fig:figure-boxplot}
+\end{figure}
 
 For destinations included in more than one survey, we can compare the
-temporal evolution of travel times. Starting with the walking trips, we
-can note that there is a tendency of increasing travel times for
-`Restaurants' and `Outdoors' (both increasing from 5 in 2005 to 10
-minutes in 2015) and `Place of worship' (rising from 10 in 2005 to 15
-minutes in 2015). In contrast, some destinations presented a decline in
-travel times, where the case of `Cultural venues,' which had a median
-travel time of 2005 and drop to 5 minutes in 2015, and `Home' which
-start the time series with a minutes in 1992 and dropped to 10 minutes
-by 2015. Other destinations maintained an almost constant travel time.
-In general, while `Place of worship' displayed the maximum median travel
-time of 15 minutes, the general median walking time cuttoff appears to
-be 10 minutes, with most of trips occurring below this limit.
+temporal evolution of travel times. Starting with walking trips, we note
+a trend of increasing travel times for `Restaurants' and `Outdoors'
+(both increasing from 5 minutes in 2005 to 10 minutes in 2015), `Other's
+home' (rising to 10 minutes in 2015 after being 5 minutes since 1992),
+`Cultural venues' (from 10 minutes in 2005 and 2010 to 15 minutes in
+2015), and `Place of worship' (increasing from 10 minutes in 2005 to 20
+minutes in 2015). Other destinations remained constant over time for
+this active travel mode, such as `Home', which, after a decline compared
+to 1992, remained constant at 10 minutes from 2005 onward as the typical
+travel time. `Work or school' and `Grocery store' also remained constant
+at 10 minutes each since their first appearance in the GSS surveys. In
+general, while `Place of worship' displayed the highest median travel
+time of 20 minutes, the general median walking time cutoff appears to be
+10 minutes, with most trips occurring below this limit. In this case, no
+destination shows a decrease in typical travel (median) time.
 
-For cycling trips, an increasing trend in travel times is evident for
-destinations such the destinations `Grocery store' (rising from 10 to 15
-minutes between 2005 and 2015), `Outdoors' (increasing from 15 in 2005
-to 20 minutes in 2015), and `Home' (retuning to the 1992 typical travel
-time of 20 minutes after dropping to 10 minutes in 2010). However,
-travel times decreased for destinations like `Other's home' and `Place
-of worship', where the typical cycling travel time declined from 20
-minutes in their first recorded surveys to 15 minutes by 2015. Other
-destinations remained with a constant travel time.
+For cycling trips, only `Cultural venues' did not show an increase in
+typical travel time when comparing 2015 to 2010. In this case, the
+travel time dropped from 25 minutes in 2010 to 15 minutes in 2015,
+although it is still higher than the value measured in 2005 (10
+minutes). An increasing trend in travel times is evident for
+destinations such as `Grocery store' (rising from 10 to 15 minutes
+between 2005 and 2015) and `Restaurant' (15 minutes in 2005 and 2010,
+rising to 20 minutes in 2015). Other destinations seem to follow a
+similar pattern, where higher travel times were recorded in the earlier
+survey cycles, dropping over time, and then rising again in the most
+recent surveys, especially in 2015. This is the case for `Home,' which
+returned to the 1992 typical travel time of 20 minutes after dropping to
+10 minutes in 2010. It is also worth mentioning `Work or school,' which
+had a typical cycling travel time of 15 minutes in 1992, peaked at 30
+minutes in 1998, dropped back to 15 minutes in 2005 and 2010, and then
+increased to 20 minutes in 2015. In this case, no destination shows a
+decrease in typical (median) travel time. `Outdoors' presented the
+longest typical travel time for cycling, reaching a median of 30 minutes
+in 2015.
 
 Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show
 walking and cycling trips from 1992 to 2015 through heat maps. These
@@ -912,7 +943,7 @@ up the majority, accounting for almost 31\% of all walking trips. These
 trips often involved leisure activities, like short walks or dog
 walking. Following this, trips from `Home' to `Work or school' comprised
 18\% of walking trips. Overall, `Home' is the principal hub, either as
-an origin or destination, with only 5\% of trips not involving `Home.'
+an origin or destination, with only 7\% of trips not involving `Home.'
 By 1998, more than half of walking trips were between `Home' and
 `Other's home,' with `Home' to `Other's home' and `Other's home' to
 `Home' each representing 26\% of trips. During this year, `Home' to
@@ -958,31 +989,23 @@ include `Place of worship' to the previous destination list.
 After performing the Kruskal-Wallis test (to assess whether there was a
 statistically significant difference between the distributions of
 empirical travel time values, considering the time differences for each
-destination) and the pairwise Wilcoxon test, we were able to identify
-the destinations where a statistically significant difference was
-detected. Table \ref{tab:result-stats} shows only the destinations where
-a statistically significant difference was found, considering the two
-modes of active transport analyzed.
+destination and the weight of each episode) and the pairwise Wilcoxon
+test, we were able to identify the destinations where a statistically
+significant difference was detected. Table \ref{tab:result-stats} shows
+only the destinations where a statistically significant difference was
+found, considering the two modes of active transport analyzed.
 
-For cycling trips, the destinations ``Home,'' ``Grocery store,''
-``Restaurant,'' and ``Work or school'' had at least one year with a
-statistically significant difference. For example, for the ``Home''
-destination, there was a statistically significant difference between
-1992 and 2005 (p-value = 0.0046), 1992 and 2010 (p-value = 0.0003), 1998
-and 2005 (p-value = 0.0390), 1998 and 2010 (p-value = 0.0412), 1998 and
-2015 (p-value = 0.0196), 2005 and 2010 (p-value = 0.00017), and 2010 and
-2015 (p-value = 0.01008). This result indicates that the previously
-discussed decrease in the typical cycling travel time for home
-destinations is statistically significant.
-
-For walking trips, among the destinations with a potential time
-difference, only ``Cultural venues'' did not show a statistically
-significant difference during the period analyzed. As a result, among
-the destinations appearing in more than one GSS survey, only ``Cultural
-venues'' showed no statistical evidence of temporal evolution for any of
-the modes of transport. Four destinations (``Home,'' ``Grocery store,''
-``Restaurant,'' and ``Work or school'') exhibited statistical
-differences for both modes of transport.
+For both active transportation modes, the possible destinations had at
+least two year with statistically significant difference in travel
+times. Considering the cycling mode and, for instance, the ``Home''
+destination, there was a statistically significant difference (p-value
+\textless{} 2.2e-16) for every possible combination of two survey
+cycles. This result indicates that the previously discussed increase in
+typical cycling travel time for home destinations when compared 2015 to
+2010 is statistically significant. As identified for cycling trips, all
+destinations presented at least two years with statistically significant
+difference in travel times for walking trips (p-value \textless{}
+2.2e-16).
 
 \begin{table}
 \centering
@@ -994,53 +1017,89 @@ differences for both modes of transport.
 \toprule
 Mode & Destination & Year & 1992 & 1998 & 2005 & 2010\\
 \midrule
- & Restaurant & 2010 &  &  & 0.00003 & \\
+ & Restaurant & 2010 &  &  & 0 & \\
 
- & Restaurant & 2015 &  &  & 0.00003 & 0.00001\\
+ & Restaurant & 2015 &  &  & 0 & 0\\
 
- & Grocery store & 2010 &  &  & 0.00000 & \\
+ & Grocery store & 2010 &  &  & 0 & \\
 
- & Grocery store & 2015 &  &  &  & 0.00159\\
+ & Grocery store & 2015 &  &  & 0 & 0\\
 
- & Home & 1998 & 0.00000 &  &  & \\
+ & Home & 1998 & 0 &  &  & \\
 
- & Home & 2005 & 0.00000 & 0.00000 &  & \\
+ & Home & 2005 & 0 & 0 &  & \\
 
- & Home & 2010 & 0.00000 & 0.00000 & 0.00000 & \\
+ & Home & 2010 & 0 & 0 & 0 & \\
 
- & Home & 2015 & 0.00000 & 0.00000 & 0.00000 & \\
+ & Home & 2015 & 0 & 0 & 0 & 0\\
 
- & Work or school & 1998 & 0.00871 &  &  & \\
+ & Work or school & 1998 & 0 &  &  & \\
 
- & Work or school & 2015 &  & 0.00004 & 0.00483 & \\
+ & Work or school & 2005 & 0 & 0 &  & \\
 
- & Other's home & 1998 & 0.00000 &  &  & \\
+ & Work or school & 2010 & 0 & 0 & 0 & \\
 
- & Other's home & 2010 & 0.00003 & 0.01048 & 0.04166 & \\
+ & Work or school & 2015 & 0 & 0 & 0 & 0\\
 
- & Other's home & 2015 &  & 0.00000 & 0.00000 & 0.00000\\
+ & Cultural venues & 2010 &  &  & 0 & \\
 
- & Place of worship & 2015 &  &  & 0.01946 & \\
+ & Cultural venues & 2015 &  &  & 0 & 0\\
 
-\multirow[t]{-15}{*}{\raggedright\arraybackslash Walking} & Outdoors & 2015 &  &  & 0.00000 & 0.00044\\
+ & Other's home & 1998 & 0 &  &  & \\
+
+ & Other's home & 2005 & 0 & 0 &  & \\
+
+ & Other's home & 2010 & 0 & 0 & 0 & \\
+
+ & Other's home & 2015 & 0 & 0 & 0 & 0\\
+
+ & Place of worship & 2010 &  &  & 0 & \\
+
+ & Place of worship & 2015 &  &  & 0 & 0\\
+
+ & Outdoors & 2010 &  &  & 0 & \\
+
+\multirow[t]{-22}{*}{\raggedright\arraybackslash Walking} & Outdoors & 2015 &  &  & 0 & 0\\
 \cmidrule{1-7}
- & Restaurant & 2010 &  &  & 0.03883 & \\
+ & Restaurant & 2010 &  &  & 0 & \\
 
- & Restaurant & 2015 &  &  &  & 0.04323\\
+ & Restaurant & 2015 &  &  & 0 & 0\\
 
- & Home & 2005 & 0.00460 & 0.03902 &  & \\
+ & Home & 1998 & 0 &  &  & \\
 
- & Home & 2010 & 0.00030 & 0.04117 & 0.00017 & \\
+ & Home & 2005 & 0 & 0 &  & \\
 
- & Home & 2015 &  & 0.01960 &  & 0.01008\\
+ & Home & 2010 & 0 & 0 & 0 & \\
 
- & Work or school & 1998 & 0.02112 &  &  & \\
+ & Home & 2015 & 0 & 0 & 0 & 0\\
 
- & Work or school & 2005 &  & 0.03558 &  & \\
+ & Work or school & 1998 & 0 &  &  & \\
 
- & Work or school & 2015 &  & 0.00190 & 0.00242 & 0.00290\\
+ & Work or school & 2005 & 0 & 0 &  & \\
 
-\multirow[t]{-9}{*}{\raggedright\arraybackslash Cycling} & Grocery store & 2015 &  &  & 0.00278 & \\
+ & Work or school & 2010 & 0 & 0 & 0 & \\
+
+ & Work or school & 2015 & 0 & 0 & 0 & 0\\
+
+ & Other's home & 1998 & 0 &  &  & \\
+
+ & Other's home & 2005 & 0 & 0 &  & \\
+
+ & Other's home & 2010 & 0 & 0 & 0 & \\
+
+ & Other's home & 2015 & 0 & 0 & 0 & 0\\
+
+ & Cultural venues & 2010 &  &  & 0 & \\
+
+ & Cultural venues & 2015 &  &  & 0 & \\
+
+ & Outdoors & 2010 &  &  & 0 & \\
+
+ & Outdoors & 2015 &  &  & 0 & 0\\
+
+ & Grocery store & 2010 &  &  & 0 & \\
+
+\multirow[t]{-20}{*}{\raggedright\arraybackslash Cycling} & Grocery store & 2015 &  &  & 0 & 0\\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -1385,39 +1444,43 @@ origins, destinations, and travel times, and to identify appropriate
 impedance functions for active transportation modes across various
 destinations and time periods. In this study we perform a direct
 application of \texttt{ActiveCA} R package (Dos Santos, Moghadasi, and
-Páez, n.d.), analyzing over 12,000 episodes from the Time Use cycles of
-the General Social Survey (GSS) from 1992 to 2015 that covered a wide
-range of destinations and considering walking and cycling as
-transportation modes.
+Páez, n.d.), analyzing over 12,000 cases of active travel trips that
+represented 22,731,111 episodes, from the Time Use cycles of the General
+Social Survey (GSS) from 1992 to 2015, covering a twelve different type
+of destinations and considering walking and cycling as transportation
+modes.
 
 Although the study does not explain the reasons for fluctuations in
-travel times over the years, the findings confirmed, with statistical
-significance, that typical active travel times decreased for walking and
-cycling modes over the 30 years analyzed. For walking trips, typical
-travel times declined from 15 minutes in 1992 to 10 minutes in 2015. For
-cycling trips, the typical travel time decreased from 20 minutes to 15
-minutes over the same period. The results also show that, in general,
-typical travel times for walking were consistently lower than for
-cycling.
+travel times over the years, the findings confirmed with statistical
+significance, that typical active travel times remained constant for
+walking mode, and increased after a dropped since 1998 for cycling mode.
+For walking trips, typical travel times remained constant at 10 minutes
+since 2005. For cycling trips, the typical travel time fluctuated from
+20 minutes in 1992 to 25 minutes in 1998, dropped to 15 minutes in 2005,
+dropped again to 10 minutes in 2010, and returned to increase to 20
+minutes in 2015. The results also show that, in general, typical travel
+times for walking were consistently lower than for cycling.
 
-However, some destinations exhibited a trend of increasing travel times.
 For walking trips, travel times to `Restaurants' and `Outdoors' rose
 from 5 minutes in 2005 to 10 minutes in 2015, while travel to `Places of
-worship' increased from 10 minutes in 2005 to 15 minutes in 2015,
-marking the highest typical travel time for walking trips. For cycling
-trips, travel times increased for destinations such as `Grocery store'
-(from 10 to 15 minutes between 2005 and 2015), `Outdoors' (from 15 to 20
-minutes during the same period), and `Home' (returning to 20 minutes in
-2015 after a drop to 10 minutes in 2010).
+worship' increased from 10 minutes in 2005 to 20 minutes in 2015,
+marking the highest typical travel time for walking trips. The walking
+travel time for `Home' and `Work or school' remained constant at 10
+minutes since at least the three last GSS cycles. For cycling trips, the
+year of 2015 displayed a trend of increasing travel times for almost all
+destinations. This trend is perceptible and statistically significant
+for `Grocery store' (rising from 10 to 15 minutes between 2005 and
+2015), `Outdoors' (from 15 to 30 minutes during the same period), and
+`Restaurant' (from 15 minutes in 2005 to 20 minutes in 2015). `Home'
+returned to 20 minutes in 2015 after a drop to 10 minutes in 2010.
 
-Conversely, for both transportation modes, the destination `Other's
-home' showed a reduction in travel time and a decline in the share of
-trips, reflecting changes in travel behavior since the technological
-advances enabled people to maintain contact with friends and relatives
-without visiting in person. For walking trips, findings indicate that
-`Home' remains the main hub, whether as an origin or destination. For
-cycling trips, the combination of `Home' and `Work or school' accounted
-for the largest share of trips.
+For both transportation modes, the destination `Other's home' showed a
+decline in the share of trips, reflecting changes in travel behavior
+since the technological advances enabled people to maintain contact with
+friends and relatives without visiting in person. For walking trips,
+findings indicate that `Home' remains the main hub, whether as an origin
+or destination. For cycling trips, the combination of `Home' and `Work
+or school' accounted for the largest share of trips.
 
 The study highlights the need to apply specific impedance functions for
 different destinations when measuring the cost decay effect in

@@ -57,12 +57,12 @@ output:
 opts <- options(knitr.kable.NA = "")
 
 knitr::knit_hooks$set(inline = function(x) {
-  if (is.numeric(x)) {
-    format(x, big.mark = ",", scientific = FALSE)
-  } else {
-    x
-  }
-})
+   if (is.numeric(x)) {
+     format(x, big.mark = ",", scientific = FALSE)
+   } else {
+     x
+   }
+ })
 
 rm(list=ls())
 ```
@@ -89,6 +89,11 @@ library(Hmisc)
 # Load data
 data(gss_impedances)
 data(gss_episodes)
+data(gss_main_1992)
+data(gss_main_1998)
+data(gss_main_2005)
+data(gss_main_2010)
+data(gss_main_2015)
 ```
 
 ```{r renaming-destinations, echo=FALSE, cache=FALSE, include=FALSE}
@@ -111,6 +116,103 @@ gss_impedances_renamed <- gss_impedances %>%
     orig_label == "In the neighbourhood" ~ "Neighbourhood",
     orig_label == "Library, museum or theatre" ~ "Cultural venues",
     TRUE ~ orig_label))
+
+# Renaming 'dest_label' and 'orig_label' values to reduce table space
+gss_episodes_renamed <- gss_episodes %>%
+  mutate(dest_label = case_when(
+    dest_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    dest_label == "Restaurant, bar or club" ~ "Restaurant",
+    dest_label == "Sports centre, field or arena" ~ "Sport area",
+    dest_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    dest_label == "In the neighbourhood" ~ "Neighbourhood",
+    dest_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ dest_label  # Keep all other values as they are
+  ), 
+  orig_label = case_when(
+    orig_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    orig_label == "Restaurant, bar or club" ~ "Restaurant",
+    orig_label == "Sports centre, field or arena" ~ "Sport area",
+    orig_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    orig_label == "In the neighbourhood" ~ "Neighbourhood",
+    orig_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ orig_label))
+```
+
+
+```{r main-episodes-junction, echo=FALSE, cache=FALSE, include=FALSE}
+# 1992
+gss_main_1992 <- gss_main_1992 %>%
+  dplyr::select(SEQNUM, FWGHT) %>%
+  rename(PUMFID = SEQNUM, 
+         WGHT_PER = FWGHT) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "1992",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 1992)
+
+# 1998
+gss_main_1998 <- gss_main_1998 %>%
+  dplyr::select(RECID, WGHTFIN) %>%
+  rename(PUMFID = RECID, 
+         WGHT_PER = WGHTFIN) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "1998",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 1998)
+
+# 2005
+gss_main_2005 <- gss_main_2005 %>%
+  dplyr::select(RECID, WGHT_PER) %>%
+  rename(PUMFID = RECID, 
+         WGHT_PER = WGHT_PER) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "2005",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 2005)
+
+# 2010
+gss_main_2010 <- gss_main_2010 %>%
+  dplyr::select(RECID, WGHT_PER) %>%
+  rename(PUMFID = RECID, 
+         WGHT_PER = WGHT_PER) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "2010",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 2010)
+
+# 2015
+gss_main_2015 <- gss_main_2015 %>%
+  dplyr::select(PUMFID, WGHT_PER) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "2015",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 2015)
+
+# Creating a new file with all main files 
+main_file <- rbind(gss_main_1992, gss_main_1998, gss_main_2005, 
+                   gss_main_2010, gss_main_2015)
+
+# Counting walking episodes 
+act_walk <- gss_episodes_renamed %>% 
+  filter(YEAR > 1986 & MODE == 'Walking') %>%
+  group_by(PUMFID, YEAR, MODE, dest_label) %>% 
+  summarise(Count = n())
+
+# Counting cycling episodes 
+act_bike <- gss_episodes_renamed %>% 
+  filter(YEAR > 1986 & MODE == 'Cycling') %>%
+  group_by(PUMFID, YEAR, MODE, dest_label) %>% 
+  summarise(Count = n())
+
+# Joining walking and cycling episodes
+act_ep_counts <- rbind(act_bike, act_walk)
+
+# Bring the counts of activity episodes to the person's file
+main_act_eps <-  main_file %>%
+  mutate(MODE = list(c("Walking", "Cycling"))) %>%
+  unnest(MODE) %>%
+  left_join(act_ep_counts, by = c("PUMFID", "YEAR", "MODE","dest_label")) %>%
+  mutate(Count = replace_na(Count, 0))
 ```
 
 # Introduction
@@ -356,11 +458,206 @@ start -->
 gss_totals_table
 ```
 
+
+#here
+
+```{r active_pop_proportion_table, include = FALSE}
+# Active episodes
+active_pop_proportion <- main_act_eps %>% 
+  group_by(PUMFID, WGHT_PER, YEAR) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR) %>%
+  summarise(active = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_active = round(sum(WGHT_PER[Count < 1], na.rm = TRUE)),
+            total = round(sum(WGHT_PER, na.rm = TRUE)), 
+            active_p = round((active / total) * 100,2),
+            non_active_p = 100 - active_p) %>%
+  dplyr::select(YEAR, active, active_p, non_active, non_active_p, total)
+
+# walking episodes
+walk_pop_proportion <- main_act_eps %>% 
+  filter(MODE == 'Walking') %>% 
+  group_by(PUMFID, WGHT_PER, YEAR) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR) %>%
+  summarise(walk = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_walk = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
+  left_join(active_pop_proportion[,c('YEAR','total')], by = 'YEAR') %>% 
+  mutate(walk_p = round((walk/total) * 100,2),
+         non_walk_p = 100 - walk_p) %>%
+  dplyr::select(YEAR, walk, walk_p, non_walk, non_walk_p)
+
+# Cycling episodes
+cycle_pop_proportion <- main_act_eps %>% 
+  filter(MODE == 'Cycling') %>% 
+  group_by(PUMFID, WGHT_PER, YEAR) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR) %>%
+  summarise(cycle = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_cycle = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
+  left_join(active_pop_proportion[,c('YEAR','total')], by = 'YEAR') %>% 
+  mutate(cycle_p = round((cycle/total) * 100,2),
+         non_cycle_p = 100 - cycle_p) %>%
+  dplyr::select(YEAR, cycle, cycle_p, non_cycle, non_cycle_p)
+
+# Joining tables
+active_pop_proportion <- active_pop_proportion %>%
+  left_join(walk_pop_proportion, by = 'YEAR') %>%
+  left_join(cycle_pop_proportion, by = 'YEAR') %>%
+  dplyr::select(YEAR, walk, walk_p, non_walk, non_walk_p,
+                cycle, cycle_p, non_cycle, non_cycle_p,
+                active, active_p, non_active, non_active_p, total)
+
+
+active_pop_proportion_table <- active_pop_proportion  %>%
+  kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
+        caption = "\\label{tab:active_pop_proportion_table}Count and share of population with at least one active travel episode by year",  
+        col.names = c("Year","Active","(%)","Non-active","(%)",
+                      "Active","(%)","Non-active","(%)",
+                      "Active","(%)","Non-active","(%)","Population")) %>% 
+  kable_styling(full_width = FALSE, font_size = 6) %>%
+  add_header_above(c(" " = 1, "Walking" = 4, "Cycling" = 4,
+                     "Total" = 4))
+```
+
+
+```{r table-active_pop_proportion_table, echo=FALSE, cache=FALSE}
+active_pop_proportion_table
+```
+
+```{r figure-people_per_ep_cycling, include = FALSE}
+# summarizing episodes by mode, year and destination
+main_act_eps_summary <- main_act_eps %>%
+   group_by(Count, MODE, YEAR, dest_label) %>%
+   summarise(WGHT_PER_SUM = sum(WGHT_PER, na.rm = TRUE), .groups = "drop")
+
+# Order of destinations 
+destination_order <- c("Home", "Work or school", "Other's home", "Grocery store", 
+                       "Restaurant", "Health clinic", "Outdoors", "Neighbourhood",
+                       "Cultural venues", "Place of worship", 
+                       "Sport area", "Business")
+
+#my_colors <- kelly(length(destination_order))
+my_colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f",
+"#ff7f00", "#cab2d6","#6a3d9a","#ffff99","#b15928")
+
+names(my_colors) <- destination_order
+
+# Pop cycling figure
+people_per_ep_cycling <- main_act_eps_summary %>% 
+   filter(Count > 0 & MODE == 'Cycling') %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>% 
+   ggplot(aes(x = Count, y = WGHT_PER_SUM, fill = dest_label)) +
+   geom_bar(stat = "identity") +
+   theme_minimal() + 
+  scale_fill_manual(values = my_colors) +
+  facet_wrap(~ as.factor(YEAR))  + 
+  labs(
+    x = "Number of cycling episodes",
+    y = "Total population",
+    fill = "Destination") + 
+  theme(
+    strip.text = element_text(face = "bold", hjust = 0))  +
+  scale_y_continuous(labels = scales::comma)
+
+
+# Saving figure
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_cycling.jpg"), 
+       plot = people_per_ep_cycling,
+       width = 12, 
+       height = 8, 
+       units = "in", 
+       dpi = 300)
+```
+
+```{r cycling-population-by-year-destination-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of people with at least one cycling episodes, by destination and year."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_cycling.jpg"))
+```
+
+
+
+```{r figure-people_per_ep_walking, include = FALSE}
+# Walking pop figure
+people_per_ep_walking <- main_act_eps_summary %>% 
+   filter(Count > 0 & MODE == 'Walking') %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>% 
+   ggplot(aes(x = Count, y = WGHT_PER_SUM, fill = dest_label)) +
+   geom_bar(stat = "identity") +
+   theme_minimal() + 
+  scale_fill_manual(values = my_colors) +
+  facet_wrap(~ as.factor(YEAR))  +
+  labs(
+    x = "Number of walking episodes",
+    y = "Total population",
+    fill = "Destination") + 
+  theme(
+    strip.text = element_text(face = "bold", hjust = 0)) +
+  scale_x_continuous(breaks = c(1, 2, 3, 4,5,6,7,8,9,10)) +
+  scale_y_continuous(labels = scales::comma)
+
+# Saving figure
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_walking.jpg"), 
+       plot = people_per_ep_walking,
+       width = 12, 
+       height = 8, 
+       units = "in", 
+       dpi = 300)
+```
+
+```{r walking-population-by-year-destination-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of people with at least one walking episodes, by destination and year."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_walking.jpg"))
+```
+
+```{r eps-per-person, include = FALSE}
+ep_per_person <- main_act_eps %>%
+  group_by(YEAR, MODE) %>%
+  summarise(
+    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
+
+ep_per_active_person <- main_act_eps %>%
+  filter(Count > 0) %>% 
+  group_by(YEAR, MODE) %>%
+  summarise(
+    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
+
+combined_data <- bind_rows(
+  ep_per_person %>% mutate(type = "Total"),
+  ep_per_active_person %>% mutate(type = "Active"))
+
+# Episodes per person Figure
+eps_per_person_fig <- ggplot(combined_data, aes(x = YEAR, y = ep_per_person, color = MODE, linetype = type)) +
+  geom_line(size = 1) +
+  geom_point()+
+  geom_label(aes(label = round(ep_per_person, 2)), size = 3, vjust = 0) +
+  theme_minimal() +
+  labs(
+    x = "Year",
+    y = "Episodes",
+    color = "Mode",
+    linetype = "Population"
+  )
+
+# Saving figure
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person.jpg"),
+       plot = eps_per_person_fig,
+       width = 18, 
+       height = 10, 
+       units = "cm", 
+       dpi = 300)
+```
+
+
+```{r eps-per-person-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of active episodes by person."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person.jpg"))
+```
+
 Tables \ref{tab:table-02} presents statistic on travel time by active transportation mode. The maximum time spent on walking trips varied between 90 and 100 minutes across the years. It is important to remember that trips with duration greater than 100 minutes were excluded from the analysis. The mean walking time also varies, starting at 20 minutes in 1992, dropping to 12 minutes between 1992 to 2005, and increasing again to 13 minutes in 2010 and to 16 minutes in 2015. However, it is known that the mean is a statistic that is highly influenced by extreme values. For this reason, we analyze the median travel time, as it is more representative of the typical travel time. The median time spent walking was 10 minutes in 1992, dropped to 5 minutes in 1998, and remained constant at 10 minutes from 2005 to 2015. The weighted median estimates for walking trips indicates that there is no difference in the typical walking travel time when compared the most recent survey analyzed (2015) with the oldest survey analyzed (1998). 
 
 
 ```{r table-02, echo=FALSE, cache=FALSE}
-
 # Calculate min, mean, and max statistic (duration)
 stats_data <- gss_impedances_renamed %>%
   group_by(YEAR, MODE) %>%
@@ -415,18 +712,6 @@ For cycling trips, the maximum travel time varies from 90 to 100 minutes, simila
 Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each destination by year and by mode of transport. For all the years analyzed, 'Home' is the most common travel destination, regardless of whether the mode of transport considered is walking or cycling, with levels above 40%. After that, 'Work or school' appears as the second most common destination, especially for journeys by bicycle, with a peak of almost 36% of trips by bicycle in 1998, a high drop to 23% in 2005, rising again to levels close to 35% in 2015. Along with the two destinations already mentioned, 'Other's home' is the only other destination present in the GSS surveys since 1992. This last destination seems to be a destination with a higher share when it comes to walking trips, but for both modes of transportation it seems that respondents are going less and less to other people's homes - a fact that can be explained by new communication technologies, in which a person doesn't need to visit another person's home to keep in touch with them.
 
 ```{r destinations-percentual, echo=FALSE, cache=FALSE, include=FALSE}
-# Define the order of destinations 
-destination_order <- c("Home", "Work or school", "Other's home", "Grocery store", 
-                       "Restaurant", "Health clinic", "Outdoors", "Neighbourhood",
-                       "Cultural venues", "Place of worship", 
-                       "Sport area", "Business")
-
-#my_colors <- kelly(length(destination_order))
-my_colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f",
-"#ff7f00", "#cab2d6","#6a3d9a","#ffff99","#b15928")
-
-names(my_colors) <- destination_order
-
 destination_percentual <- gss_impedances_renamed %>%
   group_by(MODE, dest_label, YEAR) %>%
   dplyr::summarise(n = sum(WGHT_EPI), .groups = "drop") %>%

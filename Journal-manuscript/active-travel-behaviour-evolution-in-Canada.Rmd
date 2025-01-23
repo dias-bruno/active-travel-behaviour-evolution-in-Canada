@@ -358,6 +358,10 @@ Additionally, it was necessary to guarantee the data consistency across the surv
 
 Statistical analysis was used to characterize active travel episodes using cross-tabulations and graphs. Summary statistics and visualization techniques, including median values as a measure of typical value and boxplots, were employed to describe active travel across years, destinations, and transportation modes. To assess the statistical significance of potential temporal differences in the empirical episode data set for each destination, we applied the Kruskal-Wallis test. This test was chosen because it does not assume a normal distribution for the data, an important consideration since we made no assumptions about the distribution of the empirical data. The identification of impedance functions serves as the step that captures the distributional characteristics of the empirical values. The Kruskal-Wallis test evaluates differences in the medians of the empirical data.
 
+## Analyzing the population with active travel records
+
+After assessing the active travel episodes, we analyzed the population with records of active travel for each year of the analysis. First, we identified the population with and without at least one active travel episode, considering both modes (walking and cycling). After that, for the active population, we examined how active episodes were distributed across the available destinations for each survey year. Finalizing the population analysis, we measured the number of active trips per person for each year, considering both the active and general population.  
+
 ## Estimating impedance function parameters
 
 ```{r echo=FALSE, cache=FALSE, include=FALSE}
@@ -380,7 +384,9 @@ It was also possible to know that trips with a duration higher than 100 minutes 
 
 # Results and discusion
 
-## Descriptive analysis of walking and cycling trips from 1992 to 2015
+## Descriptive analysis
+
+### Walking and cycling episodes
 
 ```{r bulding table-01, echo=FALSE, cache=FALSE, include=FALSE}
 max_duration <- 100
@@ -458,202 +464,6 @@ start -->
 gss_totals_table
 ```
 
-
-#here
-
-```{r active_pop_proportion_table, include = FALSE}
-# Active episodes
-active_pop_proportion <- main_act_eps %>% 
-  group_by(PUMFID, WGHT_PER, YEAR) %>%
-  summarise(Count = sum(Count)) %>% 
-  group_by(YEAR) %>%
-  summarise(active = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
-            non_active = round(sum(WGHT_PER[Count < 1], na.rm = TRUE)),
-            total = round(sum(WGHT_PER, na.rm = TRUE)), 
-            active_p = round((active / total) * 100,2),
-            non_active_p = 100 - active_p) %>%
-  dplyr::select(YEAR, active, active_p, non_active, non_active_p, total)
-
-# walking episodes
-walk_pop_proportion <- main_act_eps %>% 
-  filter(MODE == 'Walking') %>% 
-  group_by(PUMFID, WGHT_PER, YEAR) %>%
-  summarise(Count = sum(Count)) %>% 
-  group_by(YEAR) %>%
-  summarise(walk = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
-            non_walk = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
-  left_join(active_pop_proportion[,c('YEAR','total')], by = 'YEAR') %>% 
-  mutate(walk_p = round((walk/total) * 100,2),
-         non_walk_p = 100 - walk_p) %>%
-  dplyr::select(YEAR, walk, walk_p, non_walk, non_walk_p)
-
-# Cycling episodes
-cycle_pop_proportion <- main_act_eps %>% 
-  filter(MODE == 'Cycling') %>% 
-  group_by(PUMFID, WGHT_PER, YEAR) %>%
-  summarise(Count = sum(Count)) %>% 
-  group_by(YEAR) %>%
-  summarise(cycle = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
-            non_cycle = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
-  left_join(active_pop_proportion[,c('YEAR','total')], by = 'YEAR') %>% 
-  mutate(cycle_p = round((cycle/total) * 100,2),
-         non_cycle_p = 100 - cycle_p) %>%
-  dplyr::select(YEAR, cycle, cycle_p, non_cycle, non_cycle_p)
-
-# Joining tables
-active_pop_proportion <- active_pop_proportion %>%
-  left_join(walk_pop_proportion, by = 'YEAR') %>%
-  left_join(cycle_pop_proportion, by = 'YEAR') %>%
-  dplyr::select(YEAR, walk, walk_p, non_walk, non_walk_p,
-                cycle, cycle_p, non_cycle, non_cycle_p,
-                active, active_p, non_active, non_active_p, total)
-
-
-active_pop_proportion_table <- active_pop_proportion  %>%
-  kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
-        caption = "\\label{tab:active_pop_proportion_table}Count and share of population with at least one active travel episode by year",  
-        col.names = c("Year","Active","(%)","Non-active","(%)",
-                      "Active","(%)","Non-active","(%)",
-                      "Active","(%)","Non-active","(%)","Population")) %>% 
-  kable_styling(full_width = FALSE, font_size = 6) %>%
-  add_header_above(c(" " = 1, "Walking" = 4, "Cycling" = 4,
-                     "Total" = 4))
-```
-
-
-```{r table-active_pop_proportion_table, echo=FALSE, cache=FALSE}
-active_pop_proportion_table
-```
-
-```{r figure-people_per_ep_cycling, include = FALSE}
-# summarizing episodes by mode, year and destination
-main_act_eps_summary <- main_act_eps %>%
-   group_by(Count, MODE, YEAR, dest_label) %>%
-   summarise(WGHT_PER_SUM = sum(WGHT_PER, na.rm = TRUE), .groups = "drop")
-
-# Order of destinations 
-destination_order <- c("Home", "Work or school", "Other's home", "Grocery store", 
-                       "Restaurant", "Health clinic", "Outdoors", "Neighbourhood",
-                       "Cultural venues", "Place of worship", 
-                       "Sport area", "Business")
-
-#my_colors <- kelly(length(destination_order))
-my_colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f",
-"#ff7f00", "#cab2d6","#6a3d9a","#ffff99","#b15928")
-
-names(my_colors) <- destination_order
-
-# Pop cycling figure
-people_per_ep_cycling <- main_act_eps_summary %>% 
-   filter(Count > 0 & MODE == 'Cycling') %>%
-  mutate(dest_label = factor(dest_label, levels = destination_order)) %>% 
-   ggplot(aes(x = Count, y = WGHT_PER_SUM, fill = dest_label)) +
-   geom_bar(stat = "identity") +
-   theme_minimal() + 
-  scale_fill_manual(values = my_colors) +
-  facet_wrap(~ as.factor(YEAR))  + 
-  labs(
-    x = "Number of cycling episodes",
-    y = "Total population",
-    fill = "Destination") + 
-  theme(
-    strip.text = element_text(face = "bold", hjust = 0))  +
-  scale_y_continuous(labels = scales::comma)
-
-
-# Saving figure
-ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_cycling.jpg"), 
-       plot = people_per_ep_cycling,
-       width = 12, 
-       height = 8, 
-       units = "in", 
-       dpi = 300)
-```
-
-```{r cycling-population-by-year-destination-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of people with at least one cycling episodes, by destination and year."), fig.align="center"}
-
-knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_cycling.jpg"))
-```
-
-
-
-```{r figure-people_per_ep_walking, include = FALSE}
-# Walking pop figure
-people_per_ep_walking <- main_act_eps_summary %>% 
-   filter(Count > 0 & MODE == 'Walking') %>%
-  mutate(dest_label = factor(dest_label, levels = destination_order)) %>% 
-   ggplot(aes(x = Count, y = WGHT_PER_SUM, fill = dest_label)) +
-   geom_bar(stat = "identity") +
-   theme_minimal() + 
-  scale_fill_manual(values = my_colors) +
-  facet_wrap(~ as.factor(YEAR))  +
-  labs(
-    x = "Number of walking episodes",
-    y = "Total population",
-    fill = "Destination") + 
-  theme(
-    strip.text = element_text(face = "bold", hjust = 0)) +
-  scale_x_continuous(breaks = c(1, 2, 3, 4,5,6,7,8,9,10)) +
-  scale_y_continuous(labels = scales::comma)
-
-# Saving figure
-ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_walking.jpg"), 
-       plot = people_per_ep_walking,
-       width = 12, 
-       height = 8, 
-       units = "in", 
-       dpi = 300)
-```
-
-```{r walking-population-by-year-destination-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of people with at least one walking episodes, by destination and year."), fig.align="center"}
-
-knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_walking.jpg"))
-```
-
-```{r eps-per-person, include = FALSE}
-ep_per_person <- main_act_eps %>%
-  group_by(YEAR, MODE) %>%
-  summarise(
-    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
-
-ep_per_active_person <- main_act_eps %>%
-  filter(Count > 0) %>% 
-  group_by(YEAR, MODE) %>%
-  summarise(
-    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
-
-combined_data <- bind_rows(
-  ep_per_person %>% mutate(type = "Total"),
-  ep_per_active_person %>% mutate(type = "Active"))
-
-# Episodes per person Figure
-eps_per_person_fig <- ggplot(combined_data, aes(x = YEAR, y = ep_per_person, color = MODE, linetype = type)) +
-  geom_line(size = 1) +
-  geom_point()+
-  geom_label(aes(label = round(ep_per_person, 2)), size = 3, vjust = 0) +
-  theme_minimal() +
-  labs(
-    x = "Year",
-    y = "Episodes",
-    color = "Mode",
-    linetype = "Population"
-  )
-
-# Saving figure
-ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person.jpg"),
-       plot = eps_per_person_fig,
-       width = 18, 
-       height = 10, 
-       units = "cm", 
-       dpi = 300)
-```
-
-
-```{r eps-per-person-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of active episodes by person."), fig.align="center"}
-
-knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person.jpg"))
-```
-
 Tables \ref{tab:table-02} presents statistic on travel time by active transportation mode. The maximum time spent on walking trips varied between 90 and 100 minutes across the years. It is important to remember that trips with duration greater than 100 minutes were excluded from the analysis. The mean walking time also varies, starting at 20 minutes in 1992, dropping to 12 minutes between 1992 to 2005, and increasing again to 13 minutes in 2010 and to 16 minutes in 2015. However, it is known that the mean is a statistic that is highly influenced by extreme values. For this reason, we analyze the median travel time, as it is more representative of the typical travel time. The median time spent walking was 10 minutes in 1992, dropped to 5 minutes in 1998, and remained constant at 10 minutes from 2005 to 2015. The weighted median estimates for walking trips indicates that there is no difference in the typical walking travel time when compared the most recent survey analyzed (2015) with the oldest survey analyzed (1998). 
 
 
@@ -712,7 +522,26 @@ For cycling trips, the maximum travel time varies from 90 to 100 minutes, simila
 Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each destination by year and by mode of transport. For all the years analyzed, 'Home' is the most common travel destination, regardless of whether the mode of transport considered is walking or cycling, with levels above 40%. After that, 'Work or school' appears as the second most common destination, especially for journeys by bicycle, with a peak of almost 36% of trips by bicycle in 1998, a high drop to 23% in 2005, rising again to levels close to 35% in 2015. Along with the two destinations already mentioned, 'Other's home' is the only other destination present in the GSS surveys since 1992. This last destination seems to be a destination with a higher share when it comes to walking trips, but for both modes of transportation it seems that respondents are going less and less to other people's homes - a fact that can be explained by new communication technologies, in which a person doesn't need to visit another person's home to keep in touch with them.
 
 ```{r destinations-percentual, echo=FALSE, cache=FALSE, include=FALSE}
+# summarizing episodes by mode, year and destination
+main_act_eps_summary <- main_act_eps %>%
+   group_by(Count, MODE, YEAR, dest_label) %>%
+   summarise(WGHT_PER_SUM = sum(WGHT_PER, na.rm = TRUE), .groups = "drop")
+
+# Order of destinations 
+destination_order <- c("Home", "Work or school", "Other's home", "Grocery store", 
+                       "Restaurant", "Health clinic", "Outdoors", "Neighbourhood",
+                       "Cultural venues", "Place of worship", 
+                       "Sport area", "Business")
+
+#my_colors <- kelly(length(destination_order))
+my_colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f",
+"#ff7f00", "#cab2d6","#6a3d9a","#ffff99","#b15928")
+
+names(my_colors) <- destination_order
+
+
 destination_percentual <- gss_impedances_renamed %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>%
   group_by(MODE, dest_label, YEAR) %>%
   dplyr::summarise(n = sum(WGHT_EPI), .groups = "drop") %>%
   group_by(MODE, YEAR) %>%
@@ -1131,6 +960,224 @@ table_stats <- result_pw %>%
 table_stats
 ```
 
+### Population with records of active trip
+
+```{r active_pop_proportion_table, include = FALSE}
+# Active episodes
+active_pop_proportion <- main_act_eps %>% 
+  group_by(PUMFID, WGHT_PER, YEAR) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR) %>%
+  summarise(active = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_active = round(sum(WGHT_PER[Count < 1], na.rm = TRUE)),
+            total = round(sum(WGHT_PER, na.rm = TRUE)), 
+            active_p = round((active / total) * 100,2),
+            non_active_p = 100 - active_p) %>%
+  dplyr::select(YEAR, active, active_p, non_active, non_active_p, total)
+
+# walking episodes
+walk_pop_proportion <- main_act_eps %>% 
+  filter(MODE == 'Walking') %>% 
+  group_by(PUMFID, WGHT_PER, YEAR) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR) %>%
+  summarise(walk = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_walk = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
+  left_join(active_pop_proportion[,c('YEAR','total')], by = 'YEAR') %>% 
+  mutate(walk_p = round((walk/total) * 100,2),
+         non_walk_p = 100 - walk_p) %>%
+  dplyr::select(YEAR, walk, walk_p, non_walk, non_walk_p)
+
+# Cycling episodes
+cycle_pop_proportion <- main_act_eps %>% 
+  filter(MODE == 'Cycling') %>% 
+  group_by(PUMFID, WGHT_PER, YEAR) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR) %>%
+  summarise(cycle = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_cycle = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
+  left_join(active_pop_proportion[,c('YEAR','total')], by = 'YEAR') %>% 
+  mutate(cycle_p = round((cycle/total) * 100,2),
+         non_cycle_p = 100 - cycle_p) %>%
+  dplyr::select(YEAR, cycle, cycle_p, non_cycle, non_cycle_p)
+
+# Joining tables
+active_pop_proportion <- active_pop_proportion %>%
+  left_join(walk_pop_proportion, by = 'YEAR') %>%
+  left_join(cycle_pop_proportion, by = 'YEAR') %>%
+  dplyr::select(YEAR, walk, walk_p, non_walk, non_walk_p,
+                cycle, cycle_p, non_cycle, non_cycle_p,
+                active, active_p, non_active, non_active_p, total)
+
+
+active_pop_proportion_table <- active_pop_proportion  %>%
+  kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
+        caption = "\\label{tab:active-pop-proportion-table}Count and share of population with at least one active travel episode by year",  
+        col.names = c("Year","Active","(%)","Non-active","(%)",
+                      "Active","(%)","Non-active","(%)",
+                      "Active","(%)","Non-active","(%)","Population")) %>% 
+  kable_styling(full_width = FALSE, font_size = 6) %>%
+  add_header_above(c(" " = 1, "Walking" = 4, "Cycling" = 4,
+                     "Total" = 4))
+```
+
+In general, the share of the population with active trip records varied between 7.8% and 14.5% from 1992 to 2015 (Table \ref{tab:active-pop-proportion-table}). The year 1998 recorded the lowest level of active trip participation, with 7.8% (1,892,299 people), while 2010 marked the peak of active participation at 14.5% (4,084,114 people). In 2015, the trend of increasing participation in walking or cycling trips, which began after the 1998 low and peaked in 2010, appeared to pause. In that year, the most recent in the analysis, around 11% of the population (3,265,846 people) recorded at least one active trip. 
+
+The number of people with active trip episodes is mainly influenced by walking episodes. Over 90% of the recorded active trips involve individuals with walking episodes. However, the percentage patterns for the population with records of walking and cycling trips do not differ significantly from those observed when both modes are considered together.
+
+```{r table-active_pop_proportion_table, echo=FALSE, cache=FALSE}
+active_pop_proportion_table
+```
+
+Considering only the population with records of walking episodes, Figure \ref{fig:walking-population-by-year-destination-fig} shows that, in all the years analyzed, "Home" and "Work or study" were the main destinations (as previously discussed in the previous subsection). Those who recorded only one trip accounted for approximately 84% of the population, around 13% recorded more than one walking trip, and the remaining 2 to 3% recorded three or more trips. The maximum number of walking trips registered by a person was 10 episodes (in 1992, 2005, and 2010). In contrast, 2015 shows a reduction compared to previous years, with a maximum of 8 walking trips recorded by a single person. In all these maximum cases, the destination was "Home."
+
+```{r figure-people_per_ep_walking, include = FALSE}
+# Walking pop figure
+people_per_ep_walking <- main_act_eps_summary %>% 
+  filter(Count > 0 & MODE == 'Walking') %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>% 
+  ggplot(aes(x = Count, y = WGHT_PER_SUM, fill = dest_label)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() + 
+  scale_fill_manual(values = my_colors) +
+  facet_wrap(~ as.factor(YEAR))  +
+  labs(
+    x = "Number of walking episodes",
+    y = "Total population",
+    fill = "Destination") + 
+  theme(
+    strip.text = element_text(face = "bold", hjust = 0)) +
+  scale_x_continuous(breaks = c(1, 2, 3, 4,5,6,7,8,9,10)) +
+  scale_y_continuous(labels = scales::comma)
+
+# Saving figure
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_walking.jpg"), 
+       plot = people_per_ep_walking,
+       width = 12, 
+       height = 8, 
+       units = "in", 
+       dpi = 300)
+```
+
+```{r walking-population-by-year-destination-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of people with at least one walking episodes, by destination and year."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_walking.jpg"))
+```
+
+```{r include=FALSE}
+pop_eps_percentages <- main_act_eps_summary %>% 
+  filter(Count > 0) %>%
+  group_by(Count, YEAR, MODE) %>% 
+  summarise(sum_count = sum(WGHT_PER_SUM, na.rm = TRUE)) %>% 
+  group_by(YEAR, MODE) %>% 
+  summarise(ep1 = sum(sum_count[Count = 1], na.rm = TRUE),
+            ep2 = sum(sum_count[Count = 2], na.rm = TRUE),
+            mep3 = sum(sum_count[Count >= 3], na.rm = TRUE),
+            total = sum(sum_count, na.rm = TRUE),
+            ep1_perc = round(ep1/total * 100, 2),
+            ep2_perc = round(ep2/total * 100, 2),
+            mep3_perc = round(mep3/total * 100, 2))
+```
+
+For the cycling population, the maximum number of trips recorded was 4, in 2005 (to "Home" and "Grocery store," as shown in Figure \ref{fig:cycling-population-by-year-destination-fig}). This maximum value is lower compared to the walking population, and there is a higher concentration of cyclists recording only one episode (around 90%), two episodes (around 8%), and the remaining 2–3% recording three or four trips.
+
+```{r figure-people_per_ep_cycling, include = FALSE}
+# Pop cycling figure
+people_per_ep_cycling <- main_act_eps_summary %>% 
+   filter(Count > 0 & MODE == 'Cycling') %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>% 
+   ggplot(aes(x = Count, y = WGHT_PER_SUM, fill = dest_label)) +
+   geom_bar(stat = "identity") +
+   theme_minimal() + 
+  scale_fill_manual(values = my_colors) +
+  facet_wrap(~ as.factor(YEAR))  + 
+  labs(
+    x = "Number of cycling episodes",
+    y = "Total population",
+    fill = "Destination") + 
+  theme(
+    strip.text = element_text(face = "bold", hjust = 0))  +
+  scale_y_continuous(labels = scales::comma)
+
+
+# Saving figure
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_cycling.jpg"), 
+       plot = people_per_ep_cycling,
+       width = 12, 
+       height = 8, 
+       units = "in", 
+       dpi = 300)
+```
+
+```{r cycling-population-by-year-destination-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of people with at least one cycling episodes, by destination and year."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_cycling.jpg"))
+```
+
+Analyzing the number of episodes per person for the general population, the value is close to 0, ranging from a minimum of 0.009 in 2015 to a maximum of 0.026 in 1992. Considering only the population with active episodes recorded, this value is approximately 1.180 active episodes per person, varying from a maximum of 1.203 episodes in 2005 to a minimum of 1.152 episodes per person in 2015. Figure \ref{fig:eps-per-person-fig} presents these values broken down by mode, walking and cycling.
+
+Since walking episodes form the majority of active trip episodes, the pattern for the walking population is similar to the general trend. For the cycling population, only the low value observed in 1992 for the active population appears different from the overall pattern. However, the number of cyclists in 1992 was not sufficient to alter the overall trend for the active population. These statistics reveal a trend of decreasing active trips (whether walking or cycling) when comparing data from 1992 to 2005, with a particularly noticeable decline after 1992 for walking and 2005 for cycling. 
+
+```{r eps-per-person, include = FALSE}
+ep_per_person <- main_act_eps %>%
+  group_by(YEAR, MODE) %>%
+  summarise(
+    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
+
+ep_per_active_person <- main_act_eps %>%
+  filter(Count > 0) %>% 
+  group_by(YEAR, MODE) %>%
+  summarise(
+    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
+
+combined_data <- bind_rows(
+  ep_per_person %>% mutate(type = "Total"),
+  ep_per_active_person %>% mutate(type = "Active"))
+
+# Episodes per person Figure
+eps_per_person_fig <- ggplot(combined_data, aes(x = YEAR, y = ep_per_person, color = MODE, linetype = type)) +
+  geom_line(size = 1) +
+  geom_point()+
+  geom_label(aes(label = round(ep_per_person, 2)), size = 3, vjust = 0) +
+  theme_minimal() +
+  labs(
+    x = "Year",
+    y = "Episodes",
+    color = "Mode",
+    linetype = "Population"
+  )
+
+# Saving figure
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person.jpg"),
+       plot = eps_per_person_fig,
+       width = 18, 
+       height = 10, 
+       units = "cm", 
+       dpi = 300)
+```
+
+```{r eps-per-person-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of active episodes by person."), fig.align="center"}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person.jpg"))
+```
+
+```{r include = FALSE}
+ep_per_person2 <- main_act_eps %>%
+  group_by(YEAR) %>%
+  summarise(
+    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
+
+ep_per_active_person2 <- main_act_eps %>%
+  filter(Count > 0) %>% 
+  group_by(YEAR) %>%
+  summarise(
+    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
+
+combined_data2 <- bind_rows(
+  ep_per_person2 %>% mutate(type = "Total"),
+  ep_per_active_person2 %>% mutate(type = "Active"))
+```
+
 ## Calibrated impedance function
 
 This section presents the identified impedance functions for walking and cycling trips to various destinations across Canadian Metropolitan and Census Agglomeration Areas from 1992 to 2015. In general, the impedance functions aim to capture transportation behavior, illustrating that the likelihood of traveling between two points decreases as travel duration increases. Each impedance function follows one of the mathematical equations previously mentioned, enabling the plotting of PDF curves. These curves also highlight critical points at which a person's tendency to walk or cycle significantly decreases.
@@ -1480,6 +1527,8 @@ Although the study does not explain the reasons for fluctuations in travel times
 For walking trips, travel times to ‘Restaurants’ and ‘Outdoors’ rose from 5 minutes in 2005 to 10 minutes in 2015, while travel to ‘Places of worship’ increased from 10 minutes in 2005 to 20 minutes in 2015, marking the highest typical travel time for walking trips. The walking travel time for 'Home' and 'Work or school' remained constant at 10 minutes since at least the three last GSS cycles. For cycling trips, the year of 2015 displayed a trend of increasing travel times for almost all destinations. This trend is perceptible and statistically significant for ‘Grocery store’ (rising from 10 to 15 minutes between 2005 and 2015), ‘Outdoors’ (from 15 to 30 minutes during the same period), and 'Restaurant' (from 15 minutes in 2005 to 20 minutes in 2015). ‘Home’ returned to 20 minutes in 2015 after a drop to 10 minutes in 2010. 
 
 For both transportation modes, the destination ‘Other’s home’ showed a decline in the share of trips, reflecting changes in travel behavior since the technological advances enabled people to maintain contact with friends and relatives without visiting in person. For walking trips, findings indicate that ‘Home’ remains the main hub, whether as an origin or destination. For cycling trips, the combination of ‘Home’ and ‘Work or school’ accounted for the largest share of trips.
+
+The population share with at least one active trip record ranged from 7.8% in 1998 (the lowest, 1,892,299 people) to 14.5% in 2010 (the peak, 4,084,114 people). In the most recent GSS survey, from 2015, participation decreased to 11% (3,265,846 people). Walking trips dominate active trips. Approximately 84% of the walking population and 90% of the cycling population recorded only one trip. The maximum number of trips recorded by a person was 10 (in 1992, 2005, and 2010) for the walking population and 4 (in 2005) for the cycling population. The number of active trips per person in the general population was close to 0. Among the active population, this value averaged 1.180 trips per person. A decreasing trend in the number of active episodes per person was detected, whether analyzed in terms of walking or cycling episodes.
 
 The study highlights the need to apply specific impedance functions for different destinations when measuring the cost decay effect in accessibility analyses. Based on this, we fitted 64 impedance functions for active transportation over more than 30 years, considering different types of destinations and transportation modes. The results indicate that none of the parameterized functions were exponential, suggesting that the impedance functions commonly used in active accessibility studies may not accurately capture travel behavior, especially for very short trips (up to 3 minutes), by giving to shorter trips higher probability of being made. Destinations with a high number of episodes were primarily fitted with gamma functions, followed by lognormal functions, while destinations with fewer episodes (fewer than six) were fitted with a uniform distribution.
 

@@ -58,29 +58,35 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 
 
 % Pandoc citation processing
+%From Pandoc 3.1.8
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
 \newlength{\cslhangindent}
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
-\newlength{\cslentryspacingunit} % times entry-spacing
-\setlength{\cslentryspacingunit}{\parskip}
-% for Pandoc 2.8 to 2.10.1
-\newenvironment{cslreferences}%
-  {}%
-  {\par}
-% For Pandoc 2.11+
-\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
- {% don't indent paragraphs
-  \setlength{\parindent}{0pt}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
   % turn on hanging indent if param 1 is 1
   \ifodd #1
-  \let\oldpar\par
-  \def\par{\hangindent=\cslhangindent\oldpar}
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
   \fi
   % set entry spacing
-  \setlength{\parskip}{#2\cslentryspacingunit}
- }%
- {}
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
 \usepackage{calc}
 \newcommand{\CSLBlock}[1]{#1\hfill\break}
 \newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
@@ -169,8 +175,7 @@ function \sep Active accessibility \sep Destination \sep Temporal \sep
   
  \end{frontmatter}
 
-\hypertarget{introduction}{%
-\section{Introduction}\label{introduction}}
+\section{Introduction}\label{introduction}
 
 The idea that travel behaviour can be influenced by city form has
 attracted growing interest in urban and transportation planning. Cities
@@ -323,8 +328,7 @@ Canadian residents. Lastly, this analysis seeks to contribute to the
 ongoing conversation on active transportation, highlighting its role in
 influencing transportation plans to a more sustainable alternative.
 
-\hypertarget{background}{%
-\section{Background}\label{background}}
+\section{Background}\label{background}
 
 Accessibility is the main benefit provided by the transportation system
 (Pereira, Schwanen, and Banister 2017), being understood as the
@@ -365,9 +369,8 @@ recent ``15-minute city'' concept proposes that the majority of daily
 necessities should be accessible by walking or cycling within 15 minutes
 (Moreno et al. 2021).
 
-\hypertarget{impedance-functions-in-accessibility-measures}{%
 \subsection{Impedance functions in accessibility
-measures}\label{impedance-functions-in-accessibility-measures}}
+measures}\label{impedance-functions-in-accessibility-measures}
 
 Since the research of Hansen (1959), different categories of
 accessibility measures have been developed, such as indicators based on
@@ -591,8 +594,7 @@ process. In our case, we will use the \texttt{ActiveCA} package (Dos
 Santos, Moghadasi, and Páez, n.d.) to obtain the impedance functions, as
 the package contains ready-to-use data from GSS cycles.
 
-\hypertarget{the-gss-survey}{%
-\subsection{The GSS survey}\label{the-gss-survey}}
+\subsection{The GSS survey}\label{the-gss-survey}
 
 The GSS provides a comprehensive cross-sectional snapshot of the
 Canadian population through telephone surveys established in 1985
@@ -618,8 +620,7 @@ of Canadians' daily lives. The questions within this cycle have been
 adapted and refined over the years to reflect the changing dynamics of
 daily life, ensuring that the data remains pertinent and contemporary.
 
-\hypertarget{materials-and-methods}{%
-\section{Materials and Methods}\label{materials-and-methods}}
+\section{Materials and Methods}\label{materials-and-methods}
 
 To investigate the historical active travel behavior in Canada, we
 analyzed five GSS Time Use cycles: Cycles 7 (1992), 12 (1998), 19
@@ -658,9 +659,8 @@ with the best practices of spatial data science (Arribas-Bel et al.
 active travel behaviour in Canada and provide a basis for future
 research and policy-making.
 
-\hypertarget{analyzing-active-travel-episodes}{%
 \subsection{Analyzing active travel
-episodes}\label{analyzing-active-travel-episodes}}
+episodes}\label{analyzing-active-travel-episodes}
 
 For each selected cycle of the GSS surveys, we reviewed the episode
 files to identify cases with activities listed as walking or cycling,
@@ -711,9 +711,20 @@ functions serves as the step that captures the distributional
 characteristics of the empirical values. The Kruskal-Wallis test
 evaluates differences in the medians of the empirical data.
 
-\hypertarget{estimating-impedance-function-parameters}{%
+\subsection{Analyzing the population with active travel
+records}\label{analyzing-the-population-with-active-travel-records}
+
+After assessing the active travel episodes, we analyzed the population
+with records of active travel for each year of the analysis. First, we
+identified the population with and without at least one active travel
+episode, considering both modes (walking and cycling). After that, for
+the active population, we examined how active episodes were distributed
+across the available destinations for each survey year. Finalizing the
+population analysis, we measured the number of active trips per person
+for each year, considering both the active and general population.
+
 \subsection{Estimating impedance function
-parameters}\label{estimating-impedance-function-parameters}}
+parameters}\label{estimating-impedance-function-parameters}
 
 We applied the \texttt{fitdistrplus} package (Delignette-Muller and
 Dutang 2015) to calculate the best PDF for every destination, mode of
@@ -736,13 +747,12 @@ travel behaviour of residents of CMA and CA areas tends to be very
 different from those outside these large urban centres in terms of
 active travel.
 
-\hypertarget{results-and-discusion}{%
-\section{Results and discusion}\label{results-and-discusion}}
+\section{Results and discusion}\label{results-and-discusion}
 
-\hypertarget{descriptive-analysis-of-walking-and-cycling-trips-from-1992-to-2015}{%
-\subsection{Descriptive analysis of walking and cycling trips from 1992
-to
-2015}\label{descriptive-analysis-of-walking-and-cycling-trips-from-1992-to-2015}}
+\subsection{Descriptive analysis}\label{descriptive-analysis}
+
+\subsubsection{Walking and cycling
+episodes}\label{walking-and-cycling-episodes}
 
 After applying the filters to the GSS surveys, we obtained a total of
 12,113 lines with active travel episodes. However, GSS surveys apply a
@@ -789,53 +799,6 @@ Total & 1767040.7 & 7.77 & 1773060.9 & 7.80 & 6152777.6 & 27.07 & 7116460.2 & 31
 \bottomrule
 \end{longtable}
 \endgroup{}
-
-\#here
-
-\begingroup\fontsize{6}{8}\selectfont
-
-\begin{longtable}[t]{rrrrrrrrrrrrrr}
-\caption{\label{tab:active_pop_proportion_table}\label{tab:active_pop_proportion_table}Count and share of population with at least one active travel episode by year}\\
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Walking} & \multicolumn{4}{c}{Cycling} & \multicolumn{4}{c}{Total} \\
-\cmidrule(l{3pt}r{3pt}){2-5} \cmidrule(l{3pt}r{3pt}){6-9} \cmidrule(l{3pt}r{3pt}){10-13}
-Year & Active & (\%) & Non-active & (\%) & Active & (\%) & Non-active & (\%) & Active & (\%) & Non-active & (\%) & Population\\
-\midrule
-1992 & 1906913 & 8.96 & 19387400 & 91.04 & 187615 & 0.88 & 21106698 & 99.12 & 2086672 & 9.80 & 19207641 & 90.20 & 21294313\\
-1998 & 1751388 & 7.22 & 22508749 & 92.78 & 155191 & 0.64 & 24104946 & 99.36 & 1892299 & 7.80 & 22367838 & 92.20 & 24260137\\
-2005 & 3360966 & 12.88 & 22734853 & 87.12 & 243303 & 0.93 & 25852516 & 99.07 & 3577772 & 13.71 & 22518047 & 86.29 & 26095819\\
-2010 & 3877823 & 13.81 & 24197788 & 86.19 & 284567 & 1.01 & 27791044 & 98.99 & 4084114 & 14.55 & 23991496 & 85.45 & 28075610\\
-2015 & 3068296 & 10.31 & 26698103 & 89.69 & 262317 & 0.88 & 29504081 & 99.12 & 3265846 & 10.97 & 26500553 & 89.03 & 29766399\\
-\bottomrule
-\end{longtable}
-\endgroup{}
-
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{figures/people_per_ep_cycling} 
-
-}
-
-\caption{Number of people with at least one cycling episodes, by destination and year.}\label{fig:cycling-population-by-year-destination-fig}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{figures/people_per_ep_walking} 
-
-}
-
-\caption{Number of people with at least one walking episodes, by destination and year.}\label{fig:walking-population-by-year-destination-fig}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{figures/episodes_per_person} 
-
-}
-
-\caption{Number of active episodes by person.}\label{fig:eps-per-person-fig}
-\end{figure}
 
 Tables \ref{tab:table-02} presents statistic on travel time by active
 transportation mode. The maximum time spent on walking trips varied
@@ -1151,9 +1114,112 @@ Mode & Destination & Year & 1992 & 1998 & 2005 & 2010\\
 \end{tabular}}
 \end{table}
 
-\hypertarget{calibrated-impedance-function}{%
+\subsubsection{Population with records of active
+trip}\label{population-with-records-of-active-trip}
+
+In general, the share of the population with active trip records varied
+between 7.8\% and 14.5\% from 1992 to 2015 (Table
+\ref{tab:active-pop-proportion-table}). The year 1998 recorded the
+lowest level of active trip participation, with 7.8\% (1,892,299
+people), while 2010 marked the peak of active participation at 14.5\%
+(4,084,114 people). In 2015, the trend of increasing participation in
+walking or cycling trips, which began after the 1998 low and peaked in
+2010, appeared to pause. In that year, the most recent in the analysis,
+around 11\% of the population (3,265,846 people) recorded at least one
+active trip.
+
+The number of people with active trip episodes is mainly influenced by
+walking episodes. Over 90\% of the recorded active trips involve
+individuals with walking episodes. However, the percentage patterns for
+the population with records of walking and cycling trips do not differ
+significantly from those observed when both modes are considered
+together.
+
+\begingroup\fontsize{6}{8}\selectfont
+
+\begin{longtable}[t]{rrrrrrrrrrrrrr}
+\caption{\label{tab:active_pop_proportion_table}\label{tab:active-pop-proportion-table}Count and share of population with at least one active travel episode by year}\\
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Walking} & \multicolumn{4}{c}{Cycling} & \multicolumn{4}{c}{Total} \\
+\cmidrule(l{3pt}r{3pt}){2-5} \cmidrule(l{3pt}r{3pt}){6-9} \cmidrule(l{3pt}r{3pt}){10-13}
+Year & Active & (\%) & Non-active & (\%) & Active & (\%) & Non-active & (\%) & Active & (\%) & Non-active & (\%) & Population\\
+\midrule
+1992 & 1906913 & 8.96 & 19387400 & 91.04 & 187615 & 0.88 & 21106698 & 99.12 & 2086672 & 9.80 & 19207641 & 90.20 & 21294313\\
+1998 & 1751388 & 7.22 & 22508749 & 92.78 & 155191 & 0.64 & 24104946 & 99.36 & 1892299 & 7.80 & 22367838 & 92.20 & 24260137\\
+2005 & 3360966 & 12.88 & 22734853 & 87.12 & 243303 & 0.93 & 25852516 & 99.07 & 3577772 & 13.71 & 22518047 & 86.29 & 26095819\\
+2010 & 3877823 & 13.81 & 24197788 & 86.19 & 284567 & 1.01 & 27791044 & 98.99 & 4084114 & 14.55 & 23991496 & 85.45 & 28075610\\
+2015 & 3068296 & 10.31 & 26698103 & 89.69 & 262317 & 0.88 & 29504081 & 99.12 & 3265846 & 10.97 & 26500553 & 89.03 & 29766399\\
+\bottomrule
+\end{longtable}
+\endgroup{}
+
+Considering only the population with records of walking episodes, Figure
+\ref{fig:walking-population-by-year-destination-fig} shows that, in all
+the years analyzed, ``Home'' and ``Work or study'' were the main
+destinations (as previously discussed in the previous subsection). Those
+who recorded only one trip accounted for approximately 84\% of the
+population, around 13\% recorded more than one walking trip, and the
+remaining 2 to 3\% recorded three or more trips. The maximum number of
+walking trips registered by a person was 10 episodes (in 1992, 2005, and
+2010). In contrast, 2015 shows a reduction compared to previous years,
+with a maximum of 8 walking trips recorded by a single person. In all
+these maximum cases, the destination was ``Home.''
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{figures/people_per_ep_walking} 
+
+}
+
+\caption{Number of people with at least one walking episodes, by destination and year.}\label{fig:walking-population-by-year-destination-fig}
+\end{figure}
+
+For the cycling population, the maximum number of trips recorded was 4,
+in 2005 (to ``Home'' and ``Grocery store,'' as shown in Figure
+\ref{fig:cycling-population-by-year-destination-fig}). This maximum
+value is lower compared to the walking population, and there is a higher
+concentration of cyclists recording only one episode (around 90\%), two
+episodes (around 8\%), and the remaining 2--3\% recording three or four
+trips.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{figures/people_per_ep_cycling} 
+
+}
+
+\caption{Number of people with at least one cycling episodes, by destination and year.}\label{fig:cycling-population-by-year-destination-fig}
+\end{figure}
+
+Analyzing the number of episodes per person for the general population,
+the value is close to 0, ranging from a minimum of 0.009 in 2015 to a
+maximum of 0.026 in 1992. Considering only the population with active
+episodes recorded, this value is approximately 1.180 active episodes per
+person, varying from a maximum of 1.203 episodes in 2005 to a minimum of
+1.152 episodes per person in 2015. Figure \ref{fig:eps-per-person-fig}
+presents these values broken down by mode, walking and cycling.
+
+Since walking episodes form the majority of active trip episodes, the
+pattern for the walking population is similar to the general trend. For
+the cycling population, only the low value observed in 1992 for the
+active population appears different from the overall pattern. However,
+the number of cyclists in 1992 was not sufficient to alter the overall
+trend for the active population. These statistics reveal a trend of
+decreasing active trips (whether walking or cycling) when comparing data
+from 1992 to 2005, with a particularly noticeable decline after 1992 for
+walking and 2005 for cycling.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{figures/episodes_per_person} 
+
+}
+
+\caption{Number of active episodes by person.}\label{fig:eps-per-person-fig}
+\end{figure}
+
 \subsection{Calibrated impedance
-function}\label{calibrated-impedance-function}}
+function}\label{calibrated-impedance-function}
 
 This section presents the identified impedance functions for walking and
 cycling trips to various destinations across Canadian Metropolitan and
@@ -1482,8 +1548,7 @@ and cycling modes of transport, respectively.
 \caption{Cycling functions grouped by year.}\label{fig:cycling-function-by-year-fig}
 \end{figure}
 
-\hypertarget{summary-and-conclusion}{%
-\section{Summary and conclusion}\label{summary-and-conclusion}}
+\section{Summary and conclusion}\label{summary-and-conclusion}
 
 The main objectives of this study were to provide an overview of active
 transportation in Canadian metropolitan cities, focusing on primary
@@ -1529,6 +1594,20 @@ findings indicate that `Home' remains the main hub, whether as an origin
 or destination. For cycling trips, the combination of `Home' and `Work
 or school' accounted for the largest share of trips.
 
+The population share with at least one active trip record ranged from
+7.8\% in 1998 (the lowest, 1,892,299 people) to 14.5\% in 2010 (the
+peak, 4,084,114 people). In the most recent GSS survey, from 2015,
+participation decreased to 11\% (3,265,846 people). Walking trips
+dominate active trips. Approximately 84\% of the walking population and
+90\% of the cycling population recorded only one trip. The maximum
+number of trips recorded by a person was 10 (in 1992, 2005, and 2010)
+for the walking population and 4 (in 2005) for the cycling population.
+The number of active trips per person in the general population was
+close to 0. Among the active population, this value averaged 1.180 trips
+per person. A decreasing trend in the number of active episodes per
+person was detected, whether analyzed in terms of walking or cycling
+episodes.
+
 The study highlights the need to apply specific impedance functions for
 different destinations when measuring the cost decay effect in
 accessibility analyses. Based on this, we fitted 64 impedance functions
@@ -1550,281 +1629,280 @@ contributes to the ongoing discussion on active transportation,
 emphasizing its importance in promoting sustainable transportation
 planning.
 
-\hypertarget{references}{%
-\section*{References}\label{references}}
+\section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
 
-\hypertarget{refs}{}
+\phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
-\leavevmode\vadjust pre{\hypertarget{ref-akaike1974}{}}%
+\bibitem[\citeproctext]{ref-akaike1974}
 Akaike, Hirotugu. 1974. {``A New Look at the Statistical Model
 Identification.''} \emph{IEEE Transactions on Automatic Control} 19 (6):
 716--23. \url{https://doi.org/10.1109/TAC.1974.1100705}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-apparicio2008comparing}{}}%
+\bibitem[\citeproctext]{ref-apparicio2008comparing}
 Apparicio, Philippe, Mohamed Abdelmajid, Mylene Riva, and Richard
 Shearmur. 2008. {``Comparing Alternative Approaches to Measuring the
 Geographical Accessibility of Urban Health Services: Distance Types and
 Aggregation-Error Issues.''} \emph{International Journal of Health
 Geographics} 7 (1): 1--14.
 
-\leavevmode\vadjust pre{\hypertarget{ref-arranz2019measuring}{}}%
+\bibitem[\citeproctext]{ref-arranz2019measuring}
 Arranz-Lopez, Aldo, Julio A Soria-Lara, Frank Witlox, and Antonio Paez.
 2019. {``Measuring Relative Non-Motorized Accessibility to Retail
 Activities.''} \emph{International Journal of Sustainable
 Transportation} 13 (9): 639--51.
 
-\leavevmode\vadjust pre{\hypertarget{ref-arribas-bel2021}{}}%
+\bibitem[\citeproctext]{ref-arribas-bel2021}
 Arribas-Bel, Dani, Mark Green, Francisco Rowe, and Alex Singleton. 2021.
 {``Open Data Products-A Framework for Creating Valuable Analysis Ready
 Data.''} \emph{Journal of Geographical Systems} 23 (4): 497--514.
 \url{https://doi.org/10.1007/s10109-021-00363-5}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-bhat2002development}{}}%
+\bibitem[\citeproctext]{ref-bhat2002development}
 Bhat, Chandra, Susan Handy, Kara Kockelman, Hani Mahmassani, Anand
 Gopal, Issam Srour, and Lisa Weston. 2002. {``Development of an Urban
 Accessibility Index: Formulations, Aggregation, and Application.''}
 \emph{Work} 4938 (4).
 
-\leavevmode\vadjust pre{\hypertarget{ref-statisticscanada2022}{}}%
+\bibitem[\citeproctext]{ref-statisticscanada2022}
 Canada, Statistics. 2022. {``Time Use Survey.''} Ottawa.
-\url{https://www23.statcan.gc.ca/imdb/p2SV.pl?Function=getSurvey\&amp;SDDS=4503}.
+\url{https://www23.statcan.gc.ca/imdb/p2SV.pl?Function=getSurvey&amp;SDDS=4503}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-carrothers1956historical}{}}%
+\bibitem[\citeproctext]{ref-carrothers1956historical}
 Carrothers, Gerald AP. 1956. {``An Historical Review of the Gravity and
 Potential Concepts of Human Interaction.''} \emph{Journal of the
 American Institute of Planners} 22 (2): 94--102.
 
-\leavevmode\vadjust pre{\hypertarget{ref-cascetta2013new}{}}%
+\bibitem[\citeproctext]{ref-cascetta2013new}
 Cascetta, Ennio, Armando Carteni, and Marcello Montanino. 2013. {``A New
 Measure of Accessibility Based on Perceived Opportunities.''}
 \emph{Procedia-Social and Behavioral Sciences} 87: 117--32.
 
-\leavevmode\vadjust pre{\hypertarget{ref-church2003measuring}{}}%
+\bibitem[\citeproctext]{ref-church2003measuring}
 Church, Richard L, and James R Marston. 2003. {``Measuring Accessibility
 for People with a Disability.''} \emph{Geographical Analysis} 35 (1):
 83--96.
 
-\leavevmode\vadjust pre{\hypertarget{ref-clifton2001evaluating}{}}%
+\bibitem[\citeproctext]{ref-clifton2001evaluating}
 Clifton, KELLY J, and SL Handy. 2001. {``Evaluating Neighborhood
 Accessibility: Possibilities and Practicalities.''} \emph{Journal of
 Transportation and Statistics} 4 (2-3): 67.
 
-\leavevmode\vadjust pre{\hypertarget{ref-currie2010quantifying}{}}%
+\bibitem[\citeproctext]{ref-currie2010quantifying}
 Currie, Graham. 2010. {``Quantifying Spatial Gaps in Public Transport
 Supply Based on Social Needs.''} \emph{Journal of Transport Geography}
 18 (1): 31--41.
 
-\leavevmode\vadjust pre{\hypertarget{ref-de2009exponential}{}}%
+\bibitem[\citeproctext]{ref-de2009exponential}
 De Vries, Jacob J, Peter Nijkamp, and Piet Rietveld. 2009.
 {``Exponential or Power Distance-Decay for Commuting? An Alternative
 Specification.''} \emph{Environment and Planning A} 41 (2): 461--80.
 
-\leavevmode\vadjust pre{\hypertarget{ref-delignette2015fitdistrplus}{}}%
+\bibitem[\citeproctext]{ref-delignette2015fitdistrplus}
 Delignette-Muller, Marie Laure, and Christophe Dutang. 2015.
 {``Fitdistrplus: An r Package for Fitting Distributions.''}
 \emph{Journal of Statistical Software} 64: 1--34.
 
-\leavevmode\vadjust pre{\hypertarget{ref-dossantos2024ActiveCA}{}}%
+\bibitem[\citeproctext]{ref-dossantos2024ActiveCA}
 Dos Santos, Bruno Dias, Mahdis Moghadasi, and Antonio Páez. n.d.
 {``ActiveCA.''}
 
-\leavevmode\vadjust pre{\hypertarget{ref-dunn2023}{}}%
+\bibitem[\citeproctext]{ref-dunn2023}
 Dunn, William L., and J. Kenneth Shultis. 2023. {``Appendix a - Some
 Common Probability Distributions.''} In, edited by William L. Dunn and
 J. Kenneth Shultis, 447--95. Elsevier.
 \url{https://doi.org/10.1016/B978-0-12-819739-4.00019-6}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-eldridge1991warped}{}}%
+\bibitem[\citeproctext]{ref-eldridge1991warped}
 Eldridge, J Douglas, and John Paul Jones III. 1991. {``Warped Space: A
 Geography of Distance Decay.''} \emph{The Professional Geographer} 43
 (4): 500--511.
 
-\leavevmode\vadjust pre{\hypertarget{ref-fotheringham1981spatial}{}}%
+\bibitem[\citeproctext]{ref-fotheringham1981spatial}
 Fotheringham, A Stewart. 1981. {``Spatial Structure and Distance-Decay
 Parameters.''} \emph{Annals of the Association of American Geographers}
 71 (3): 425--36.
 
-\leavevmode\vadjust pre{\hypertarget{ref-fotheringham1989spatial}{}}%
+\bibitem[\citeproctext]{ref-fotheringham1989spatial}
 Fotheringham, A Stewart, and Morton E O'Kelly. 1989. \emph{Spatial
 Interaction Models: Formulations and Applications}. Vol. 1. Kluwer
 Academic Publishers Dordrecht.
 
-\leavevmode\vadjust pre{\hypertarget{ref-frank2001built}{}}%
+\bibitem[\citeproctext]{ref-frank2001built}
 Frank, Lawrence D, and Peter O Engelke. 2001. {``The Built Environment
 and Human Activity Patterns: Exploring the Impacts of Urban Form on
 Public Health.''} \emph{Journal of Planning Literature} 16 (2): 202--18.
 
-\leavevmode\vadjust pre{\hypertarget{ref-frank2005linking}{}}%
+\bibitem[\citeproctext]{ref-frank2005linking}
 Frank, Lawrence D, Thomas L Schmid, James F Sallis, James Chapman, and
 Brian E Saelens. 2005. {``Linking Objectively Measured Physical Activity
 with Objectively Measured Urban Form: Findings from SMARTRAQ.''}
 \emph{American Journal of Preventive Medicine} 28 (2): 117--25.
 
-\leavevmode\vadjust pre{\hypertarget{ref-geurs2001accessibility}{}}%
+\bibitem[\citeproctext]{ref-geurs2001accessibility}
 Geurs, Karst T, and Jan R Ritsema van Eck. 2001. {``Accessibility
 Measures: Review and Applications. Evaluation of Accessibility Impacts
 of Land-Use Transportation Scenarios, and Related Social and Economic
 Impact.''} \emph{RIVM Rapport 408505006}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-geurs2004}{}}%
+\bibitem[\citeproctext]{ref-geurs2004}
 Geurs, Karst T, and Bert Van Wee. 2004. {``Accessibility Evaluation of
 Land-Use and Transport Strategies: Review and Research Directions.''}
 \emph{Journal of Transport Geography} 12 (2): 127--40.
 
-\leavevmode\vadjust pre{\hypertarget{ref-grengs2015nonwork}{}}%
+\bibitem[\citeproctext]{ref-grengs2015nonwork}
 Grengs, Joe. 2015. {``Nonwork Accessibility as a Social Equity
 Indicator.''} \emph{International Journal of Sustainable Transportation}
 9 (1): 1--14.
 
-\leavevmode\vadjust pre{\hypertarget{ref-gutierrez1996european}{}}%
+\bibitem[\citeproctext]{ref-gutierrez1996european}
 Gutierrez, Javier, Rafael Gonzalez, and Gabriel Gomez. 1996. {``The
 European High-Speed Train Network: Predicted Effects on Accessibility
 Patterns.''} \emph{Journal of Transport Geography} 4 (4): 227--38.
 
-\leavevmode\vadjust pre{\hypertarget{ref-handy1993regional}{}}%
+\bibitem[\citeproctext]{ref-handy1993regional}
 Handy, Susan. 1993. {``Regional Versus Local Accessibility: Implications
 for Nonwork Travel.''}
 
-\leavevmode\vadjust pre{\hypertarget{ref-handy1997measuring}{}}%
+\bibitem[\citeproctext]{ref-handy1997measuring}
 Handy, Susan L, and Debbie A Niemeier. 1997. {``Measuring Accessibility:
 An Exploration of Issues and Alternatives.''} \emph{Environment and
 Planning A} 29 (7): 1175--94.
 
-\leavevmode\vadjust pre{\hypertarget{ref-hansen1959accessibility}{}}%
+\bibitem[\citeproctext]{ref-hansen1959accessibility}
 Hansen, Walter G. 1959. {``How Accessibility Shapes Land Use.''}
 \emph{Journal of the American Institute of Planners} 25 (2): 73--76.
 
-\leavevmode\vadjust pre{\hypertarget{ref-hino2014built}{}}%
+\bibitem[\citeproctext]{ref-hino2014built}
 Hino, Adriano AF, Rodrigo S Reis, Olga L Sarmiento, Diana C Parra, and
 Ross C Brownson. 2014. {``Built Environment and Physical Activity for
 Transportation in Adults from Curitiba, Brazil.''} \emph{Journal of
 Urban Health} 91: 446--62.
 
-\leavevmode\vadjust pre{\hypertarget{ref-hsiao1997use}{}}%
+\bibitem[\citeproctext]{ref-hsiao1997use}
 Hsiao, Shirley, Jian Lu, James Sterling, and Matthew Weatherford. 1997.
 {``Use of Geographic Information System for Analysis of Transit
 Pedestrian Access.''} \emph{Transportation Research Record} 1604 (1):
 50--59.
 
-\leavevmode\vadjust pre{\hypertarget{ref-hull2012accessibility}{}}%
+\bibitem[\citeproctext]{ref-hull2012accessibility}
 Hull, Angela, Cecilia Silva, and Luca Bertolini. 2012.
 \emph{Accessibility Instruments for Planning Practice}. Cost Office
 Brussels.
 
-\leavevmode\vadjust pre{\hypertarget{ref-iacono2010}{}}%
+\bibitem[\citeproctext]{ref-iacono2010}
 Iacono, Michael, Kevin J Krizek, and Ahmed El-Geneidy. 2010.
 {``Measuring Non-Motorized Accessibility: Issues, Alternatives, and
 Execution.''} \emph{Journal of Transport Geography} 18 (1): 133--40.
 
-\leavevmode\vadjust pre{\hypertarget{ref-iacono2008access}{}}%
+\bibitem[\citeproctext]{ref-iacono2008access}
 Iacono, Michael, Kevin Krizek, and Ahmed M El-Geneidy. 2008. {``Access
 to Destinations: How Close Is Close Enough? Estimating Accurate Distance
 Decay Functions for Multiple Modes and Different Purposes.''}
 
-\leavevmode\vadjust pre{\hypertarget{ref-itf2017linking}{}}%
+\bibitem[\citeproctext]{ref-itf2017linking}
 ITF. 2017. \emph{Linking People and Places: New Ways of Understanding
 Spatial Access in Cities}. OECD Publishing.
 
-\leavevmode\vadjust pre{\hypertarget{ref-kanafani1983transportation}{}}%
+\bibitem[\citeproctext]{ref-kanafani1983transportation}
 Kanafani, Adib. 1983. {``Transportation Demand Analysis.''}
 
-\leavevmode\vadjust pre{\hypertarget{ref-koenig1980indicators}{}}%
+\bibitem[\citeproctext]{ref-koenig1980indicators}
 Koenig, Jean-Gerard. 1980. {``Indicators of Urban Accessibility: Theory
 and Application.''} \emph{Transportation} 9 (2): 145--72.
 
-\leavevmode\vadjust pre{\hypertarget{ref-krizek2005perspectives}{}}%
+\bibitem[\citeproctext]{ref-krizek2005perspectives}
 Krizek, Kevin J. 2005. {``Perspectives on Accessibility and Travel.''}
 In \emph{Access to Destinations}, 109--30. Emerald Group Publishing
 Limited.
 
-\leavevmode\vadjust pre{\hypertarget{ref-kwan1998space}{}}%
+\bibitem[\citeproctext]{ref-kwan1998space}
 Kwan, Mei-Po. 1998. {``Space-Time and Integral Measures of Individual
 Accessibility: A Comparative Analysis Using a Point-Based Framework.''}
 \emph{Geographical Analysis} 30 (3): 191--216.
 
-\leavevmode\vadjust pre{\hypertarget{ref-kwan2003recent}{}}%
+\bibitem[\citeproctext]{ref-kwan2003recent}
 Kwan, Mei-Po, Alan T Murray, Morton E OKelly, and Michael Tiefelsdorf.
 2003. {``Recent Advances in Accessibility Research: Representation,
 Methodology and Applications.''} \emph{Journal of Geographical Systems}
 5: 129--38.
 
-\leavevmode\vadjust pre{\hypertarget{ref-lamiquiz2015effects}{}}%
+\bibitem[\citeproctext]{ref-lamiquiz2015effects}
 Lamiquiz, Patxi J, and Jorge Lopez-Dominguez. 2015. {``Effects of Built
 Environment on Walking at the Neighbourhood Scale. A New Role for Street
 Networks by Modelling Their Configurational Accessibility?''}
 \emph{Transportation Research Part A: Policy and Practice} 74: 148--63.
 
-\leavevmode\vadjust pre{\hypertarget{ref-larsen2010beyond}{}}%
+\bibitem[\citeproctext]{ref-larsen2010beyond}
 Larsen, Jacob, Ahmed El-Geneidy, and Farhana Yasmin. 2010. {``Beyond the
 Quarter Mile: Re-Examining Travel Distances by Active Transportation.''}
 \emph{Canadian Journal of Urban Research} 19 (1): 70--88.
 
-\leavevmode\vadjust pre{\hypertarget{ref-levinson2005access}{}}%
+\bibitem[\citeproctext]{ref-levinson2005access}
 Levinson, David M, and Kevin J Krizek. 2005. \emph{Access to
 Destinations}. Elsevier Publishers.
 
-\leavevmode\vadjust pre{\hypertarget{ref-li2020approach}{}}%
+\bibitem[\citeproctext]{ref-li2020approach}
 Li, Aoyong, Yizhe Huang, and Kay W Axhausen. 2020. {``An Approach to
 Imputing Destination Activities for Inclusion in Measures of Bicycle
 Accessibility.''} \emph{Journal of Transport Geography} 82: 102566.
 
-\leavevmode\vadjust pre{\hypertarget{ref-lowry2012using}{}}%
+\bibitem[\citeproctext]{ref-lowry2012using}
 Lowry, M, Daniel Callister, M Gresham, and B Moore. 2012. {``Using
 Bicycle Level of Service to Assess Community-Wide Bikeability.''} In
 \emph{91st Annual Meeting of the Transportation Research Board,
 Washington, DC: Transportation Research Board}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-luoma1993threshold}{}}%
+\bibitem[\citeproctext]{ref-luoma1993threshold}
 Luoma, Martti, Kauko Mikkonen, and Mauri Palomaki. 1993. {``The
 Threshold Gravity Model and Transport Geography: How Transport
 Development Influences the Distance-Decay Parameter of the Gravity
 Model.''} \emph{Journal of Transport Geography} 1 (4): 240--47.
 
-\leavevmode\vadjust pre{\hypertarget{ref-meyer1984urban}{}}%
+\bibitem[\citeproctext]{ref-meyer1984urban}
 Meyer, Michael D, and Eric J Miller. 1984. {``Urban Transportation
 Planning: A Decision-Oriented Approach.''}
 
-\leavevmode\vadjust pre{\hypertarget{ref-mikkonen1999parameters}{}}%
+\bibitem[\citeproctext]{ref-mikkonen1999parameters}
 Mikkonen, Kauko, and Martti Luoma. 1999. {``The Parameters of the
 Gravity Model Are Changing--How and Why?''} \emph{Journal of Transport
 Geography} 7 (4): 277--83.
 
-\leavevmode\vadjust pre{\hypertarget{ref-miller2005place}{}}%
+\bibitem[\citeproctext]{ref-miller2005place}
 Miller, Harvey J. 2005. {``Place-Based Versus People-Based
 Accessibility.''} In \emph{Access to Destinations}, 63--89. Emerald
 Group Publishing Limited.
 
-\leavevmode\vadjust pre{\hypertarget{ref-millward2013active}{}}%
+\bibitem[\citeproctext]{ref-millward2013active}
 Millward, Hugh, Jamie Spinney, and Darren Scott. 2013.
 {``Active-Transport Walking Behavior: Destinations, Durations,
 Distances.''} \emph{Journal of Transport Geography} 28: 101--10.
 
-\leavevmode\vadjust pre{\hypertarget{ref-moreno2021}{}}%
+\bibitem[\citeproctext]{ref-moreno2021}
 Moreno, Carlos, Zaheer Allam, Didier Chabaud, Catherine Gall, and
 Florent Pratlong. 2021. {``Introducing the {``}15-Minute City{''}:
 Sustainability, Resilience and Place Identity in Future Post-Pandemic
 Cities.''} \emph{Smart Cities} 4 (1): 93--111.
 \url{https://doi.org/10.3390/smartcities4010006}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-nassir2016utility}{}}%
+\bibitem[\citeproctext]{ref-nassir2016utility}
 Nassir, Neema, Mark Hickman, Ali Malekzadeh, and Elnaz Irannezhad. 2016.
 {``A Utility-Based Travel Impedance Measure for Public Transit Network
 Accessibility.''} \emph{Transportation Research Part A: Policy and
 Practice} 88: 26--39.
 
-\leavevmode\vadjust pre{\hypertarget{ref-osth2016new}{}}%
+\bibitem[\citeproctext]{ref-osth2016new}
 Osth, John, Johan Lyhagen, and Aura Reggiani. 2016. {``A New Way of
 Determining Distance Decay Parameters in Spatial Interaction Models with
 Application to Job Accessibility Analysis in Sweden.''} \emph{European
 Journal of Transport and Infrastructure Research} 16 (2).
 
-\leavevmode\vadjust pre{\hypertarget{ref-puxe1ez2021}{}}%
+\bibitem[\citeproctext]{ref-puxe1ez2021}
 Páez, Antonio. 2021. {``Open Spatial Sciences: An Introduction.''}
 \emph{Journal of Geographical Systems} 23 (4): 467--76.
 \url{https://doi.org/10.1007/s10109-021-00364-4}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-puxe1ez2012}{}}%
+\bibitem[\citeproctext]{ref-puxe1ez2012}
 Páez, Antonio, Darren M. Scott, and Catherine Morency. 2012.
 {``Measuring Accessibility: Positive and Normative Implementations of
 Various Accessibility Indicators.''} \emph{Journal of Transport
@@ -1832,117 +1910,117 @@ Geography}, Special section on accessibility and socio-economic
 activities: Methodological and empirical aspects, 25 (November):
 141--53. \url{https://doi.org/10.1016/j.jtrangeo.2012.03.016}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-papa2012gravity}{}}%
+\bibitem[\citeproctext]{ref-papa2012gravity}
 Papa, Enrica, and Pierluigi Coppola. 2012. {``Gravity-Based
 Accessibility Measures for Integrated Transport-Land Use Planning
 (GraBAM).''} \emph{Accessibility Instruments for Planning Practice} 117:
 124.
 
-\leavevmode\vadjust pre{\hypertarget{ref-pereira2023}{}}%
+\bibitem[\citeproctext]{ref-pereira2023}
 Pereira, Rafael H. M., and Daniel Herszenhut. 2023. {``Accessibility
 measures.''} In. Rio de Janeiro.
 \url{https://doi.org/10.38116/9786556350653}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-pereira2017}{}}%
+\bibitem[\citeproctext]{ref-pereira2017}
 Pereira, Rafael H. M., Tim Schwanen, and David Banister. 2017.
 {``Distributive Justice and Equity in Transportation.''} \emph{Transport
 Reviews} 37 (2): 170--91.
 \url{https://doi.org/10.1080/01441647.2016.1257660}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-pirie1979measuring}{}}%
+\bibitem[\citeproctext]{ref-pirie1979measuring}
 Pirie, Gordon H. 1979. {``Measuring Accessibility: A Review and
 Proposal.''} \emph{Environment and Planning A} 11 (3): 299--312.
 
-\leavevmode\vadjust pre{\hypertarget{ref-prins2014many}{}}%
+\bibitem[\citeproctext]{ref-prins2014many}
 Prins, Richard G, Frank Pierik, Astrid Etman, Reinier P Sterkenburg,
 Carlijn BM Kamphuis, and FJ Van Lenthe. 2014. {``How Many Walking and
 Cycling Trips Made by Elderly Are Beyond Commonly Used Buffer Sizes:
 Results from a GPS Study.''} \emph{Health \& Place} 27: 127--33.
 
-\leavevmode\vadjust pre{\hypertarget{ref-reggiani2011accessibility}{}}%
+\bibitem[\citeproctext]{ref-reggiani2011accessibility}
 Reggiani, Aura, Pietro Bucci, and Giovanni Russo. 2011. {``Accessibility
 and Impedance Forms: Empirical Applications to the German Commuting
 Network.''} \emph{International Regional Science Review} 34 (2):
 230--52.
 
-\leavevmode\vadjust pre{\hypertarget{ref-saghapour2017measuring}{}}%
+\bibitem[\citeproctext]{ref-saghapour2017measuring}
 Saghapour, Tayebeh, Sara Moridpour, and Russell G Thompson. 2017.
 {``Measuring Cycling Accessibility in Metropolitan Areas.''}
 \emph{International Journal of Sustainable Transportation} 11 (5):
 381--94.
 
-\leavevmode\vadjust pre{\hypertarget{ref-sallis2004active}{}}%
+\bibitem[\citeproctext]{ref-sallis2004active}
 Sallis, James F, Lawrence D Frank, Brian E Saelens, and M Katherine
 Kraft. 2004. {``Active Transportation and Physical Activity:
 Opportunities for Collaboration on Transportation and Public Health
 Research.''} \emph{Transportation Research Part A: Policy and Practice}
 38 (4): 249--68.
 
-\leavevmode\vadjust pre{\hypertarget{ref-signorino2011gravity}{}}%
+\bibitem[\citeproctext]{ref-signorino2011gravity}
 Signorino, Guido, Roberto Pasetto, Elisa Gatto, Massimo Mucciardi,
 Marina La Rocca, and Pierpaolo Mudu. 2011. {``Gravity Models to Classify
 Commuting Vs. Resident Workers. An Application to the Analysis of
 Residential Risk in a Contaminated Area.''} \emph{International Journal
 of Health Geographics} 10 (1): 1--10.
 
-\leavevmode\vadjust pre{\hypertarget{ref-skov2001estimation}{}}%
+\bibitem[\citeproctext]{ref-skov2001estimation}
 Skov-Petersen, Hans. 2001. {``Estimation of Distance-Decay Parameters:
 GIS-Based Indicators of Recreational Accessibility.''} In
 \emph{ScanGIS}, 237--58.
 
-\leavevmode\vadjust pre{\hypertarget{ref-soukhov2024}{}}%
+\bibitem[\citeproctext]{ref-soukhov2024}
 Soukhov, Anastasia, and Antonio Paez. 2024. {``Accessibility Analysis
 for Planning Applications.''}
 \url{https://github.com/soukhova/MJ-Accessibility-Blogs}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-sun2012measuring}{}}%
+\bibitem[\citeproctext]{ref-sun2012measuring}
 Sun, Guibo, Hui Lin, and Rongrong Li. 2012. {``Measuring the Influence
 of Built Environment on Walking Behavior: An Accessibility Approach.''}
 In \emph{Geographic Information Science: 7th International Conference,
 GIScience 2012, Columbus, OH, USA, September 18-21, 2012. Proceedings
 7}, 187--97. Springer.
 
-\leavevmode\vadjust pre{\hypertarget{ref-taylor1975distance}{}}%
+\bibitem[\citeproctext]{ref-taylor1975distance}
 Taylor, Peter. 1975. {``Distance Decay Models in Spatial
 Interactions.''} \emph{(No Title)}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-untermann1984accommodating}{}}%
+\bibitem[\citeproctext]{ref-untermann1984accommodating}
 Untermann, Richard K. 1984. {``Accommodating the Pedestrian: Adapting
 Towns and Neighbourhoods for Walking and Bicycling.''}
 
-\leavevmode\vadjust pre{\hypertarget{ref-vale2017influence}{}}%
+\bibitem[\citeproctext]{ref-vale2017influence}
 Vale, David S, and Mauro Pereira. 2017. {``The Influence of the
 Impedance Function on Gravity-Based Pedestrian Accessibility Measures: A
 Comparative Analysis.''} \emph{Environment and Planning B: Urban
 Analytics and City Science} 44 (4): 740--63.
 
-\leavevmode\vadjust pre{\hypertarget{ref-vandenbulcke2009mapping}{}}%
+\bibitem[\citeproctext]{ref-vandenbulcke2009mapping}
 Vandenbulcke, Gregory, Therese Steenberghen, and Isabelle Thomas. 2009.
 {``Mapping Accessibility in Belgium: A Tool for Land-Use and Transport
 Planning?''} \emph{Journal of Transport Geography} 17 (1): 39--53.
 
-\leavevmode\vadjust pre{\hypertarget{ref-vasconcelos2012evaluation}{}}%
+\bibitem[\citeproctext]{ref-vasconcelos2012evaluation}
 Vasconcelos, Ana S, and Tiago L Farias. 2012. {``Evaluation of Urban
 Accessibility Indicators Based on Internal and External Environmental
 Costs.''} \emph{Transportation Research Part D: Transport and
 Environment} 17 (6): 433--41.
 
-\leavevmode\vadjust pre{\hypertarget{ref-vega2012using}{}}%
+\bibitem[\citeproctext]{ref-vega2012using}
 Vega, Amaya. 2012. {``Using Place Rank to Measure Sustainable
 Accessibility.''} \emph{Journal of Transport Geography} 24: 411--18.
 
-\leavevmode\vadjust pre{\hypertarget{ref-wu2019measuring}{}}%
+\bibitem[\citeproctext]{ref-wu2019measuring}
 Wu, Xueying, Yi Lu, Yaoyu Lin, and Yiyang Yang. 2019. {``Measuring the
 Destination Accessibility of Cycling Transfer Trips in Metro Station
 Areas: A Big Data Approach.''} \emph{International Journal of
 Environmental Research and Public Health} 16 (15): 2641.
 
-\leavevmode\vadjust pre{\hypertarget{ref-yang2012walking}{}}%
+\bibitem[\citeproctext]{ref-yang2012walking}
 Yang, Yong, and Ana V Diez-Roux. 2012. {``Walking Distance by Trip
 Purpose and Population Subgroups.''} \emph{American Journal of
 Preventive Medicine} 43 (1): 11--19.
 
-\leavevmode\vadjust pre{\hypertarget{ref-zhao2003forecasting}{}}%
+\bibitem[\citeproctext]{ref-zhao2003forecasting}
 Zhao, Fang, Lee-Fang Chow, Min-Tang Li, Ike Ubaka, and Albert Gan. 2003.
 {``Forecasting Transit Walk Accessibility: Regression Model Alternative
 to Buffer Method.''} \emph{Transportation Research Record} 1835 (1):

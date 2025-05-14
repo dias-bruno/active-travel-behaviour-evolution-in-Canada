@@ -48,12 +48,12 @@ classoption: preprint, 3p, authoryear # remove authoryear is not using `elsartic
 output: 
   rticles::elsevier_article:
     keep_tex: true
-    citation_package: default
+    citation_package: natbib
 ---
 
 ```{r install-activeCA, include = FALSE}
-#install.packages("pak")
-#pak::pak("dias-bruno/ActiveCA")
+# install.packages("pak")
+# pak::pak("dias-bruno/ActiveCA")
 opts <- options(knitr.kable.NA = "")
 
 knitr::knit_hooks$set(inline = function(x) {
@@ -94,9 +94,17 @@ data(gss_main_1998)
 data(gss_main_2005)
 data(gss_main_2010)
 data(gss_main_2015)
+data(gss_main_2022)
 ```
 
 ```{r renaming-destinations, echo=FALSE, cache=FALSE, include=FALSE}
+# Filtering episodes and impedances functions 
+gss_episodes <- gss_episodes %>%
+  filter(YEAR > 1986)
+  
+gss_impedances <- gss_impedances %>%
+  filter(YEAR > 1986)
+
 # Renaming 'dest_label' and 'orig_label' values to reduce table space
 gss_impedances_renamed <- gss_impedances %>%
   mutate(dest_label = case_when(
@@ -188,21 +196,29 @@ gss_main_2015 <- gss_main_2015 %>%
   unnest(dest_label) %>%
   mutate(YEAR = 2015)
 
+# 2022
+gss_main_2022 <- gss_main_2022 %>%
+  dplyr::select(PUMFID, WGHT_PER) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "2022",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 2022)
+
 # Creating a new file with all main files 
 main_file <- rbind(gss_main_1992, gss_main_1998, gss_main_2005, 
-                   gss_main_2010, gss_main_2015)
+                   gss_main_2010, gss_main_2015, gss_main_2022)
 
 # Counting walking episodes 
 act_walk <- gss_episodes_renamed %>% 
   filter(YEAR > 1986 & MODE == 'Walking') %>%
   group_by(PUMFID, YEAR, MODE, dest_label) %>% 
-  summarise(Count = n())
+  summarise(Count = n(), Total_eps = sum(WGHT_EPI))
 
 # Counting cycling episodes 
 act_bike <- gss_episodes_renamed %>% 
   filter(YEAR > 1986 & MODE == 'Cycling') %>%
   group_by(PUMFID, YEAR, MODE, dest_label) %>% 
-  summarise(Count = n())
+  summarise(Count = n(), Total_eps = sum(WGHT_EPI))
 
 # Joining walking and cycling episodes
 act_ep_counts <- rbind(act_bike, act_walk)
@@ -212,7 +228,7 @@ main_act_eps <-  main_file %>%
   mutate(MODE = list(c("Walking", "Cycling"))) %>%
   unnest(MODE) %>%
   left_join(act_ep_counts, by = c("PUMFID", "YEAR", "MODE","dest_label")) %>%
-  mutate(Count = replace_na(Count, 0))
+  mutate(Count = replace_na(Count, 0), Total_eps = replace_na(Total_eps, 0))
 ```
 
 # Introduction
@@ -344,17 +360,17 @@ These surveys encompass an array of socio-demographic inquiries combined with qu
 
 # Materials and Methods
 
-To investigate the historical active travel behavior in Canada, we analyzed five GSS Time Use cycles: Cycles 7 (1992), 12 (1998), 19 (2005), 24 (2010), and 29 (2015). We excluded Cycle 2 (1986) from our analysis because this survey did not specify whether the respondent lived in a metropolitan area and did not present cycling as a mode of transportation option, although this cycle is notable for having been the first national random sample to examine Canadian time-use patterns. This paper is a direct application of the ready-to-use data set provided by the `ActiveCA` data package [-@dossantos2024ActiveCA], which is based on the Main and Episode files from the GSS Public Use Microdata Files. The Main file contains questionnaire responses and associated data from participants, while the Episode files provided detailed information about every activity episode reported by the respondents. It is important to mention that this study did not analyze the last Time Use survey released (Cycle 37 of 2022, released in June 2024) because, at the time of publication of the study, the Public Use Microdata Files had not been published.
+To investigate the historical active travel behavior in Canada, we analyzed five GSS Time Use cycles: Cycles 7 (1992), 12 (1998), 19 (2005), 24 (2010), 29 (2015) and 37 (2022). We excluded Cycle 2 (1986) from our analysis because this survey did not specify whether the respondent lived in a metropolitan area and did not present cycling as a mode of transportation option, although this cycle is notable for having been the first national random sample to examine Canadian time-use patterns. This paper is a direct application of the ready-to-use data set provided by the `ActiveCA` data package [-@dossantos2024ActiveCA], which is based on the Main and Episode files from the GSS Public Use Microdata Files. The Main file contains questionnaire responses and associated data from participants, while the Episode files provided detailed information about every activity episode reported by the respondents. 
 
-This methodology involves two main steps, each designed to achieve one of our primary objectives. The first step employs descriptive analysis of active transportation episodes to identify typical travel times across destinations and years, comparing their temporal evolution and identifying differences in active transportation episodes through statistical tests. The second step calculates and analyzes impedance functions for each combination of cycle, destination, and active travel mode.
+The methodology involves two main steps, each designed to achieve one of our primary objectives. The first step employs descriptive analysis of active transportation episodes to identify typical travel times across destinations and years, comparing their temporal evolution and identifying differences in active transportation episodes through statistical tests. The second step calculates and analyzes impedance functions for each combination of cycle, destination, and active travel mode.
 
-To facilitate collaboration and further analysis, we updated the `ActiveCA` R Package to include the methodology to obtain impedance functions from the raw data files. Additionally, we created this paper using literate programming in which the R markdown code to fully reproduce this article is available on our GitHub repository *(include after the review)*, and we also updated the  ,  in line with the best practices of spatial data science [@arribas-bel2021; @páez2021]. These contributions improve our understanding of active travel behaviour in Canada and provide a basis for future research and policy-making.
+To facilitate collaboration and further analysis, we updated the `ActiveCA` R Package to include the methodology to obtain impedance functions from the raw data files (GSS surveys). Additionally, we created this paper using literate programming in which the R markdown code to fully reproduce this article is available on our GitHub repository *(include after the review)*, in line with the best practices of spatial data science [@arribas-bel2021; @páez2021]. These contributions improve our understanding of active travel behaviour in Canada and provide a basis for future research and policy-making.
 
 ## Analyzing active travel episodes
 
-For each selected cycle of the GSS surveys, we reviewed the episode files to identify cases with activities listed as walking or cycling, selecting the locations immediately before and after the mobility episode. Doing this, we were able to identify the origin and the destination of the active travel episode. We labeled the code variables with their appropriate descriptions, identifying the transportation mode, activity/reason of the travel, as well the province and urban classification of the respondent's residency (if the respondent lives in a Census Metropolitan Area or in a Census Agglomerations).
+For each selected cycle of the GSS surveys, we reviewed the episode files to identify cases with activities listed as walking or cycling, selecting the locations immediately before and after the mobility episode. With this process, we were able to identify the origin and the destination of the active travel episode. We labeled the code variables with their appropriate descriptions, identifying the transportation mode, activity/reason of the travel, as well the province and urban classification of the respondent's residency (if the respondent lives in a CMA or in a Census Agglomerations).
 
-Additionally, it was necessary to guarantee the data consistency across the surveys, since they have employed a variety of variable coding schemes. The range of activities and destinations considered in the surveys changed from 1992 to 2015. In 1992, there were only three options of origin/destination location available to the respondent: their home, other's home and work or study. In its turn, the most recent survey (2015) counts with twelve possible destination, including sport area (sports centre, field or arena), restaurant (including bar and club), health clinics (medical, dental or other health clinic), grocery stores (including other types of stores and malls) and more. In order to achieve uniformity, the activity categories from 2005, 2010, and 2015 were synchronised, and a similar process was employed for those from 1992 and 1998. For the preceding years (1992, and 1998), the trip origins and destinations were classified as "Home," "Other's home," and "Work or school." In the subsequent years (2005, 2010, and 2015), these categories were expanded to include "Business," "Restaurant" "Place of worship," "Grocery store" "Neighbourhood," "Outdoors," "Cultural venues" (such as library, museum and theatre), and "Sport area." This evolution in data collection reflects a growing understanding of the complex nature of urban mobility and the diverse purposes that motivate walking and cycling trips, providing a comprehensive foundation for analyzing distance decay and its implications for urban planning and sustainable transportation strategies.
+Additionally, it was necessary to guarantee the data consistency across the surveys, since they have employed a variety of variable coding schemes. The range of activities and destinations considered in the surveys changed from 1992 to 2022. In 1992, there were only three options of origin/destination location available to the respondent: their home, other's home and work or study. In its turn, the most recent survey (2022) counts with twelve possible destination, including sport area (sports centre, field or arena), restaurant (including bar and club), health clinics (medical, dental or other health clinic), grocery stores (including other types of stores and malls) and more. In order to achieve uniformity, the activity categories from 2005, 2010, 2015, and 2022 were synchronised, and a similar process was employed for those from 1992 and 1998. For the preceding years (1992, and 1998), the trip origins and destinations were classified as "Home," "Other's home," and "Work or school." In the subsequent years (2005, 2010, 2015, and 2022), these categories were expanded to include "Business," "Restaurant" "Place of worship," "Grocery store" "Neighbourhood," "Outdoors," "Cultural venues" (such as library, museum and theatre), and "Sport area." This evolution in data collection reflects a growing understanding of the complex nature of urban mobility and the diverse purposes that motivate walking and cycling trips, providing a comprehensive foundation for analyzing distance decay and its implications for urban planning and sustainable transportation strategies.
 
 Statistical analysis was used to characterize active travel episodes using cross-tabulations and graphs. Summary statistics and visualization techniques, including median values as a measure of typical value and boxplots, were employed to describe active travel across years, destinations, and transportation modes. To assess the statistical significance of potential temporal differences in the empirical episode data set for each destination, we applied the Kruskal-Wallis test. This test was chosen because it does not assume a normal distribution for the data, an important consideration since we made no assumptions about the distribution of the empirical data. The identification of impedance functions serves as the step that captures the distributional characteristics of the empirical values. The Kruskal-Wallis test evaluates differences in the medians of the empirical data.
 
@@ -380,7 +396,7 @@ all_episodes <- gss_episodes %>%
 
 We applied the `fitdistrplus` package [@delignette2015fitdistrplus] to calculate the best PDF for every destination, mode of transportation and survey year, between the options: uniform, negative exponential, gamma, normal, and lognormal distributions. In order to calculate the impedance functions, two filters were applied in the GSS data set. The first is that we excluded all trips with travel times higher than 100 minutes (1.5 hours). An exploratory data analysis showed that, taking into account all the walking and cycling episodes (`r all_episodes$total_eps` in total), less than `r round(less_than100$total_eps/all_episodes$total_eps * 100, 2)`% of the episodes have a trip duration higher than this limit. When considering the weights of this episodes, travel times higher than 100 minutes represented `r round(less_than100$total_WGHT_EPI /all_episodes$total_WGHT_EPI * 100, 2)`% of the episodes. 
 
-It was also possible to know that trips with a duration higher than 100 minutes are mainly composed of hiking and camping episodes. The second filter was realized to select only the population living in a larger urban population centre (a Census Metropolitan Area (CMA) or Census Agglomeration (CA)). We decided to apply this restriction because the travel behaviour of residents of CMA and CA areas tends to be very different from those outside these large urban centres in terms of active travel.
+It was also possible to know that trips with a duration higher than 100 minutes are mainly composed of hiking and camping episodes. The second filter was realized to select only the population living in a larger urban population centre. We decided to apply this restriction because the travel behaviour of residents of CMA and CA areas tends to be very different from those outside these large urban centres in terms of active travel.
 
 # Results and discusion
 
@@ -421,11 +437,13 @@ gss_summary <- gss_summary %>%
     `2005 (%)` = round(`2005` / gss_summary$`2005`[Mode == "Total"] * 100, 2),
     `2010 (%)` = round(`2010` / gss_summary$`2010`[Mode == "Total"] * 100, 2),
     `2015 (%)` = round(`2015` / gss_summary$`2015`[Mode == "Total"] * 100, 2),
+    `2022 (%)` = round(`2022` / gss_summary$`2022`[Mode == "Total"] * 100, 2),
     `Total (%)` = round(`Total` / gss_summary$`Total`[Mode == "Total"] * 100, 2)
   ) %>%
   ungroup() %>%
   select("Mode", "1992", "1992 (%)", "1998", "1998 (%)", 
          "2005", "2005 (%)", "2010", "2010 (%)", "2015", "2015 (%)",
+         "2022", "2022 (%)",
          "Total", "Total (%)") 
 
 gss_summary[gss_summary$Mode == 'Total', ]$"1992 (%)" <- round(gss_summary[gss_summary$Mode == 'Total', ]$"1992"/gss_summary[gss_summary$Mode == 'Total', ]$"Total" *100, 2)
@@ -438,21 +456,24 @@ gss_summary[gss_summary$Mode == 'Total', ]$"2010 (%)" <- round(gss_summary[gss_s
 
 gss_summary[gss_summary$Mode == 'Total', ]$"2015 (%)" <- round(gss_summary[gss_summary$Mode == 'Total', ]$"2015"/gss_summary[gss_summary$Mode == 'Total', ]$"Total" *100, 2)
 
+gss_summary[gss_summary$Mode == 'Total', ]$"2022 (%)" <- round(gss_summary[gss_summary$Mode == 'Total', ]$"2022"/gss_summary[gss_summary$Mode == 'Total', ]$"Total" *100, 2)
+
 
 gss_totals_table <- gss_summary %>%
   kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
         caption = "\\label{tab:episodes-count-percentages}Weighted number of episodes identified in each active transportation mode by year",  
         align = c('l', rep('c', ncol(gss_summary) - 1)), 
-    col.names = c("Mode","","(%)","","(%)","","(%)","","(%)","","(%)","","(%)")) %>% 
+    col.names = c("Mode","","(%)","","(%)","","(%)","","(%)","","(%)","","(%)","","(%)")) %>% 
   kable_styling(full_width = FALSE, font_size = 8) %>%
-  add_header_above(c(" " = 1, "1992" = 2, "1998" = 2, "2005" = 2, "2010" = 2, "2015"=2, "Total" = 2))
+  add_header_above(c(" " = 1, "1992" = 2, "1998" = 2, "2005" = 2, "2010" = 2, "2015"=2, "2022"=2, "Total" = 2))
 ```
 
-After applying the filters to the GSS surveys, we obtained a total of 12,113 lines with active travel episodes. However, GSS surveys apply a probability sampling methodology, in which each episode or person selected in the sample represents several other episodes or persons not in the sample. The number of episodes and persons represented by a episode or person is determined by the weight or weighting factor. Because of this, every estimates of the number of episodes or persons need to be calculated applying the corresponding weighting factors.
+After applying the filters to the GSS surveys, we obtained a total of 19,166 lines with active travel episodes. However, GSS surveys apply a probability sampling methodology, in which each episode or person selected in the sample represents several other episodes or persons not in the sample. The number of episodes and persons represented by a episode or person is determined by the weight or weighting factor. Because of this, every estimates of the number of episodes or persons need to be calculated applying the corresponding weighting factors.
 
-Considering the weights - and from this point onward, all counts estimates presented in this paper account for them - the 12,113 episodes represent a total of `r format(gss_summary[gss_summary$Mode == 'Total',]$Total, big.mark = ",", scientific = FALSE)` episodes. Table \ref{tab:episodes-count-percentages} contains the weighted number of episodes about walking and cycling trips between 1992 and 2015, obtained from the GSS cycles. The year 2010 is the year with the most episodes, with `r gss_summary[gss_summary$Mode == 'Total',]$'2010'` episodes (representing `r gss_summary[gss_summary$Mode == 'Total',]$'2010 (%)'`% of the total). The year 2010 is followed by 2005 with `r gss_summary[gss_summary$Mode == 'Total',]$'2005'`, representing approximately `r gss_summary[gss_summary$Mode == 'Total',]$'2005 (%)'`% of all active travel episodes; followed by 2015 (`r gss_summary[gss_summary$Mode == 'Total',]$'2015'` episodes, `r gss_summary[gss_summary$Mode == 'Total',]$'2015 (%)'`% of the total), 1998 `r gss_summary[gss_summary$Mode == 'Total',]$'1998'` episodes, (`r gss_summary[gss_summary$Mode == 'Total',]$'1998 (%)'`% of the total), and 1992, with only `r gss_summary[gss_summary$Mode == 'Total',]$'1992'` episodes, representing `r gss_summary[gss_summary$Mode == 'Total',]$'1992 (%)'`% of the total.
+Considering the weights - and from this point onward, all counts estimates presented in this paper account for them - the 19,166 episodes represent a total of `r format(gss_summary[gss_summary$Mode == 'Total',]$Total, big.mark = ",", scientific = FALSE)` episodes. Table \ref{tab:episodes-count-percentages} contains the weighted number of episodes about walking and cycling trips between 1992 and 2022, obtained from the GSS cycles. The year 2010 is the year with the most episodes, with `r gss_summary[gss_summary$Mode == 'Total',]$'2010'` episodes (representing `r gss_summary[gss_summary$Mode == 'Total',]$'2010 (%)'`% of the total). The year 2010 is followed by 2005 with `r gss_summary[gss_summary$Mode == 'Total',]$'2005'`, representing approximately `r gss_summary[gss_summary$Mode == 'Total',]$'2005 (%)'`% of all active travel episodes; followed by 2015 (`r gss_summary[gss_summary$Mode == 'Total',]$'2015'` episodes, `r gss_summary[gss_summary$Mode == 'Total',]$'2015 (%)'`% of the total), 2022 (`r gss_summary[gss_summary$Mode == 'Total',]$'2022'` episodes, `r gss_summary[gss_summary$Mode == 'Total',]$'2022 (%)'`% of the total), 1998 `r gss_summary[gss_summary$Mode == 'Total',]$'1998'` episodes, (`r gss_summary[gss_summary$Mode == 'Total',]$'1998 (%)'`% of the total), and 1992, with only `r gss_summary[gss_summary$Mode == 'Total',]$'1992'` episodes, representing `r gss_summary[gss_summary$Mode == 'Total',]$'1992 (%)'`% of the total.
 
-When analyzing the two active transportation modes, walking episodes account for `r gss_summary[gss_summary$Mode == 'Walking',]$'Total (%)'`%, while the remaining `r gss_summary[gss_summary$Mode == 'Cycling',]$'Total (%)'`% are cycling episodes. However, it is worth mentioning that, while in 2015 cycling episodes represented only `r gss_summary[gss_summary$Mode == 'Cycling',]$'2015 (%)'`% of the active travel episodes for that year, in 1992 the cycling episodes represented `r gss_summary[gss_summary$Mode == 'Cycling',]$'1992 (%)'`% - the highest share of this mode across all years. In 2005, it drops to the lowest representation level with `r gss_summary[gss_summary$Mode == 'Cycling',]$'2005 (%)'`%, stabilizing at around 8% thereafter.
+When analyzing the two active transportation modes, walking episodes account for `r gss_summary[gss_summary$Mode == 'Walking',]$'Total (%)'`%, while the remaining `r gss_summary[gss_summary$Mode == 'Cycling',]$'Total (%)'`% are cycling episodes. 
+The most recent survey (2022) showed that bicycle trips accounted for almost 10% of active travel episodes, reinforcing an increasing trend in the participation since 2005 - the year that marked the lowest representation, as opposed to 1992, when bicycle episodes marked the highest participation in all years (13%). 
 
 ```{=html}
 <!-- 
@@ -464,7 +485,7 @@ start -->
 gss_totals_table
 ```
 
-Tables \ref{tab:table-02} presents statistic on travel time by active transportation mode. The maximum time spent on walking trips varied between 90 and 100 minutes across the years. It is important to remember that trips with duration greater than 100 minutes were excluded from the analysis. The mean walking time also varies, starting at 20 minutes in 1992, dropping to 12 minutes between 1992 to 2005, and increasing again to 13 minutes in 2010 and to 16 minutes in 2015. However, it is known that the mean is a statistic that is highly influenced by extreme values. For this reason, we analyze the median travel time, as it is more representative of the typical travel time. The median time spent walking was 10 minutes in 1992, dropped to 5 minutes in 1998, and remained constant at 10 minutes from 2005 to 2015. The weighted median estimates for walking trips indicates that there is no difference in the typical walking travel time when compared the most recent survey analyzed (2015) with the oldest survey analyzed (1998). 
+Tables \ref{tab:table-02} presents statistic on travel time by active transportation mode. The maximum time spent on walking trips varied between 90 and 100 minutes across the years. It is important to remember that trips with duration greater than 100 minutes were excluded from the analysis. The mean walking time also varies, starting at 20 minutes in 1992, dropping to 12 minutes between 1992 to 2005, and increasing again to 13 minutes in 2010, to 16 minutes in 2015, and to 18 minutes in 2022. However, it is known that the mean is a statistic that is highly influenced by extreme values. For this reason, we analyze the median travel time, as it is more representative of the typical travel time. The median time spent walking was 10 minutes in 1992, dropped to 5 minutes in 1998, remained constant at 10 minutes from 2005 to 2015, and increased to the highest level in 2022, to 15 minutes. 
 
 
 ```{r table-02, echo=FALSE, cache=FALSE}
@@ -517,9 +538,10 @@ styled_table_02
 ```
 
 
-For cycling trips, the maximum travel time varies from 90 to 100 minutes, similar to walking, except in 1998 when the maximum travel time recorded was 80 minutes. The average cycling travel time varied a lot, ranging from 18 minutes in 2010 to 28 minutes 1998. In this case, when we analyze the median travel time, we see that the typical cycling travel time fluctuated between 1992 to 2015. It started at 20 minutes for 1992, increased to 25 minutes in 1998 - the  highest median travel time identified across all survey cycles - then dropped to 15 minutes in 2005 and to 10 minutes in 2010, before returning to 20 minutes in 2015, the same value as in 1992 when the surveys started. The analysis of travel time statistics alone does not fully explain the reasons behind these fluctuations in travel time over the years. However, it is likely that these variations reflect changes in bicycle technology or  cyclist behavior.
+For cycling trips, the maximum travel time ranges from 60 to 100 minutes. Until 2022, maximum travel times had a similar pattern to walking trips, but the new survey showed that the maximum travel time for cycling trips was the lowest when considering all years for both modes (walking and cycling). The average cycling travel time varied considerably, ranging from 18 minutes in 2010 to 30 minutes in 2022. When we analyze the median travel time, we see that the typical cycling travel time also fluctuated between the periods, starting at 20 minutes in 1992 and peaking at 30 minutes in 2022. As was also the case with the walking travel times, these results show a trend of increasing for cycling trip duration throughout the years. 
+The analysis of travel time statistics alone does not fully explain the reasons behind these fluctuations in travel time over the years. However, it is likely that these variations reflect changes in bicycle technology or  cyclist behavior.
 
-Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each destination by year and by mode of transport. For all the years analyzed, 'Home' is the most common travel destination, regardless of whether the mode of transport considered is walking or cycling, with levels above 40%. After that, 'Work or school' appears as the second most common destination, especially for journeys by bicycle, with a peak of almost 36% of trips by bicycle in 1998, a high drop to 23% in 2005, rising again to levels close to 35% in 2015. Along with the two destinations already mentioned, 'Other's home' is the only other destination present in the GSS surveys since 1992. This last destination seems to be a destination with a higher share when it comes to walking trips, but for both modes of transportation it seems that respondents are going less and less to other people's homes - a fact that can be explained by new communication technologies, in which a person doesn't need to visit another person's home to keep in touch with them.
+Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each destination by year and by mode of transport. For all the years analyzed, 'Home' is the most common travel destination, regardless of whether the mode of transport considered is walking or cycling, with levels above 40%. After that, 'Work or school' appears as the second most common destination, especially for journeys by bicycle, with a peak of almost 36% of trips by bicycle in 1998, followed by a high drop to 23% in 2005. Along with the two destinations already mentioned, 'Other's home' is the only other destination present in the GSS surveys since 1992. This last destination seems to be a destination with a higher share when it comes to walking trips, but for both modes of transportation it seems that respondents are going less and less to other people's homes - a fact that can be explained by new communication technologies, in which a person does not need to visit another person's home to keep in touch with them.
 
 ```{r destinations-percentual, echo=FALSE, cache=FALSE, include=FALSE}
 # summarizing episodes by mode, year and destination
@@ -574,7 +596,7 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_perce
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_percentual.jpg"))
 ```
 
-After 2005, the expansion of the destination highlights some new popular locations. For example, 'Grocery store' appears as the third most chosen destination, varying from almost 10% in 2005 to 5.6% in 2015 for cycling trips and from 12% to 10.6% for walking trips. When considering walking trips, 'Restaurants' appears as another well chosen destination and, in the case of cycling trips, 'Outdoors' appears as a well chosen destination.
+After 2005, the expansion of the destination highlights some new popular locations. For example, 'Grocery store' appears as the third most chosen destination, varying from almost 10% in 2005 to 14.3% in 2022 for cycling trips and from 12% to 12.6% for walking trips. When considering walking trips, 'Restaurants' appears as another well chosen destination and, in the case of cycling trips, 'Outdoors' appears as a well chosen destination.
 
 ```{=html}
 <!-- 
@@ -720,7 +742,7 @@ Decided to not include the following tables because I transformed them into figu
 start -->
 ```
 
-Figure \ref{fig:figure-boxplot} present the box plot graphs showing the travel time distribution for active transportation modes over the years, categorized by destination. Over the period studied, the typical duration of walking trips was consistently lower than that of cycling trips. Some destinations are presented in only one survey, such as 'Business', 'Health clinic', 'Neighbourhood,' and 'Sport area'. These new destination exhibit typical walking travel times 10 minutes. For cycling trips, 'Business' recorded no trips, and while 'Neighbourhood' registered a typical travel times of 30 minutes, the others cited destinations obtained a typical travel time of 15 minutes.
+Figure \ref{fig:figure-boxplot} presents box plots showing the distribution of travel times for active transport modes over the years, categorized by destination. During the period studied, the typical duration of walking trips was consistently shorter than that of cycling trips. While we can compare the temporal evolution of travel times, some destinations appear only in the two most recent surveys, such as “Neighborhood,” “Health clinic,” “Sports area,” and “Business.” The first three showed a constant walking travel time of 10 minutes in both surveys, while the travel time to “Business” increased from 10 to 15 minutes. For cycling trips, “Business” recorded no trips, while “Neighborhood” had a typical travel time of 30 minutes in 2015 but no records for 2022. “Health clinic” showed a constant cycling travel time of 15 minutes, and “Sports area” doubled its typical duration, from 15 to 30 minutes.
 
 ```{r include = FALSE}
 # I created this version to visualize only the medians across destinations, years and mode to facilitate the explanation of the boxplots
@@ -738,7 +760,7 @@ destination_medians <- gss_impedances_renamed %>%
   theme_bw() +   
   facet_wrap(~dest_label) + 
   scale_x_discrete(
-    breaks = c(1992, 1998, 2005, 2010, 2015)) +
+    breaks = c(1992, 1998, 2005, 2010, 2015, 2022)) +
   labs(
     color = "Mode",                      
     x = "Year",                          
@@ -769,7 +791,7 @@ destination_boxplots <- gss_impedances_renamed %>%
 theme_bw() +   
 facet_wrap(~dest_label) + 
   scale_x_discrete(
-    breaks = c(1992, 1998, 2005, 2010, 2015)) +
+    breaks = c(1992, 1998, 2005, 2010, 2015, 2022)) +
   labs(
     fill = "Mode",                      
     x = "Year",                          
@@ -794,11 +816,13 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_boxpl
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_boxplots.jpg"))
 ```
 
-For destinations included in more than one survey, we can compare the temporal evolution of travel times. Starting with walking trips, we note a trend of increasing travel times for 'Restaurants' and 'Outdoors' (both increasing from 5 minutes in 2005 to 10 minutes in 2015), 'Other's home' (rising to 10 minutes in 2015 after being 5 minutes since 1992), 'Cultural venues' (from 10 minutes in 2005 and 2010 to 15 minutes in 2015), and 'Place of worship' (increasing from 10 minutes in 2005 to 20 minutes in 2015). Other destinations remained constant over time for this active travel mode, such as 'Home', which, after a decline compared to 1992, remained constant at 10 minutes from 2005 onward as the typical travel time. 'Work or school' and 'Grocery store' also remained constant at 10 minutes each since their first appearance in the GSS surveys. In general, while 'Place of worship' displayed the highest median travel time of 20 minutes, the general median walking time cutoff appears to be 10 minutes, with most trips occurring below this limit. In this case, no destination shows a decrease in typical travel (median) time. 
+For the other destinations, starting with walking trips, we note a trend of increasing travel times for almost all destinations, with an increase observed at least in the most recent survey (2022). “Restaurants” and “Outdoors” both increased from 5 minutes in 2005 to 10 minutes in 2022; “Other’s home” rose to 10 minutes in 2022 after remaining at 5 minutes since 1992; “Place of worship” increased from 10 minutes in 2005 to 20 minutes in 2022; and “Cultural venues” rose from 10 minutes in 2005 and 2010 to 20 minutes in 2022. The three most popular types of destinations - “Home,” “Work or school,” and “Grocery store” - had an increase to 15 minutes after decades of stabilization at 10 minutes. In general, while “Place of worship” and “Cultural venues” displayed the highest median travel times of 20 minutes, the overall median walking time cutoff across all surveys appears to be 10 minutes, with most trips occurring below this threshold. In this case, no destination shows a decrease in typical (median) travel time.
 
-For cycling trips, only 'Cultural venues' did not show an increase in typical travel time when comparing 2015 to 2010. In this case, the travel time dropped from 25 minutes in 2010 to 15 minutes in 2015, although it is still higher than the value measured in 2005 (10 minutes). An increasing trend in travel times is evident for destinations such as 'Grocery store' (rising from 10 to 15 minutes between 2005 and 2015) and 'Restaurant' (15 minutes in 2005 and 2010, rising to 20 minutes in 2015). Other destinations seem to follow a similar pattern, where higher travel times were recorded in the earlier survey cycles, dropping over time, and then rising again in the most recent surveys, especially in 2015. This is the case for 'Home,' which returned to the 1992 typical travel time of 20 minutes after dropping to 10 minutes in 2010. It is also worth mentioning 'Work or school,' which had a typical cycling travel time of 15 minutes in 1992, peaked at 30 minutes in 1998, dropped back to 15 minutes in 2005 and 2010, and then increased to 20 minutes in 2015. In this case, no destination shows a decrease in typical (median) travel time. 'Outdoors' presented the longest typical travel time for cycling, reaching a median of 30 minutes in 2015.
+For cycling trips, only “Cultural venues” did not show an increase in typical travel time when comparing 2022 to the previous years. In this case, the travel time dropped from 25 minutes in 2010 to 15 minutes in 2015, although it remained higher than the 2005 value (10 minutes), and no trips were recorded in the most recent survey (2022). "Other's home" is the other destination with no cycling records for the 2022 survey. An increasing trend in travel times is evident for destinations such as “Grocery store” (rising from 10 to 60 minutes between 2005 and 2022) and “Restaurant” (rising to 30 minutes in 2022).
 
-Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show walking and cycling trips from 1992 to 2015 through heat maps. These maps use color gradients to represent the percentage of trips between origins and destinations, with darker colors indicating higher percentages and lighter colors representing less frequent routes. In 1992, walking trips with 'Home' as both the origin and destination made up the majority, accounting for almost 31% of all walking trips. These trips often involved leisure activities, like short walks or dog walking. Following this, trips from 'Home' to 'Work or school' comprised 18% of walking trips. Overall, 'Home' is the principal hub, either as an origin or destination, with only 7% of trips not involving 'Home.' By 1998, more than half of walking trips were between 'Home' and 'Other's home,' with 'Home' to 'Other's home' and 'Other's home' to 'Home' each representing 26% of trips. During this year, 'Home' to 'Home' accounted for only 10% of trips. In 2005, trips with origins or destinations involving 'Home' and 'Work or school' remained as the most common, but the introduction of new destinations led to a more dispersed trip distribution. Together, these two combinations accounted for 25% of all trips. In 2010, trips between 'Home' and 'Work or school' continued as the most common type, representing 18% of trips, tied with trips from 'Grocery store' to 'Home' (9%). Finishing the walking trip descriptive analysis, in 2015, the highest proportion of trips were from 'Home' to 'Work or school' (12%) and vice versa (11%). Trips from 'Home' to 'Home' accounted for 8% of trips, and 'Grocery store' became a notable destination for trips originating from 'Home' (8%).
+Other destinations seem to follow a similar pattern of increasing travel time, where higher values were recorded in earlier survey cycles, dropped over time, and then rose again in the most recent surveys. This is the case for “Home,” which reached its highest typical travel time of 25 minutes after dropping to 10 minutes in 2010. It is also worth mentioning “Work or school,” which had a typical cycling travel time of 15 minutes in 1992, peaked at 30 minutes in 1998, dropped back to 15 minutes in 2005 and 2010, and then increased to 25 minutes in 2022. In this case, no destination shows a decrease in typical (median) travel time. 
+
+Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show walking and cycling trips from 1992 to 2022 through heat maps. These maps use color gradients to represent the percentage of trips between origins and destinations, with darker colors indicating higher percentages and lighter colors representing less frequent routes. In 1992, walking trips with 'Home' as both the origin and destination made up the majority, accounting for almost 31% of all walking trips. These trips often involved leisure activities, like short walks or dog walking. Following this, trips from 'Home' to 'Work or school' comprised 18% of walking trips. Overall, 'Home' is the principal hub, either as an origin or destination, with only 7% of trips not involving 'Home.' By 1998, more than half of walking trips were between 'Home' and 'Other's home,' with 'Home' to 'Other's home' and 'Other's home' to 'Home' each representing 26% of trips. During this year, 'Home' to 'Home' accounted for only 10% of trips. In 2005, trips with origins or destinations involving 'Home' and 'Work or school' remained as the most common, but the introduction of new destinations led to a more dispersed trip distribution. Together, these two combinations accounted for 25% of all trips. In 2010, trips between 'Home' and 'Work or school' continued as the most common type, representing 18% of trips, tied with trips from 'Grocery store' to 'Home' (9%).In 2015, the highest proportion of trips were from “Home” to “Work or school” (12%) and vice versa (11%). Trips from “Home” to “Home” accounted for 8% of trips, and the “Grocery store” became a notable destination for trips originating from “Home” (8%) - patterns that were reinforced, as shown in the 2022 survey. In the most recent survey, the most common trip was from “Home” to “Work or school” (17%), followed by the return trip from “Work or school” to “Home” (13%). After that, trips between “Home” and the “Grocery store” accounted for 20% when both directions are combined.
 
 ```{r make-figs-heatmaps, include=FALSE}
 # Walking heat map
@@ -815,7 +839,7 @@ walking_hm_fig <- gss_impedances_renamed %>%
     labs(x = "Destination",
     y = "Origin",
     fill = "Percentage (%)") + 
-    #geom_text(aes(label = round(percentage)), color = "black", size = 3) + 
+    geom_text(aes(label = round(percentage)), color = "black", size = 3) + 
     theme_bw() + 
     scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "YlOrRd")) +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
@@ -844,7 +868,7 @@ cycling_hm_fig <- gss_impedances_renamed %>%
     labs(x = "Destination",
     y = "Origin",
     fill = "Percentage (%)") + 
-    #geom_text(aes(label = round(percentage)), color = "black", size = 3) + 
+    geom_text(aes(label = round(percentage)), color = "black", size = 3) + 
     theme_bw() + 
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
     scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "YlOrRd")) +
@@ -869,17 +893,17 @@ knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/walking
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_hm_fig.jpg"))
 ```
 
-For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common trip was from 'Home' to 'Work or school' (26%), followed by trips from 'Other's home' to 'Home' (22%). In all following years, the most frequent trip were between 'Home' and 'Work or school' in both direction. This combination accounted for 65% of the trips in 1998, 40% in 2005, 52% in 2010, and 58% in 2015. Additionally and unlike walking trips, 'Home' to 'Home' trips were not a common cycling trip in any of the surveys. This suggests that leisure trips, such as activities around the home, are predominantly done by foot rather than by bicycle.
+For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common trip was from 'Home' to 'Work or school' (26%), followed by trips from 'Other's home' to 'Home' (22%). In all following years, the most frequent trip were between 'Home' and 'Work or school' in both direction. This combination accounted for 65% of the trips in 1998, 40% in 2005, 52% in 2010, and 58% in 2015.  However, in 2022, this combination dropped to 43%, mainly due to an increase in trips between the “Grocery store” and “Home” (18%).  Additionally and unlike walking trips, 'Home' to 'Home' trips were not a common cycling trip in any of the surveys. This suggests that leisure trips, such as activities around the home, are predominantly done by foot rather than by bicycle.
 
-We analyzed whether the temporal differences in travel times for the destinations had statistical significance. Only destinations that appear in more than one year can have their temporal evolution analyzed. Therefore, from the twelve possible destinations, in the cycling mode only seven locations can be temporally analyzed: 'Cultural venues,' 'Grocery store,' 'Home,' 'Other's home,' 'Outdoors,' 'Restaurant,' and 'Work or school.' In the case of walking trips, it is possible to include 'Place of worship' to the previous destination list.
+We analyzed whether the temporal differences in travel times for the destinations were statistically significant. Only destinations that appear in more than one survey year can have their temporal evolution analyzed. Therefore, out of the twelve possible destinations, some cycling locations could not be temporally analyzed: “Business,” “Neighborhood,” and “Place of worship.” In the case of walking trips, all destinations could be analyzed over time. 
 
 After performing the Kruskal-Wallis test (to assess whether there was a statistically significant difference between the distributions of empirical travel time values, considering the time differences for each destination and the weight of each episode) and the pairwise Wilcoxon test, we were able to identify the destinations where a statistically significant difference was detected. Table \ref{tab:result-stats} shows only the destinations where a statistically significant difference was found, considering the two modes of active transport analyzed.
 
-For both active transportation modes, the possible destinations had at least two year with statistically significant difference in travel times. Considering the cycling mode and, for instance, the "Home" destination, there was a statistically significant difference (p-value < 2.2e-16) for every possible combination of two survey cycles. This result indicates that the previously discussed increase in typical cycling travel time for home destinations when compared 2015 to 2010 is statistically significant. As identified for cycling trips, all destinations presented at least two years with statistically significant difference in travel times for walking trips (p-value < 2.2e-16).
+For both active transportation modes, the possible destinations had at least two year with statistically significant difference in travel times. Considering the cycling mode and, for instance, the "Home" destination, there was a statistically significant difference (p-value < 2.2e-16) for every possible combination of two survey cycles. This result indicates that the previously discussed increase in typical cycling travel time for home destinations when compared 2022 to 2010 is statistically significant. As identified for cycling trips, all destinations presented at least two years with statistically significant difference in travel times for walking trips (p-value < 2.2e-16).
 
 ```{r kruskal-walking, include = FALSE, warning= FALSE}
 result_kw <- data.frame()
-anos_possiveis <- c("1992", "1998", "2005", "2010", "2015")
+anos_possiveis <- c("1992", "1998", "2005", "2010", "2015", "2022")
 result_pw <- data.frame(matrix(ncol = length(anos_possiveis) + 2, nrow = 0))
 colnames(result_pw) <- c(anos_possiveis, "Mode", "Destination")
 
@@ -937,21 +961,24 @@ result_pw$Year <- substr(rownames(result_pw), 1, 4)
 rownames(result_pw) <- NULL
 
 result_pw <- result_pw %>%
-  filter(rowSums(select(., `1992`:`2015`) <= 0.05, na.rm = TRUE) > 0)
+  filter(rowSums(select(., `1992`:`2022`) <= 0.05, na.rm = TRUE) > 0)
 
 result_pw <- result_pw[, colSums(!is.na(result_pw)) > 0]
 
-result_pw <- result_pw[,c("Mode","Destination","Year","1992","1998","2005","2010")]
+result_pw <- result_pw[,c("Mode","Destination","Year","1992","1998","2005","2010","2015")]
 
 result_pw <- result_pw %>%
   mutate(across(where(is.numeric), ~ ifelse(. > 0.05, NA, .)))
 
-table_stats <- result_pw %>% 
+result_pw_sci <- result_pw %>%
+  mutate(across(where(is.numeric), ~ sprintf("%.2e", .x)))
+
+table_stats <- result_pw_sci %>% 
   kable(format = "latex",
         booktabs = TRUE,
-        caption = paste0("\\label{tab:result-stats}P-values of the pairwise Wilcoxon test .")) %>% 
-    kable_styling(full_width = FALSE, 
-                latex_options=c("scale_down"),
+        caption = paste0("\\label{tab:result-stats}P-values of the pairwise Wilcoxon test.")) %>% 
+  kable_styling(full_width = FALSE, 
+                latex_options = c("scale_down"),
                 font_size = 10) %>%
   collapse_rows(columns = 1, valign = "top", latex_hline = "major")
 ```
@@ -1021,166 +1048,139 @@ active_pop_proportion_table <- active_pop_proportion  %>%
                      "Total" = 4))
 ```
 
-In general, the share of the population with active trip records varied between 7.8% and 14.5% from 1992 to 2015 (Table \ref{tab:active-pop-proportion-table}). The year 1998 recorded the lowest level of active trip participation, with 7.8% (1,892,299 people), while 2010 marked the peak of active participation at 14.5% (4,084,114 people). In 2015, the trend of increasing participation in walking or cycling trips, which began after the 1998 low and peaked in 2010, appeared to pause. In that year, the most recent in the analysis, around 11% of the population (3,265,846 people) recorded at least one active trip. 
+In general, the share of the population with active trip records varied between 7.8% and 14.6% from 1992 to 2022 (Table \ref{tab:active-pop-proportion-table}). The year 1998 recorded the lowest level of active trip participation, with 7.8% (1,892,299 people), while 2010 marked the peak of active participation at 14.5% (4,084,114 people). In 2015, the trend of increasing participation in walking and cycling trips was reversed to the beginning of a decline, confirmed by the 2022 survey. In 2015, around 11% of the population (3,265,846 people) recorded at least one active trip. In 2022, this share of the population fell to 8.9%, the second lowest share in the entire historical series, representing 2,856,564 people out of a total population of 32,136,802 people.
 
 The number of people with active trip episodes is mainly influenced by walking episodes. On average, over 90% of the recorded active trips involve individuals with walking episodes. The percentage patterns for the population with records of walking and cycling trips do not differ significantly from those observed when both modes are considered together.
 
 ```{r table-active_pop_proportion_table, echo=FALSE, cache=FALSE}
 active_pop_proportion_table
 ```
+Analyzing the number of episodes per person for the general population, the average value for each year is approximately 0.22, ranging from a minimum of 0.15 in 1998 to a maximum of 0.30 in 2010. Considering only the population with active episodes recorded, the average is around 2 active episodes per person, varying from a maximum of 2.11 episodes in 2005 to a minimum of 1.77 episodes per person in 1992. The average of 2 episodes for the active population is expected, as it reflects the two trips typically required to travel to and from a specific location. Figure \ref{fig:eps-per-person-fig} presents these values broken down by mode, walking and cycling. 
 
-Considering only the population with records of walking episodes, Figure \ref{fig:walking-population-by-year-destination-fig} shows that, in all the years analyzed, "Home" and "Work or study" were the main destinations (as previously discussed in the previous subsection). On average, those who recorded only one trip accounted for approximately 84% of the population, around 13% recorded more than one walking trip, and the remaining 2 to 3% recorded three or more trips. The maximum number of walking trips registered by a person was 10 episodes (in 1992, 2005, and 2010). In contrast, 2015 shows a reduction compared to previous years, with a maximum of 8 walking trips recorded by a single person. In all these maximum cases, the destination was "Home."
+```{r include = FALSE}
+# total episodes
+resume_eps_by_type <- gss_episodes_renamed %>%
+     group_by(YEAR, MODE) %>%
+     dplyr::summarise(
+         Episodes = sum(WGHT_EPI),
+         .groups = "drop") %>%
+  rename(Mode = MODE)
 
-```{r figure-people_per_ep_walking, include = FALSE}
-# Walking pop figure
-people_per_ep_walking <- main_act_eps_summary %>% 
-  filter(Count > 0 & MODE == 'Walking') %>%
-  mutate(dest_label = factor(dest_label, levels = destination_order)) %>% 
-  ggplot(aes(x = Count, y = WGHT_PER_SUM, fill = dest_label)) +
-  geom_bar(stat = "identity") +
-  theme_minimal() + 
-  scale_fill_manual(values = my_colors) +
-  facet_wrap(~ as.factor(YEAR))  +
-  labs(
-    x = "Number of walking episodes",
-    y = "Total population",
-    fill = "Destination") + 
-  theme(
-    strip.text = element_text(face = "bold", hjust = 0)) +
-  scale_x_continuous(breaks = c(1, 2, 3, 4,5,6,7,8,9,10)) +
-  scale_y_continuous(labels = scales::comma)
+resume_eps <- resume_eps_by_type %>%
+  group_by(YEAR) %>% 
+  dplyr::summarise(Episodes = sum(Episodes),
+         .groups = "drop") %>%  
+    mutate(Mode = 'Active_eps') %>%
+  select(YEAR, Mode, Episodes)
 
-# Saving figure
-ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_walking.jpg"), 
-       plot = people_per_ep_walking,
-       width = 12, 
-       height = 8, 
-       units = "in", 
-       dpi = 300)
+# total pop
+pop <- active_pop_proportion %>% 
+  dplyr::select(YEAR, walk, cycle, active, total) %>% 
+  rename(Walking_pop = walk, 
+         Cycling_pop = cycle, 
+         Active_pop = active, 
+         Total_pop = total)
+
+ep_per_person <- resume_eps %>% 
+  left_join(pop, by = "YEAR") %>% 
+  mutate(eps_per_total_pop = Episodes/Total_pop, 
+         eps_per_active_pop = Episodes/Active_pop)
+
+# Per type of transportation 
+
+tab_total <- resume_eps_by_type %>% 
+  left_join(ep_per_person %>% dplyr::select(YEAR, Total_pop), by = 'YEAR') %>% 
+  mutate(type = 'Total') %>% 
+  rename(Pop = Total_pop)
+
+tab_active <- resume_eps_by_type %>% 
+  left_join(ep_per_person %>% dplyr::select(YEAR, Active_pop), by = 'YEAR') %>% 
+  mutate(type = 'Active') %>% 
+  rename(Pop = Active_pop) 
+
+tab_walk <- resume_eps_by_type %>% 
+  left_join(ep_per_person %>% dplyr::select(YEAR, Walking_pop), by = 'YEAR') %>% 
+  mutate(type = 'Walking') %>% 
+  rename(Pop = Walking_pop) %>% 
+  filter(Mode == 'Walking')
+  
+
+tab_bike <- resume_eps_by_type %>% 
+  left_join(ep_per_person %>% dplyr::select(YEAR, Cycling_pop), by = 'YEAR') %>% 
+  mutate(type = 'Cycling') %>% 
+  rename(Pop = Cycling_pop) %>% 
+  filter(Mode == 'Cycling')
+
+combined_data <- bind_rows(tab_total,tab_active,tab_walk,tab_bike) %>%
+  mutate(ep_per_person = Episodes/Pop)
 ```
 
-```{r walking-population-by-year-destination-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of people with at least one walking episodes, by destination and year."), fig.align="center"}
-
-knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_walking.jpg"))
-```
-
-```{r include=FALSE}
-pop_eps_percentages <- main_act_eps_summary %>% 
-  filter(Count > 0) %>%
-  group_by(Count, YEAR, MODE) %>% 
-  summarise(sum_count = sum(WGHT_PER_SUM, na.rm = TRUE)) %>% 
-  group_by(YEAR, MODE) %>% 
-  summarise(ep1 = sum(sum_count[Count = 1], na.rm = TRUE),
-            ep2 = sum(sum_count[Count = 2], na.rm = TRUE),
-            mep3 = sum(sum_count[Count >= 3], na.rm = TRUE),
-            total = sum(sum_count, na.rm = TRUE),
-            ep1_perc = round(ep1/total * 100, 2),
-            ep2_perc = round(ep2/total * 100, 2),
-            mep3_perc = round(mep3/total * 100, 2))
-```
-
-For the cycling population, the maximum number of trips recorded was 4, in 2005 (to "Home" and "Grocery store," as shown in Figure \ref{fig:cycling-population-by-year-destination-fig}). This maximum value is lower compared to the walking population, and there is a higher concentration of cyclists recording only one episode (around 90%), two episodes (around 8%), and the remaining 2–3% recording three or four trips.
-
-```{r figure-people_per_ep_cycling, include = FALSE}
-# Pop cycling figure
-people_per_ep_cycling <- main_act_eps_summary %>% 
-   filter(Count > 0 & MODE == 'Cycling') %>%
-  mutate(dest_label = factor(dest_label, levels = destination_order)) %>% 
-   ggplot(aes(x = Count, y = WGHT_PER_SUM, fill = dest_label)) +
-   geom_bar(stat = "identity") +
-   theme_minimal() + 
-  scale_fill_manual(values = my_colors) +
-  facet_wrap(~ as.factor(YEAR))  + 
-  labs(
-    x = "Number of cycling episodes",
-    y = "Total population",
-    fill = "Destination") + 
-  theme(
-    strip.text = element_text(face = "bold", hjust = 0))  +
-  scale_y_continuous(labels = scales::comma)
-
-
-# Saving figure
-ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_cycling.jpg"), 
-       plot = people_per_ep_cycling,
-       width = 12, 
-       height = 8, 
-       units = "in", 
-       dpi = 300)
-```
-
-```{r cycling-population-by-year-destination-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of people with at least one cycling episodes, by destination and year."), fig.align="center"}
-
-knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/people_per_ep_cycling.jpg"))
-```
-
-Analyzing the number of episodes per person for the general population, the values for each year is very close to 0, ranging from a minimum of 0.009 in 2015 to a maximum of 0.026 in 1992. Considering only the population with active episodes recorded, this value is in average 1.180 active episodes per person, varying from a maximum of 1.203 episodes in 2005 to a minimum of 1.152 episodes per person in 2015. Figure \ref{fig:eps-per-person-fig} presents these values broken down by mode, walking and cycling. The sum of each category of number of episodes is higher than the population with walking episodes, because some people are counted in more than one category due to different destinations. For instance, a person who went once to the "Grocery store" and twice to "Other's home" will be counted three times.
-
-Since walking episodes form the majority of active trip episodes, the pattern for the walking population is similar to the general trend. For the cycling population, only the low value observed in 1992 for the active population appears different from the overall pattern. However, the number of cyclists in 1992 was not sufficient to alter the overall trend for the active population. These statistics reveal a trend of decreasing active trips per person (whether walking or cycling) when comparing data from 1992 to 2005, with a particularly noticeable decline after 1992 for walking and 2005 for cycling. 
-
-```{r eps-per-person, include = FALSE}
-ep_per_person <- main_act_eps %>%
-  group_by(YEAR, MODE) %>%
-  summarise(
-    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
-
-ep_per_active_person <- main_act_eps %>%
-  filter(Count > 0) %>% 
-  group_by(YEAR, MODE) %>%
-  summarise(
-    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
-
-combined_data <- bind_rows(
-  ep_per_person %>% mutate(type = "Total"),
-  ep_per_active_person %>% mutate(type = "Active"))
-
-# Episodes per person Figure
-eps_per_person_fig <- ggplot(combined_data, aes(x = YEAR, y = ep_per_person, color = MODE, linetype = type)) +
+```{r eps-per-person-act-total, include = FALSE}
+# Episodes per person Figure (active and total pop)
+eps_per_person_fig <- ggplot(combined_data %>% 
+                               filter(type %in% c('Active', 'Total')), 
+                             aes(x = YEAR, y = ep_per_person, color = Mode)) +
   geom_line(size = 1) +
   geom_point()+
   geom_label(aes(label = round(ep_per_person, 2)), size = 3, vjust = 0) +
-  theme_minimal() +
+  theme_minimal() + 
+  scale_x_continuous(
+    breaks = c(1992, 1998, 2005, 2010, 2015, 2022)) + 
   labs(
     x = "Year",
     y = "Episodes",
-    color = "Mode",
-    linetype = "Population"
-  )
+    color = "Mode") + facet_wrap(~ as.factor(type))
 
 # Saving figure
-ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person.jpg"),
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person_act_total.jpg"),
        plot = eps_per_person_fig,
-       width = 18, 
-       height = 10, 
+       width = 21, 
+       height = 8, 
        units = "cm", 
        dpi = 300)
 ```
 
-```{r eps-per-person-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of active episodes by person."), fig.align="center"}
+```{r eps-per-person-act-total-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of active episodes by person."), fig.align="center"}
 
-knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person.jpg"))
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person_act_total.jpg"))
+```
+When we split the walking and cycling episodes by the active population and the total population (Figure \ref{fig:eps-per-person-act-total-fig}), we observe that each active person recorded between 1.6 and 1.97 walking episodes, with the minimum in 1992 and the maximum in 2005. This number dropped to 1.87 in 2015, followed by a slight recovery to 1.91 in 2022. For cycling episodes, considering only the active population, there has been an increasing trend since 1998, rising from 0.14 to 0.20 cycling episodes per active person in 2022. However, when we consider the total population, cycling episodes remained stable at 0.02 episodes per person. Walking episodes per total population showed the lowest value (0.17) since 1998, when the minimum of 0.14 episodes per person was recorded.
+
+```{r eps-per-person-walk-bike, include = FALSE}
+# Episodes per person Figure (active and total pop)
+eps_per_person_fig <- ggplot(combined_data %>% 
+                               filter(type %in% c('Walking', 'Cycling')), 
+                             aes(x = YEAR, y = ep_per_person, color = Mode)) +
+  geom_line(size = 1) +
+  geom_point()+
+  geom_label(aes(label = round(ep_per_person, 2)), size = 3, vjust = 0) +
+  theme_minimal() + 
+  scale_x_continuous(
+    breaks = c(1992, 1998, 2005, 2010, 2015, 2022)) + 
+  labs(
+    x = "Year",
+    y = "Episodes",
+    color = "Mode")
+
+# Saving figure
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person_by_mode.jpg"),
+       plot = eps_per_person_fig,
+       width = 16, 
+       height = 8, 
+       units = "cm", 
+       dpi = 300)
 ```
 
-```{r include = FALSE}
-ep_per_person2 <- main_act_eps %>%
-  group_by(YEAR) %>%
-  summarise(
-    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
+An interesting pattern emerges when we analyze the episodes by type of active population (Figure \ref{fig:eps-per-person-by-mode-fig}). When we divide the number of walking episodes by the population with recorded walking trips (pedestrians), and the number of cycling episodes by the population with recorded cycling trips (cyclists), we observe an increasing trend for both rates. The results shown in Figures \ref{fig:eps-per-person-act-total-fig} and \ref{fig:eps-per-person-by-mode-fig}, along with the data on the percentage of respondents with active trips, indicate that: first, the number of people with active episodes has been decreasing over time; however, among those with recorded active trips, the number of episodes per person is increasing for both transportation modes, walking and cycling.
 
-ep_per_active_person2 <- main_act_eps %>%
-  filter(Count > 0) %>% 
-  group_by(YEAR) %>%
-  summarise(
-    ep_per_person = sum(Count * WGHT_PER, na.rm = TRUE) / sum(WGHT_PER, na.rm = TRUE))
+```{r eps-per-person-by-mode-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of active episodes by person, considering the walking population and cyclists."), fig.align="center"}
 
-combined_data2 <- bind_rows(
-  ep_per_person2 %>% mutate(type = "Total"),
-  ep_per_active_person2 %>% mutate(type = "Active"))
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person_by_mode.jpg"))
 ```
 
 ## Calibrated impedance function
 
-This section presents the identified impedance functions for walking and cycling trips to various destinations across Canadian Metropolitan and Census Agglomeration Areas from 1992 to 2015. In general, the impedance functions aim to capture transportation behavior, illustrating that the likelihood of traveling between two points decreases as travel duration increases. Each impedance function follows one of the mathematical equations previously mentioned, enabling the plotting of PDF curves. These curves also highlight critical points at which a person's tendency to walk or cycle significantly decreases.
+After analyzing the active travel episodes and population with records of active trip, this section presents the identified impedance functions for walking and cycling trips to various destinations across CMA/CA in Canada from 1992 to 2022. In general, the impedance functions aim to capture transportation behavior, illustrating that the likelihood of traveling between two points decreases as travel duration increases. Each impedance function follows one of the mathematical equations previously mentioned, enabling the plotting of PDF curves. These curves also highlight critical points at which a person's tendency to walk or cycle significantly decreases.
 
 As explained in the methodology section, we used the `fitdistrplus` package [@delignette2015fitdistrplus] to calibrate the functions. We selected the best impedance function for each transportation mode, destination, and year based on the lowest Akaike Information Criterion (AIC) value [@akaike1974]. The AIC metric not only assesses the goodness of fit but also penalizes model complexity to prevent overfitting. AIC provides a balance between a model's accuracy and simplicity, with lower values indicating a more economical model. The distribution with the lowest AIC was considered the most suitable for representing the distance decay curve for each specific destination in each year. We chose AIC as the selection criterion because, while the `fitdistrplus` package accommodates weighted episodes during estimation, it does not extend this functionality to diagnostic plots, which are typically unweighted and traditionally used to select the best-fitting function.
 
@@ -1234,9 +1234,7 @@ biking_functions_table <- selected_functions %>%
   footnote(general = c("For 'lnorm' distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For the 'Gamma' distribution, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For the 'Uniform' distribution,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion."), threeparttable = T)
 ```
 
-In total, we fitted `r nrow(selected_functions)` impedance functions. Among the candidate distributions, only the lognormal, gamma, and uniform distributions were selected, with the uniform distribution being chosen exclusively for certain cycling destinations. The absence of exponential functions, given the variety of destinations, year and mode of transport, indicates that the impedance functions applied in active accessibility studies may not be adequately measuring travel behavior, especially for cases when the travel time is close to 0 minute. Table \ref{tab:walking-functions-tab} displays the selected functions for walking trips, while Table \ref{tab:cycling-functions-tab} presents the functions for cycling trips. Appendix A includes the AIC, BIC, and log-likelihood values for all candidate distributions.
-
-<!--# Criar um appendix que demonstre os valores de AIC para as funcoes nao selecionadas. Ou nao.  -->
+In total, we fitted `r nrow(selected_functions)` impedance functions. Among the candidate distributions, only the negative exponential type was not selected. The absence of exponential functions, given the variety of destinations, year and mode of transport, indicates that the impedance functions applied in active accessibility studies may not be adequately measuring travel behavior, especially for cases when the travel time is close to 0 minute. Table \ref{tab:walking-functions-tab} displays the selected functions for walking trips, while Table \ref{tab:cycling-functions-tab} presents the functions for cycling trips. Appendix A includes the AIC, BIC, and log-likelihood values for all candidate distributions.
 
 ```{r walking_functions_table,echo=FALSE, cache=FALSE, warning=FALSE}
 
@@ -1248,15 +1246,7 @@ walking_functions_table
 biking_functions_table
 ```
 
-Figure \ref{fig:outdoors-impedance-fig} presents the calibrated functions for the destination 'Outdoors,' along with a histogram of the empirical distribution of trips, split by year and transportation mode. Comparing functions from different categories can be difficult when analyzed for the first time, but by starting with the functions from the walking transportation mode, the calibrated functions from this example show a similar pattern. At a duration of around zero minutes, the probability of making the trip is low (with a density of zero for the years 2010 and 2015). After a few minutes, there is a peak in the maximum probability of traveling to reach 'Outdoors,' followed by a drop in willingness to zero for very high values of time, indicating a low probability of making the trip.
-
-For the years 2005 and 2010, the selected impedance functions are of the gamma type, with shapes of $\alpha = 1.24$ and $\alpha = 1.27$, respectively, and the same rate of $\sigma = 0.13$. The rate parameter ($\sigma$) mainly controls the speed of the curved drop, which is the same for both years. The shape parameter ($\mu$) controls how the density peak shifts in relation to the $x$-axis (the travel time). A larger shape value means that the probability peak occurs at larger values of time. Since the shape values for 2005 and 2010 are very close, the peak of the PDF curve in both cases occurs at 2 minutes. Although the difference in shape ($\mu$) between the two years is small and does not change the time at which the peak occurs, it is enough to cause a difference in the peak values themselves. In 2005, the walking trips had a higher density around 2 minutes (0.079) compared to 2010 (0.077).
-
-For 2015, the PDF that best represents the population's transport behavior is a lognormal distribution, with a mean of $\mu = 3.08$ and a standard deviation of $\sigma = 0.80$. In this year, the density peak (0.05) occurs when the journey has the duration of 7 minutes. Here, we can see that a lower density peak also corresponds to a more dispersed curve, with higher densities at larger values of time. In fact, while in 2005 and 2010 walking trips had densities close to zero for values over 50 minutes, in 2015 there is still a small density (0.002) at the 50-minute mark.
-
-For trips made by bicycle, in 2015 and 2010 the impedance functions are of the gamma type, with a shape of $\alpha = 2.99$ and $\alpha = 2.05$, respectively, and rates $\sigma = 0.17$ and $\sigma = 0.59$. Such configurations in the gamma function result in different peak values, where in 2005 the peak (0.046) of density occurred in 12 minutes, in 2010 the peak (0.102) occurs in 6 minutes, half the previous time. In 2005, the curve has a smaller peak and is more dispersed, while in 2010 the curve has a higher peak and is less dispersed, reinforced by its higher rate ($\sigma$).
-
-In 2005, the PDF that best represented the curve was a uniform function with upper bound equals to 35 minutes and peak of (0.028). The presence of uniform functions means that it wasn't possible to parameterize more complex functions (like the other functions) and is explained by the low number of episodes in this category of destination, mode of transport and year (in this case, there were only 3 episodes identified). Overall, all the uniform functions have a maximum of 6 episodes and all of them are for the transportation mode cycling - which can be explained since this mode of transport doesn't have many episodes compared to the walking episodes (only 7% of active travel episodes). The figure also shows how cycling trips tend to have greater dispersion and higher typical values (dashed vertical lines) when compared to walking trips.
+Figure \ref{fig:outdoors-impedance-fig} presents the calibrated functions for the destination 'Outdoors,' along with a histogram of the empirical distribution of trips, split by year and transportation mode. Comparing functions from different categories can be difficult when analyzed for the first time, but by starting with the functions from the walking transportation mode (blue curves), the calibrated functions from this example show a similar pattern. At a duration of around zero minutes, the probability of making the trip is lower (with a density of zero for the years 2015 and 2022). After a few minutes, there is a peak in the maximum probability of traveling to reach 'Outdoors,' followed by a drop in willingness to zero for very high values of time, indicating a low probability of making the trip.
 
 ```{r mean_functions, include = FALSE}
 mean_functions <- selected_functions %>% 
@@ -1267,8 +1257,6 @@ mean_gamma <- round(mean_functions[mean_functions$Function == 'Gamma', ]$mean)
 mean_uniform <- round(mean_functions[mean_functions$Function == 'Uniform', ]$mean)
 mean_lognormal <- round(mean_functions[mean_functions$Function == 'Lognormal', ]$mean)
 ```
-
-The complexity of the impedance function will depend of the amount of episodes available to perform the calibration. For instance, to fit a gamma type function was necessary an average of `r mean_gamma` episodes, and to fit a lognormal type function, it was necessary around `r mean_lognormal` episodes. In contrast, to fit an uniform function it was required only `r mean_uniform` in average.
 
 ```{r theoretical_impedance_values, include = FALSE}
 theoretical_impedance <- function(df_functions, travel_cost) {
@@ -1411,13 +1399,21 @@ destino <- "Outdoors"
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/impf_",destino,".jpg"))
 ```
 
-The temporal difference between the decay functions is also evident in Figure \ref{fig:walking-evolution-fig}, which shows the calibrated functions for each year of analysis across all destination and transport mode categories for walking trips. For some locations, the impedance functions are of the same type and have similar parameters across all the years analyzed. For example, the "Cultural venues", the only destination present in more than one survey that did not displayed a statistically significant difference for the walking mode, consistently uses a gamma function to represent the population's transport behavior for all the years analyzed. On the other hand, the "Place of worship" destination exhibits temporal differences, with distinctly different peaks and density dispersions, reflecting the variations in the empirical data shown in Figure \ref{fig:figure-boxplot} and discussed above.
+For the years 2005 and 2010, the selected impedance functions are of the gamma type, with shapes of $\alpha = 1.24$ and $\alpha = 1.27$, respectively, and the same rate of $\sigma = 0.13$. The rate parameter ($\sigma$) mainly controls the speed of the curved drop, which is the same for both years. The shape parameter ($\mu$) controls how the density peak shifts in relation to the $x$-axis (the travel time). A larger shape value means that the probability peak occurs at larger values of time. Since the shape values for 2005 and 2010 are very close, the peak of the PDF curve in both cases occurs at 2 minutes. Although the difference in shape ($\mu$) between the two years is small and does not change the time at which the peak occurs, it is enough to cause a difference in the peak values themselves. In 2005, the walking trips had a higher density around 2 minutes (0.079) compared to 2010 (0.077).
+
+For 2015 and 2022, the PDFs that best represent the population's transport behavior are lognormal distributions, with a mean of $\mu = 2.54$ and a standard deviation of $\sigma = 0.79$ for 2015, and a mean of $\mu = 2.27$ and a standard deviation of $\sigma = 0.77$ for 2022. In 2015, the density peak (0.05) occurs at a journey duration of 7 minutes. Here, we observe that a lower density peak corresponds to a more dispersed curve, with higher densities at longer durations. In fact, while in 2005 and 2010 walking trips had densities close to zero for durations over 50 minutes, in 2015 there is still a small density (0.002) at the 50-minute mark. In 2022, the density peak (0.07) occurs at a duration of 5 minutes, and the curve is less dispersed than in 2015, registering lower densities near the 50-minute mark (0.01), in comparison.
+
+For trips made by bicycle, the best-fitting impedance function in 2005 is of the gamma type. For 2010 and 2022, the impedance functions are best represented by lognormal distributions. In 2015, the PDF that best fits the data is a uniform distribution, with an upper bound of 35 minutes and a peak density of 0.028.  The presence of uniform functions means that it was not possible to parameterize more complex functions (like the other functions) and is explained by the low number of episodes in this category of destination, mode of transport and year (in this case, there were only 3 episodes identified). Overall, all the uniform functions have a maximum of 6 episodes and all of them are for the transportation mode cycling - which can be explained since this mode of transport does not have many episodes compared to the walking episodes (only 7% of active travel episodes). The figure also shows how cycling trips tend to have greater dispersion and higher typical values (dashed vertical lines) when compared to walking trips.
+
+The complexity of the impedance function depends on the number of episodes available for calibration. For instance, fitting a gamma-type function required an average of `r mean_gamma` episodes, while fitting a lognormal function required approximately `r mean_lognormal` episodes. In contrast, fitting a normal function required only 5 episodes, and fitting a uniform function required, on average, just `r mean_uniform` episodes.
+
+The temporal difference between the decay functions is also evident in Figure \ref{fig:walking-evolution-fig}, which shows the calibrated functions for each year of analysis across all destination and transport mode categories for walking trips. For some locations, the impedance functions are of the same type and have similar parameters across all the years analyzed. For example, the "Cultural venues", consistently uses a gamma function to represent the population's transport behavior for all the years analyzed. On the other hand, the "Place of worship" destination exhibits temporal differences, with distinctly different peaks and density dispersions, reflecting the variations in the empirical data shown in Figure \ref{fig:figure-boxplot} and discussed above.
 
 ```{r figure-walking-evolution, include = FALSE}
-year_order <- c(1992,1998,2005,2010,2015)
+year_order <- c(1992,1998,2005,2010,2015,2022)
 
 #my_colors <- kelly(length(destination_order))
-my_colors_years <- c("#cbd9bf","#bae4bc","#7bccc4","#43a2ca","#0868ac")
+my_colors_years <- c("#cbd9bf","#bae4bc","#7bccc4","#43a2ca","#0868ac","#053c63")
 
 names(my_colors_years) <- year_order
 

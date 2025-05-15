@@ -150,7 +150,7 @@ gss_episodes_renamed <- gss_episodes %>%
 ```{r main-episodes-junction, echo=FALSE, cache=FALSE, include=FALSE}
 values_ordered <- c("15 to 24 years","25 to 34 years","35 to 44 years",
                     "45 to 54 years", "55 to 64 years","65 to 74 years",
-                    "75 to 84 years", "75 years and over", "85 years and over")
+                    "75 years and over")
 
 # 1992
 gss_main_1992_file <- gss_main_1992 %>%
@@ -203,8 +203,8 @@ gss_main_1998_file <- gss_main_1998 %>%
            AGE == "45 to 54 years" ~ "45 to 54 years",
            AGE == "55 to 64 years" ~ "55 to 64 years",
            AGE == "65 to 74 years" ~ "65 to 74 years",
-           AGE == "75 to 84 years" ~ "75 to 84 years",
-           AGE == "85 years and over" ~ "85 years and over"), 
+           AGE == "75 to 84 years" ~ "75 years and over",
+           AGE == "85 years and over" ~ "75 years and over"), 
            AGE = factor(AGE, levels = values_ordered, ordered = TRUE),
          GENDER2 = case_when(
            GENDER2 == "Male" ~ "Men+",
@@ -1293,8 +1293,21 @@ active_pop_proportion_g <- active_pop_proportion_g %>%
                 active, active_p, non_active, non_active_p, total)
 
 library(data.table)
-long <- melt(setDT(active_pop_proportion_g[,c("YEAR","GENDER2","walk_p","cycle_p","active_p")]), 
+long <- melt(setDT(active_pop_proportion_g[,c("YEAR","GENDER2","cycle_p","walk_p","active_p")]), 
              id.vars = c("YEAR","GENDER2"), variable.name = "Proportion")
+```
+
+```{r}
+teste <- ggplot(long %>% 
+                  filter(Proportion %in% c("walk_p","cycle_p")), aes(x = YEAR, y = value, color = Proportion, linetype = GENDER2)) +
+  geom_line(size = 1) +
+  geom_point()+
+  geom_label(aes(label = round(value, 2)), size = 3, vjust = 0) +
+  theme_minimal() + 
+  scale_x_continuous(
+    breaks = c(1992, 1998, 2005, 2010, 2015, 2022))
+
+teste
 ```
 
 ### By age group
@@ -1345,6 +1358,26 @@ active_pop_proportion_age <- active_pop_proportion_age %>%
   dplyr::select(YEAR, AGE, walk, walk_p, non_walk, non_walk_p,
                 cycle, cycle_p, non_cycle, non_cycle_p,
                 active, active_p, non_active, non_active_p, total)
+
+library(data.table)
+long_age <- melt(setDT(active_pop_proportion_age[,c("YEAR","AGE","walk_p","cycle_p","active_p")]), 
+             id.vars = c("YEAR","AGE"), variable.name = "Proportion")
+```
+
+```{r}
+#my_colors <- kelly(length(destination_order))
+my_colors_years <- c("#cbd9bf","#bae4bc","#7bccc4","#43a2ca","#0868ac","#053c63","#053c93")
+
+teste <- ggplot(long_age %>% 
+                  filter(Proportion %in% c("walk_p","cycle_p")), aes(x = YEAR, y = value, color = AGE)) +
+  geom_line(size = 0.8) +
+  theme_minimal() + 
+  scale_x_continuous(
+    breaks = c(1992, 1998, 2005, 2010, 2015, 2022)) + 
+  scale_color_manual(values = my_colors_years) +
+  facet_wrap(~ as.factor(Proportion))
+
+teste
 ```
 
 ## Calibrated impedance function

@@ -148,65 +148,130 @@ gss_episodes_renamed <- gss_episodes %>%
 
 
 ```{r main-episodes-junction, echo=FALSE, cache=FALSE, include=FALSE}
+values_ordered <- c("15 to 24 years","25 to 34 years","35 to 44 years",
+                    "45 to 54 years", "55 to 64 years","65 to 74 years",
+                    "75 to 84 years", "75 years and over", "85 years and over")
+
 # 1992
-gss_main_1992 <- gss_main_1992 %>%
-  dplyr::select(SEQNUM, FWGHT) %>%
+gss_main_1992_file <- gss_main_1992 %>%
+  dplyr::select(SEQNUM, FWGHT, DVSEX, DVAGEGR) %>%
   rename(PUMFID = SEQNUM, 
-         WGHT_PER = FWGHT) %>%
+         WGHT_PER = FWGHT, 
+         GENDER2 = DVSEX, 
+         AGE = DVAGEGR) %>%
   mutate(dest_label = list(unique(
     gss_episodes_renamed[gss_episodes_renamed$YEAR == "1992",]$dest_label))) %>%
   unnest(dest_label) %>%
-  mutate(YEAR = 1992)
+  mutate(YEAR = 1992, 
+         AGE = case_when(
+           AGE == "15 to 17 years" ~ "15 to 24 years",
+           AGE == "18 to 19 years" ~ "15 to 24 years",
+           AGE == "20 to 24 years" ~ "15 to 24 years",
+           AGE == "25 to 29 years" ~ "25 to 34 years",
+           AGE == "30 to 34 years" ~ "25 to 34 years",
+           AGE == "35 to 39 year" ~ "35 to 44 years",
+           AGE == "40 to 44 years" ~ "35 to 44 years",
+           AGE == "45 to 49 years" ~ "45 to 54 years",
+           AGE == "50 to 54 years" ~ "45 to 54 years",
+           AGE == "55 to 59 year" ~ "55 to 64 years",
+           AGE == "60 to 64 years" ~ "55 to 64 years",
+           AGE == "65 to 69 years" ~ "65 to 74 years",
+           AGE == "70 to 74 years" ~ "65 to 74 years",
+           AGE == "75 to 79 year" ~ "75 years and over",
+           AGE == "80 years and over" ~ "75 years and over"), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE),
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE))
 
 # 1998
-gss_main_1998 <- gss_main_1998 %>%
-  dplyr::select(RECID, WGHTFIN) %>%
+gss_main_1998_file <- gss_main_1998 %>%
+  dplyr::select(RECID, WGHTFIN, SEX, AGEGR10) %>%
   rename(PUMFID = RECID, 
-         WGHT_PER = WGHTFIN) %>%
+         WGHT_PER = WGHTFIN, 
+         GENDER2 = SEX, 
+         AGE = AGEGR10) %>%
   mutate(dest_label = list(unique(
     gss_episodes_renamed[gss_episodes_renamed$YEAR == "1998",]$dest_label))) %>%
   unnest(dest_label) %>%
-  mutate(YEAR = 1998)
+  mutate(YEAR = 1998, 
+         AGE = case_when(
+           AGE == "15 to 24 years" ~ "15 to 24 years",
+           AGE == "25 to 34 years" ~ "25 to 34 years",
+           AGE == "35 to 44 years" ~ "35 to 44 years",
+           AGE == "45 to 54 years" ~ "45 to 54 years",
+           AGE == "55 to 64 years" ~ "55 to 64 years",
+           AGE == "65 to 74 years" ~ "65 to 74 years",
+           AGE == "75 to 84 years" ~ "75 to 84 years",
+           AGE == "85 years and over" ~ "85 years and over"), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE),
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE))
 
 # 2005
-gss_main_2005 <- gss_main_2005 %>%
-  dplyr::select(RECID, WGHT_PER) %>%
+gss_main_2005_file <- gss_main_2005 %>%
+  dplyr::select(RECID, WGHT_PER, SEX, AGEGR10) %>%
   rename(PUMFID = RECID, 
-         WGHT_PER = WGHT_PER) %>%
+         WGHT_PER = WGHT_PER, 
+         AGE = AGEGR10,
+         GENDER2 = SEX) %>%
   mutate(dest_label = list(unique(
     gss_episodes_renamed[gss_episodes_renamed$YEAR == "2005",]$dest_label))) %>%
   unnest(dest_label) %>%
-  mutate(YEAR = 2005)
+  mutate(YEAR = 2005,
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE))
 
 # 2010
-gss_main_2010 <- gss_main_2010 %>%
-  dplyr::select(RECID, WGHT_PER) %>%
+gss_main_2010_file <- gss_main_2010 %>%
+  dplyr::select(RECID, WGHT_PER, SEX, AGEGR10) %>%
   rename(PUMFID = RECID, 
-         WGHT_PER = WGHT_PER) %>%
+         WGHT_PER = WGHT_PER, 
+         AGE = AGEGR10,
+         GENDER2 = SEX) %>%
   mutate(dest_label = list(unique(
     gss_episodes_renamed[gss_episodes_renamed$YEAR == "2010",]$dest_label))) %>%
   unnest(dest_label) %>%
-  mutate(YEAR = 2010)
+  mutate(YEAR = 2010,
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE))
 
 # 2015
-gss_main_2015 <- gss_main_2015 %>%
-  dplyr::select(PUMFID, WGHT_PER) %>%
+gss_main_2015_file <- gss_main_2015 %>%
+  dplyr::select(PUMFID, WGHT_PER, SEX, AGEGR10) %>%
+  rename(AGE = AGEGR10, 
+         GENDER2 = SEX) %>% 
   mutate(dest_label = list(unique(
     gss_episodes_renamed[gss_episodes_renamed$YEAR == "2015",]$dest_label))) %>%
   unnest(dest_label) %>%
-  mutate(YEAR = 2015)
+  mutate(YEAR = 2015,
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE))
 
 # 2022
-gss_main_2022 <- gss_main_2022 %>%
-  dplyr::select(PUMFID, WGHT_PER) %>%
+gss_main_2022_file <- gss_main_2022 %>%
+  dplyr::select(PUMFID, WGHT_PER, GENDER2, AGEGR10) %>%
+  rename(AGE = AGEGR10) %>% 
   mutate(dest_label = list(unique(
     gss_episodes_renamed[gss_episodes_renamed$YEAR == "2022",]$dest_label))) %>%
   unnest(dest_label) %>%
   mutate(YEAR = 2022)
 
 # Creating a new file with all main files 
-main_file <- rbind(gss_main_1992, gss_main_1998, gss_main_2005, 
-                   gss_main_2010, gss_main_2015, gss_main_2022)
+main_file <- rbind(gss_main_1992_file, gss_main_1998_file, gss_main_2005_file, 
+                   gss_main_2010_file, gss_main_2015_file, gss_main_2022_file)
 
 # Counting walking episodes 
 act_walk <- gss_episodes_renamed %>% 
@@ -1176,6 +1241,110 @@ An interesting pattern emerges when we analyze the episodes by type of active po
 ```{r eps-per-person-by-mode-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Number of active episodes by person, considering the walking population and cyclists."), fig.align="center"}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/episodes_per_person_by_mode.jpg"))
+```
+
+### By gender 
+
+```{r active_pop_gender_proportion_table, include = FALSE}
+# Active episodes
+active_pop_proportion_g <- main_act_eps %>% 
+  group_by(PUMFID, WGHT_PER, YEAR, GENDER2) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR, GENDER2) %>%
+  summarise(active = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_active = round(sum(WGHT_PER[Count < 1], na.rm = TRUE)),
+            total = round(sum(WGHT_PER, na.rm = TRUE)), 
+            active_p = round((active / total) * 100,2),
+            non_active_p = 100 - active_p) %>%
+  dplyr::select(YEAR, GENDER2, active, active_p, non_active, non_active_p, total)
+
+# walking episodes
+walk_pop_proportion_g <- main_act_eps %>% 
+  filter(MODE == 'Walking') %>% 
+  group_by(PUMFID, WGHT_PER, YEAR, GENDER2) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR, GENDER2) %>%
+  summarise(walk = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_walk = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
+  left_join(active_pop_proportion_g[,c('YEAR','GENDER2','total')], by = c('YEAR', 'GENDER2')) %>% 
+  mutate(walk_p = round((walk/total) * 100,2),
+         non_walk_p = 100 - walk_p) %>%
+  dplyr::select(YEAR, GENDER2, walk, walk_p, non_walk, non_walk_p)
+
+# Cycling episodes
+cycle_pop_proportion_g <- main_act_eps %>% 
+  filter(MODE == 'Cycling') %>% 
+  group_by(PUMFID, WGHT_PER, YEAR, GENDER2) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR, GENDER2) %>%
+  summarise(cycle = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_cycle = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
+  left_join(active_pop_proportion_g[,c('YEAR','GENDER2','total')], by = c('YEAR', 'GENDER2')) %>% 
+  mutate(cycle_p = round((cycle/total) * 100,2),
+         non_cycle_p = 100 - cycle_p) %>%
+  dplyr::select(YEAR, GENDER2, cycle, cycle_p, non_cycle, non_cycle_p)
+
+# Joining tables
+active_pop_proportion_g <- active_pop_proportion_g %>%
+  left_join(walk_pop_proportion_g, by = c('YEAR', 'GENDER2')) %>%
+  left_join(cycle_pop_proportion_g, by = c('YEAR', 'GENDER2')) %>%
+  dplyr::select(YEAR, GENDER2, walk, walk_p, non_walk, non_walk_p,
+                cycle, cycle_p, non_cycle, non_cycle_p,
+                active, active_p, non_active, non_active_p, total)
+
+library(data.table)
+long <- melt(setDT(active_pop_proportion_g[,c("YEAR","GENDER2","walk_p","cycle_p","active_p")]), 
+             id.vars = c("YEAR","GENDER2"), variable.name = "Proportion")
+```
+
+### By age group
+
+```{r active_pop_age_proportion_table, include = FALSE}
+# Active episodes
+active_pop_proportion_age <- main_act_eps %>% 
+  group_by(PUMFID, WGHT_PER, YEAR, AGE) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR, AGE) %>%
+  summarise(active = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_active = round(sum(WGHT_PER[Count < 1], na.rm = TRUE)),
+            total = round(sum(WGHT_PER, na.rm = TRUE)), 
+            active_p = round((active / total) * 100,2),
+            non_active_p = 100 - active_p) %>%
+  dplyr::select(YEAR, AGE, active, active_p, non_active, non_active_p, total)
+
+# walking episodes
+walk_pop_proportion_age <- main_act_eps %>% 
+  filter(MODE == 'Walking') %>% 
+  group_by(PUMFID, WGHT_PER, YEAR, AGE) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR, AGE) %>%
+  summarise(walk = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_walk = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
+  left_join(active_pop_proportion_age[,c('YEAR','AGE','total')], by = c('YEAR', 'AGE')) %>% 
+  mutate(walk_p = round((walk/total) * 100,2),
+         non_walk_p = 100 - walk_p) %>%
+  dplyr::select(YEAR, AGE, walk, walk_p, non_walk, non_walk_p)
+
+# Cycling episodes
+cycle_pop_proportion_age <- main_act_eps %>% 
+  filter(MODE == 'Cycling') %>% 
+  group_by(PUMFID, WGHT_PER, YEAR, AGE) %>%
+  summarise(Count = sum(Count)) %>% 
+  group_by(YEAR, AGE) %>%
+  summarise(cycle = round(sum(WGHT_PER[Count > 0], na.rm = TRUE)), 
+            non_cycle = sum(WGHT_PER[Count < 1], na.rm = TRUE)) %>%
+  left_join(active_pop_proportion_age[,c('YEAR','AGE','total')], by = c('YEAR', 'AGE')) %>% 
+  mutate(cycle_p = round((cycle/total) * 100,2),
+         non_cycle_p = 100 - cycle_p) %>%
+  dplyr::select(YEAR, AGE, cycle, cycle_p, non_cycle, non_cycle_p)
+
+# Joining tables
+active_pop_proportion_age <- active_pop_proportion_age %>%
+  left_join(walk_pop_proportion_age, by = c('YEAR', 'AGE')) %>%
+  left_join(cycle_pop_proportion_age, by = c('YEAR', 'AGE')) %>%
+  dplyr::select(YEAR, AGE, walk, walk_p, non_walk, non_walk_p,
+                cycle, cycle_p, non_cycle, non_cycle_p,
+                active, active_p, non_active, non_active_p, total)
 ```
 
 ## Calibrated impedance function

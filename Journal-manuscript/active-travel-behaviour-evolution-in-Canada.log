@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.5.13)  14 MAY 2025 00:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.5.13)  14 MAY 2025 22:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -74,7 +74,7 @@ File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
 \@enLab=\toks19
 \@sep=\skip51
 \@@sep=\skip52
-(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/natbib/natbib.sty
+(./active-travel-behaviour-evolution-in-Canada.spl) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/natbib/natbib.sty
 Package: natbib 2010/09/13 8.31b (PWD, AO)
 \bibhang=\skip53
 \bibsep=\skip54
@@ -1375,10 +1375,10 @@ Package rerunfilecheck Info: Checksums for `active-travel-behaviour-evolution-in
 (rerunfilecheck)             After:  2ACEC8C86AB5384556267600D89DB583;2773.
  ) 
 Here is how much of TeX's memory you used:
- 13911 strings out of 471589
- 221441 string characters out of 5519310
+ 13914 strings out of 471589
+ 221597 string characters out of 5519310
  654716 words of memory out of 5000000
- 40165 multiletter control sequences out of 15000+600000
+ 40166 multiletter control sequences out of 15000+600000
  685379 words of font info for 81 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  72i,14n,79p,541b,512s stack positions out of 10000i,1000n,20000p,200000b,200000s

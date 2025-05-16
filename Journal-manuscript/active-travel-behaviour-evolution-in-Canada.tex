@@ -1,5 +1,4 @@
-\documentclass[preprint, 3p,
-authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
+\documentclass[]{elsarticle} %review=doublespace preprint=single 5p=2 column
 %%% Begin My package additions %%%%%%%%%%%%%%%%%%%
 
 \usepackage[hyphens]{url}
@@ -15,6 +14,7 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 % TODO: Currently lineno needs to be loaded after amsmath because of conflict
 % https://github.com/latex-lineno/lineno/issues/5
 \usepackage{lineno} % add
+  \linenumbers % turns line numbering on
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 % use upquote if available, for straight quotes in verbatim environments
@@ -136,8 +136,8 @@ States},}
   \end{abstract}
     \begin{keyword}
     Active mobility \sep Walking \sep Cycling \sep Impedance
-function \sep Active accessibility \sep Destination \sep Temporal \sep 
-    Evolution
+function \sep 
+    Temporal evolution
   \end{keyword}
   
  \end{frontmatter}
@@ -1124,63 +1124,100 @@ trip}\label{population-with-records-of-active-trip}
 
 In general, the share of the population with active trip records varied
 between 7.8\% and 14.6\% from 1992 to 2022 (Table
-\ref{tab:active-pop-proportion-table}). The year 1998 recorded the
-lowest level of active trip participation, with 7.8\% (1,892,299
-people), while 2010 marked the peak of active participation at 14.5\%
-(4,084,114 people). In 2015, the trend of increasing participation in
-walking and cycling trips was reversed to the beginning of a decline,
-confirmed by the 2022 survey. In 2015, around 11\% of the population
-(3,265,846 people) recorded at least one active trip. In 2022, this
-share of the population fell to 8.9\%, the second lowest share in the
-entire historical series, representing 2,856,564 people out of a total
-population of 32,136,802 people.
-
-The number of people with active trip episodes is mainly influenced by
-walking episodes. On average, over 90\% of the recorded active trips
-involve individuals with walking episodes. The percentage patterns for
-the population with records of walking and cycling trips do not differ
-significantly from those observed when both modes are considered
-together.
+\ref{tab:pop-stats-table}). The year 1998 recorded the lowest level of
+active trip participation, with 7.8\% (1,892,299 people), while 2010
+marked the peak of active participation at 14.5\% (4,084,114 people). In
+2015, the trend of increasing participation in walking and cycling trips
+was reversed to the beginning of a decline, confirmed by the 2022
+survey. In 2015, around 11\% of the population (3,265,846 people)
+recorded at least one active trip. In 2022, this share of the population
+fell to 8.9\%, the second lowest share in the entire historical series,
+representing 2,856,564 people out of a total population of 32,136,802
+people.
 
 \begingroup\fontsize{6}{8}\selectfont
 
-\begin{longtable}[t]{rrrrrrrrrrrrrr}
-\caption{\label{tab:active_pop_proportion_table}\label{tab:active-pop-proportion-table}Count and share of population with at least one active travel episode by year}\\
+\begin{longtable}[t]{>{}lcccc>{}c|cccccc>{}c|cccccc}
+\caption{\label{tab:pop-table-with-prevalence}\label{tab:pop-stats-table}Prevalence of active trip by transportation mode, year of analysis, gender and age group.}\\
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Walking} & \multicolumn{4}{c}{Cycling} & \multicolumn{4}{c}{Total} \\
-\cmidrule(l{3pt}r{3pt}){2-5} \cmidrule(l{3pt}r{3pt}){6-9} \cmidrule(l{3pt}r{3pt}){10-13}
-Year & Active & (\%) & Non-active & (\%) & Active & (\%) & Non-active & (\%) & Active & (\%) & Non-active & (\%) & Population\\
+\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Walking} & \multicolumn{6}{c}{Cycling} & \multicolumn{6}{c}{Walking and Cycling} \\
+\cmidrule(l{3pt}r{3pt}){2-7} \cmidrule(l{3pt}r{3pt}){8-13} \cmidrule(l{3pt}r{3pt}){14-19}
+  & 1992 & 1998 & 2005 & 2010 & 2015 & 2022 & 1992 & 1998 & 2005 & 2010 & 2015 & 2022 & 1992 & 1998 & 2005 & 2010 & 2015 & 2022\\
 \midrule
-1992 & 1906913 & 8.96 & 19387400 & 91.04 & 187615 & 0.88 & 21106698 & 99.12 & 2086672 & 9.80 & 19207641 & 90.20 & 21294313\\
-1998 & 1751388 & 7.22 & 22508749 & 92.78 & 155191 & 0.64 & 24104946 & 99.36 & 1892299 & 7.80 & 22367838 & 92.20 & 24260137\\
-2005 & 3360966 & 12.88 & 22734853 & 87.12 & 243303 & 0.93 & 25852516 & 99.07 & 3577772 & 13.71 & 22518047 & 86.29 & 26095819\\
-2010 & 3877823 & 13.81 & 24197788 & 86.19 & 284567 & 1.01 & 27791044 & 98.99 & 4084114 & 14.55 & 23991496 & 85.45 & 28075610\\
-2015 & 3068296 & 10.31 & 26698103 & 89.69 & 262317 & 0.88 & 29504081 & 99.12 & 3265846 & 10.97 & 26500553 & 89.03 & 29766399\\
+\textbf{Total} & 8.112817 & 6.291682 & 13.184502 & 14.19945 & 10.908547 & 8.658299 & 1.0495040 & 0.6767230 & 0.9916221 & 1.1672734 & 0.9931890 & 0.8948529 & 9.105543 & 6.927465 & 14.059466 & 15.06081 & 11.648713 & 9.445029\\
+\textbf{Men+} & 7.528134 & 5.034566 & 11.900550 & 13.92957 & 10.849674 & 8.888276 & 1.4451866 & 1.1804147 & 1.5584589 & 1.8666636 & 1.3415257 & 1.3262390 & 8.938127 & 6.182314 & 13.309461 & 15.30787 & 11.888698 & 10.054391\\
+\textbf{Women+} & 8.693204 & 7.522666 & 14.421176 & 14.45877 & 10.965871 & 8.431012 & 0.6567284 & 0.1835012 & 0.4456571 & 0.4952302 & 0.6540139 & 0.4685109 & 9.271729 & 7.657127 & 14.781856 & 14.82340 & 11.415040 & 8.842793\\
+\textbf{15 to 24 years} & 12.475414 & 8.382103 & 25.006727 & 22.27651 & 17.327913 & 19.884674 & 2.4992948 & 1.1562412 & 2.0781927 & 2.7505490 & 1.0582936 & 1.5829892 & 14.974709 & 9.295704 & 26.879289 & 24.01045 & 17.909552 & 21.467663\\
+\textbf{25 to 34 years} & 7.152427 & 5.438087 & 13.328986 & 15.24494 & 14.802591 & 9.743730 & 1.6642883 & 0.4648541 & 1.1900530 & 1.1707246 & 1.5669562 & 1.6192238 & 8.816715 & 5.902941 & 14.280088 & 16.10988 & 15.778534 & 11.213176\\
 \addlinespace
-2022 & 2617493 & 8.14 & 29519309 & 91.86 & 270427 & 0.84 & 31866375 & 99.16 & 2856564 & 8.89 & 29280238 & 91.11 & 32136802\\
+\textbf{35 to 44 years} & 5.786423 & 6.399745 & 10.517651 & 13.45598 & 9.381115 & 5.227927 & 0.6462726 & 1.1432400 & 1.0115445 & 1.0590734 & 1.1732797 & 0.8285441 & 6.243982 & 7.542986 & 11.428648 & 14.34433 & 10.495729 & 5.783006\\
+\textbf{45 to 54 years} & 7.545398 & 5.901157 & 9.396331 & 11.68721 & 7.758093 & 5.705892 & 0.3033537 & 0.6276123 & 0.5064098 & 0.8438476 & 0.7483517 & 0.8156381 & 7.734909 & 6.528769 & 9.846246 & 12.35402 & 8.222011 & 6.302084\\
+\textbf{55 to 64 years} & 8.893992 & 5.434284 & 9.611636 & 10.91250 & 7.696259 & 5.770591 & 0.2479165 & 0.2966514 & 0.9537762 & 0.8575569 & 0.7705951 & 0.4674650 & 9.141908 & 5.730936 & 10.484551 & 11.74650 & 8.432901 & 6.238056\\
+\textbf{65 to 74 years} & 8.554111 & 5.269737 & 8.756855 & 11.59251 & 8.766450 & 6.658521 & 0.0000000 & 0.0000000 & 0.2241089 & 0.4235186 & 0.6987856 & 0.3335174 & 8.554111 & 5.269737 & 8.980964 & 11.81528 & 9.356414 & 6.960677\\
+\textbf{75 years and over} & 5.915971 & 6.842840 & 13.543455 & 10.91263 & 8.626774 & 6.933773 & 0.0000000 & 0.0000000 & 0.0000000 & 0.0669363 & 0.5682477 & 0.0889275 & 5.915971 & 6.842840 & 13.543455 & 10.97957 & 9.195022 & 7.022700\\
 \bottomrule
 \end{longtable}
 \endgroup{}
 
-Analyzing the number of episodes per person for the general population,
-the average value for each year is approximately 0.22, ranging from a
-minimum of 0.15 in 1998 to a maximum of 0.30 in 2010. Considering only
-the population with active episodes recorded, the average is around 2
-active episodes per person, varying from a maximum of 2.11 episodes in
-2005 to a minimum of 1.77 episodes per person in 1992. The average of 2
-episodes for the active population is expected, as it reflects the two
-trips typically required to travel to and from a specific location.
-Figure \ref{fig:eps-per-person-fig} presents these values broken down by
-mode, walking and cycling.
+The decrease in the active population over the years is observed in both
+genders, Men+ and Women+. However, the decline in the share of the
+active population was more pronounced among Women+ than Men+, leading to
+a shift in the pattern where Women+ had historically been the more
+active gender. Women+ peaked at 14.82\% of the population with a record
+of active episodes in 2010, but dropped to the second-lowest level of
+8.84\% in 2022, only higher than 1998 when the active representation of
+7.66\%. In contrast, Men+, who also peaked in 2010 with 15.31\% of the
+population reporting active episodes, declined to 10.05\% in 2022,
+appearing as the gender with higher active population share. When
+analyzing by transportation mode, in all survey years a higher
+proportion of Men+ reported at least one cycling episode on the previous
+day compared to Women+ (ranging from 1.18\% to 1.87\% for Men+ and
+0.18\% to 0.66\% for Women+). Conversely, Women+ historically reported
+more walking trips than Men+, but this pattern changed in the most
+recent survey (2022), reinforcing a trend already present in 2015. In
+2022, 8.43\% of Women+ reported at least one walking episode, compared
+to 8.89\% of Men+.
 
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{figures/episodes_per_person_act_total} 
-
-}
-
-\caption{Number of active episodes by person.}\label{fig:eps-per-person-act-total-fig}
+\includegraphics[width=1\linewidth]{figures/active_pop_gender_graph} \caption{Population with active trip episodes by transportation mode and gender.}\label{fig:gender-prevalence}
 \end{figure}
+
+When we analyze the population by age group, the youngest (those between
+15 and 24 years) stand out as the most active group, ranging from 9.3\%
+to 26.88\%, and marking 21.47\% in the most recent survey. This is the
+only group that did not show a decrease in the prevalence of active
+participation over the years, increasing from a low of 17.91\% in 2015
+to 21.47\% in 2022 - although still below the levels recorded in 2010
+(24.01\%) and 2005 (26.88\%). Historically, prevalence decreases as age
+increases. However, in the most recent survey (2022), as well as in
+2005, the oldest group (75 years and older) presented the third-highest
+prevalence (7.02\%), surpassing the groups aged 35 to 44 years (5.78\%),
+45 to 54 years (6.30\%), 55 to 64 years (6.24\%), and 65 to 74 years
+(6.96\%).
+
+The analysis by mode shows a similar trend. However, for cycling, the
+second youngest group (aged 25 to 34 years) had the highest prevalence
+in the 2022 survey (1.62\%), surpassing the youngest group (1.58\%). For
+all other age groups, cycling prevalence decreases as age increases,
+approaching 0\% for the oldest group (75 years and older).
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{figures/active_pop_age_graph} \caption{Population with active trip episodes by transportation mode and age group.}\label{fig:age-prevalence}
+\end{figure}
+
+The number of people with active trip episodes is mainly influenced by
+walking episodes. On average, over 90\% of the recorded active trips
+involve individuals with walking episodes. Analyzing the number of
+episodes per person for the general population, the average value for
+each year is approximately 0.22, ranging from a minimum of 0.15 in 1998
+to a maximum of 0.30 in 2010. Considering only the population with
+active episodes recorded, the average is around 2 active episodes per
+person, varying from a maximum of 2.11 episodes in 2005 to a minimum of
+1.77 episodes per person in 1992. The average of 2 episodes for the
+active population is expected, as it reflects the two trips typically
+required to travel to and from a specific location. Figure
+\ref{fig:eps-per-person-fig} presents these values broken down by mode,
+walking and cycling.
 
 When we split the walking and cycling episodes by the active population
 and the total population (Figure
@@ -1194,6 +1231,10 @@ person in 2022. However, when we consider the total population, cycling
 episodes remained stable at 0.02 episodes per person. Walking episodes
 per total population showed the lowest value (0.17) since 1998, when the
 minimum of 0.14 episodes per person was recorded.
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{figures/eps_gender_graph} \caption{Population with active trip episodes by transportation mode and gender.}\label{fig:gender-eps-prevalence}
+\end{figure}
 
 An interesting pattern emerges when we analyze the episodes by type of
 active population (Figure \ref{fig:eps-per-person-by-mode-fig}). When we
@@ -1210,12 +1251,7 @@ per person is increasing for both transportation modes, walking and
 cycling.
 
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{figures/episodes_per_person_by_mode} 
-
-}
-
-\caption{Number of active episodes by person, considering the walking population and cyclists.}\label{fig:eps-per-person-by-mode-fig}
+\includegraphics[width=1\linewidth]{figures/eps_gender_graph} \caption{Population with active trip episodes by transportation mode and age group.}\label{fig:age-eps-figure}
 \end{figure}
 
 \subsection{Calibrated impedance

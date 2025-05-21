@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.5.20)  20 MAY 2025 23:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.5.20)  21 MAY 2025 16:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -631,136 +631,40 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <6> on input line 143.
 
-Package natbib Warning: Citation `iacono2008access' on page 1 undefined on input line 153.
+Package natbib Warning: Citation `csep2012' on page 1 undefined on input line 150.
 
 
-Package natbib Warning: Citation `hino2014built' on page 1 undefined on input line 156.
+Package natbib Warning: Citation `hakim1998effects' on page 1 undefined on input line 159.
 
 
-Package natbib Warning: Citation `lamiquiz2015effects' on page 1 undefined on input line 156.
+Package natbib Warning: Citation `lacroix1996' on page 1 undefined on input line 160.
 
 
-Package natbib Warning: Citation `handy1993regional' on page 1 undefined on input line 158.
+Package natbib Warning: Citation `hakim1999' on page 1 undefined on input line 160.
 
 
-Package natbib Warning: Citation `clifton2001evaluating' on page 1 undefined on input line 158.
+Package natbib Warning: Citation `hu2000' on page 1 undefined on input line 160.
 
 
-Package natbib Warning: Citation `frank2001built' on page 1 undefined on input line 158.
+Package natbib Warning: Citation `dunn1999' on page 1 undefined on input line 161.
 
 
-Package natbib Warning: Citation `krizek2005perspectives' on page 1 undefined on input line 158.
+Package natbib Warning: Citation `hu1999' on page 1 undefined on input line 162.
 
 
-Package natbib Warning: Citation `sallis2004active' on page 1 undefined on input line 158.
+Package natbib Warning: Citation `fogelholm2000' on page 1 undefined on input line 163.
 
 
-Package natbib Warning: Citation `vandenbulcke2009mapping' on page 1 undefined on input line 158.
+Package natbib Warning: Citation `bryan2009patterns' on page 1 undefined on input line 169.
 
 
-Package natbib Warning: Citation `wu2019measuring' on page 1 undefined on input line 158.
+Package natbib Warning: Citation `csep2012' on page 1 undefined on input line 173.
 
 
-Package natbib Warning: Citation `frank2005linking' on page 1 undefined on input line 173.
+Package natbib Warning: Citation `hootman2001' on page 1 undefined on input line 177.
 
 
-Package natbib Warning: Citation `krizek2005perspectives' on page 1 undefined on input line 173.
-
-
-Package natbib Warning: Citation `currie2010quantifying' on page 1 undefined on input line 173.
-
-
-Package natbib Warning: Citation `iacono2010' on page 1 undefined on input line 173.
-
-
-Package natbib Warning: Citation `yang2012walking' on page 1 undefined on input line 173.
-
-
-Package natbib Warning: Citation `millward2013active' on page 1 undefined on input line 173.
-
-
-Package natbib Warning: Citation `nassir2016utility' on page 1 undefined on input line 173.
-
-
-Package natbib Warning: Citation `saghapour2017measuring' on page 1 undefined on input line 173.
-
-
-Package natbib Warning: Citation `wu2019measuring' on page 1 undefined on input line 173.
-
-
-Package natbib Warning: Citation `taylor1975distance' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `fotheringham1981spatial' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `kwan1998space' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `eldridge1991warped' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `luoma1993threshold' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `papa2012gravity' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `yang2012walking' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `millward2013active' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `vale2017influence' on page 1 undefined on input line 178.
-
-
-Package natbib Warning: Citation `hansen1959accessibility' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `pirie1979measuring' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `handy1997measuring' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `geurs2001accessibility' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `bhat2002development' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `church2003measuring' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `kwan2003recent' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `geurs2004' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `levinson2005access' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `cascetta2013new' on page 1 undefined on input line 184.
-
-
-Package natbib Warning: Citation `iacono2008access' on page 1 undefined on input line 192.
-
-
-Package natbib Warning: Citation `iacono2010' on page 1 undefined on input line 192.
-
-
-Package natbib Warning: Citation `luoma1993threshold' on page 1 undefined on input line 193.
-
-
-Package natbib Warning: Citation `luoma1993threshold' on page 1 undefined on input line 196.
-
-
-Package natbib Warning: Citation `mikkonen1999parameters' on page 1 undefined on input line 197.
-
-
-Package natbib Warning: Citation `mikkonen1999parameters' on page 1 undefined on input line 200.
+Package natbib Warning: Citation `bryan2009patterns' on page 1 undefined on input line 177.
 
 
 
@@ -771,413 +675,406 @@ Overfull \hbox (2.22221pt too wide) has occurred while \output is active
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\<def>-command' on input line 201.
+(hyperref)                removing `\<def>-command' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\cnotenum' on input line 201.
+(hyperref)                removing `\cnotenum' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\<def>-command' on input line 201.
+(hyperref)                removing `\<def>-command' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@corref' on input line 201.
+(hyperref)                removing `\@corref' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\<let>-command' on input line 201.
+(hyperref)                removing `\<let>-command' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\comma' on input line 201.
+(hyperref)                removing `\comma' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\<def>-command' on input line 201.
+(hyperref)                removing `\<def>-command' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@fnmark' on input line 201.
+(hyperref)                removing `\@fnmark' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\<let>-command' on input line 201.
+(hyperref)                removing `\<let>-command' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\comma' on input line 201.
+(hyperref)                removing `\comma' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\<def>-command' on input line 201.
+(hyperref)                removing `\<def>-command' on input line 178.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@fnmark' on input line 201.
+(hyperref)                removing `\@fnmark' on input line 178.
 
 [1
 
 {c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
 
-Package natbib Warning: Citation `iacono2008access' on page 2 undefined on input line 206.
+Package natbib Warning: Citation `hino2014built' on page 2 undefined on input line 181.
 
 
-Package natbib Warning: Citation `iacono2010' on page 2 undefined on input line 206.
+Package natbib Warning: Citation `lamiquiz2015effects' on page 2 undefined on input line 181.
 
 
-Package natbib Warning: Citation `larsen2010beyond' on page 2 undefined on input line 206.
+Package natbib Warning: Citation `vandenbulcke2009mapping' on page 2 undefined on input line 183.
 
 
-Package natbib Warning: Citation `yang2012walking' on page 2 undefined on input line 206.
+Package natbib Warning: Citation `wu2019measuring' on page 2 undefined on input line 183.
 
 
-Package natbib Warning: Citation `millward2013active' on page 2 undefined on input line 206.
+Package natbib Warning: Citation `canada2021' on page 2 undefined on input line 191.
 
 
-Package natbib Warning: Citation `vale2017influence' on page 2 undefined on input line 206.
+Package natbib Warning: Citation `statisticscanada2022' on page 2 undefined on input line 210.
 
 
-Package natbib Warning: Citation `li2020approach' on page 2 undefined on input line 206.
+Package natbib Warning: Citation `hansen1959' on page 2 undefined on input line 224.
 
 
-Package natbib Warning: Citation `de2009exponential' on page 2 undefined on input line 213.
+Package natbib Warning: Citation `paez2012' on page 2 undefined on input line 224.
 
 
-Package natbib Warning: Citation `reggiani2011accessibility' on page 2 undefined on input line 213.
+Package natbib Warning: Citation `pereira2023' on page 2 undefined on input line 231.
 
 
-Package natbib Warning: Citation `osth2016new' on page 2 undefined on input line 213.
+Package natbib Warning: Citation `papa2012gravity' on page 2 undefined on input line 236.
 
 
-Package natbib Warning: Citation `itf2017linking' on page 2 undefined on input line 213.
+Package natbib Warning: Citation `yang2012walking' on page 2 undefined on input line 236.
 
 
-Package natbib Warning: Citation `handy1997measuring' on page 2 undefined on input line 218.
+Package natbib Warning: Citation `millward2013active' on page 2 undefined on input line 236.
 
 
-Package natbib Warning: Citation `geurs2001accessibility' on page 2 undefined on input line 218.
+Package natbib Warning: Citation `vale2017influence' on page 2 undefined on input line 236.
 
 
-Package natbib Warning: Citation `iacono2010' on page 2 undefined on input line 218.
+Package natbib Warning: Citation `hansen1959accessibility' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `vega2012using' on page 2 undefined on input line 218.
+Package natbib Warning: Citation `pirie1979measuring' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `millward2013active' on page 2 undefined on input line 218.
+Package natbib Warning: Citation `handy1997measuring' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `vale2017influence' on page 2 undefined on input line 218.
+Package natbib Warning: Citation `geurs2001accessibility' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `li2020approach' on page 2 undefined on input line 218.
+Package natbib Warning: Citation `bhat2002development' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `iacono2010' on page 2 undefined on input line 223.
+Package natbib Warning: Citation `church2003measuring' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `kanafani1983transportation' on page 2 undefined on input line 223.
+Package natbib Warning: Citation `kwan2003recent' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `fotheringham1989spatial' on page 2 undefined on input line 223.
+Package natbib Warning: Citation `geurs2004' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `iacono2010' on page 2 undefined on input line 230.
+Package natbib Warning: Citation `levinson2005access' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `hull2012accessibility' on page 2 undefined on input line 230.
+Package natbib Warning: Citation `cascetta2013new' on page 2 undefined on input line 242.
 
 
-Package natbib Warning: Citation `sun2012measuring' on page 2 undefined on input line 230.
+Package natbib Warning: Citation `iacono2008access' on page 2 undefined on input line 250.
 
 
-Package natbib Warning: Citation `lowry2012using' on page 2 undefined on input line 230.
+Package natbib Warning: Citation `iacono2010' on page 2 undefined on input line 250.
 
-
-Package natbib Warning: Citation `vasconcelos2012evaluation' on page 2 undefined on input line 230.
-
-
-Package natbib Warning: Citation `handy1997measuring' on page 2 undefined on input line 234.
-
-
-Package natbib Warning: Citation `iacono2010' on page 2 undefined on input line 234.
-
-
-Package natbib Warning: Citation `yang2012walking' on page 2 undefined on input line 234.
-
-
-Package natbib Warning: Citation `arranz2019measuring' on page 2 undefined on input line 234.
-
-
-Package natbib Warning: Citation `iacono2010' on page 2 undefined on input line 241.
-
-
-Package natbib Warning: Citation `millward2013active' on page 2 undefined on input line 241.
-
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 262.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 267.
 (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
-Package natbib Warning: Citation `dossantos2024ActiveCA' on page 2 undefined on input line 262.
+Package natbib Warning: Citation `dossantos2024ActiveCA' on page 2 undefined on input line 267.
 
 
 
 [2]
 
-Package natbib Warning: Citation `grengs2015nonwork' on page 3 undefined on input line 276.
+Package natbib Warning: Citation `grengs2015nonwork' on page 3 undefined on input line 280.
 
 
-Package natbib Warning: Citation `pereira2017' on page 3 undefined on input line 293.
+Package natbib Warning: Citation `bryan2009patterns' on page 3 undefined on input line 302.
 
 
-Package natbib Warning: Citation `hansen1959accessibility' on page 3 undefined on input line 295.
+Package natbib Warning: Citation `borhani2024' on page 3 undefined on input line 323.
 
 
-Package natbib Warning: Citation `paez2012' on page 3 undefined on input line 295.
+Package natbib Warning: Citation `harms2018' on page 3 undefined on input line 344.
 
 
-Package natbib Warning: Citation `hansen1959accessibility' on page 3 undefined on input line 300.
+Package natbib Warning: Citation `statisticscanada2022' on page 3 undefined on input line 349.
 
 
-Package natbib Warning: Citation `koenig1980indicators' on page 3 undefined on input line 300.
 
+[3]
 
-Package natbib Warning: Citation `fotheringham1981spatial' on page 3 undefined on input line 300.
+Package natbib Warning: Citation `pereira2017' on page 4 undefined on input line 379.
 
 
-Package natbib Warning: Citation `hsiao1997use' on page 3 undefined on input line 305.
+Package natbib Warning: Citation `hansen1959accessibility' on page 4 undefined on input line 381.
 
 
-Package natbib Warning: Citation `zhao2003forecasting' on page 3 undefined on input line 305.
+Package natbib Warning: Citation `paez2012' on page 4 undefined on input line 381.
 
 
-Package natbib Warning: Citation `iacono2010' on page 3 undefined on input line 305.
+Package natbib Warning: Citation `soukhov2024' on page 4 undefined on input line 385.
 
 
-Package natbib Warning: Citation `li2020approach' on page 3 undefined on input line 305.
+Package natbib Warning: Citation `li2020approach' on page 4 undefined on input line 389.
 
 
-Package natbib Warning: Citation `hansen1959accessibility' on page 3 undefined on input line 314.
+Package natbib Warning: Citation `untermann1984accommodating' on page 4 undefined on input line 402.
 
 
-Package natbib Warning: Citation `koenig1980indicators' on page 3 undefined on input line 314.
+Package natbib Warning: Citation `moreno2021' on page 4 undefined on input line 405.
 
 
-Package natbib Warning: Citation `fotheringham1981spatial' on page 3 undefined on input line 314.
+Package natbib Warning: Citation `hansen1959accessibility' on page 4 undefined on input line 407.
 
 
-Package natbib Warning: Citation `skov2001estimation' on page 3 undefined on input line 314.
+Package natbib Warning: Citation `geurs2004' on page 4 undefined on input line 410.
 
 
-Package natbib Warning: Citation `carrothers1956historical' on page 3 undefined on input line 317.
+Package natbib Warning: Citation `paez2012' on page 4 undefined on input line 410.
 
 
-Package natbib Warning: Citation `untermann1984accommodating' on page 3 undefined on input line 328.
+Package natbib Warning: Citation `miller2005place' on page 4 undefined on input line 412.
 
 
-Package natbib Warning: Citation `moreno2021' on page 3 undefined on input line 331.
+Package natbib Warning: Citation `hansen1959accessibility' on page 4 undefined on input line 413.
 
 
-Package natbib Warning: Citation `hansen1959accessibility' on page 3 undefined on input line 336.
+LaTeX Warning: Reference `eq:accessibility-equation' on page 4 undefined on input line 414.
 
 
-Package natbib Warning: Citation `geurs2004' on page 3 undefined on input line 339.
 
+[4{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
 
-Package natbib Warning: Citation `paez2012' on page 3 undefined on input line 339.
+Package natbib Warning: Citation `iacono2008access' on page 5 undefined on input line 442.
 
 
-Package natbib Warning: Citation `miller2005place' on page 3 undefined on input line 341.
+Package natbib Warning: Citation `iacono2010' on page 5 undefined on input line 442.
 
 
-Package natbib Warning: Citation `hansen1959accessibility' on page 3 undefined on input line 342.
+Package natbib Warning: Citation `larsen2010beyond' on page 5 undefined on input line 442.
 
 
-LaTeX Warning: Reference `eq:accessibility-equation' on page 3 undefined on input line 343.
+Package natbib Warning: Citation `yang2012walking' on page 5 undefined on input line 442.
 
 
+Package natbib Warning: Citation `millward2013active' on page 5 undefined on input line 442.
 
-[3{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
 
-LaTeX Warning: Reference `eq:cumulative-equation' on page 4 undefined on input line 369.
+Package natbib Warning: Citation `vale2017influence' on page 5 undefined on input line 442.
 
 
-Package natbib Warning: Citation `pereira2023' on page 4 undefined on input line 383.
+Package natbib Warning: Citation `li2020approach' on page 5 undefined on input line 442.
 
 
-Package natbib Warning: Citation `meyer1984urban' on page 4 undefined on input line 397.
+Package natbib Warning: Citation `de2009exponential' on page 5 undefined on input line 448.
 
 
-Package natbib Warning: Citation `gutierrez1996european' on page 4 undefined on input line 397.
+Package natbib Warning: Citation `reggiani2011accessibility' on page 5 undefined on input line 448.
 
 
-Package natbib Warning: Citation `kwan1998space' on page 4 undefined on input line 397.
+Package natbib Warning: Citation `osth2016new' on page 5 undefined on input line 448.
 
 
-Package natbib Warning: Citation `apparicio2008comparing' on page 4 undefined on input line 397.
+Package natbib Warning: Citation `itf2017linking' on page 5 undefined on input line 448.
 
 
-Package natbib Warning: Citation `iacono2008access' on page 4 undefined on input line 397.
+LaTeX Warning: Reference `eq:cumulative-equation' on page 5 undefined on input line 452.
 
 
-Package natbib Warning: Citation `iacono2010' on page 4 undefined on input line 397.
+Package natbib Warning: Citation `pereira2023' on page 5 undefined on input line 466.
 
 
-Package natbib Warning: Citation `larsen2010beyond' on page 4 undefined on input line 397.
+Package natbib Warning: Citation `hansen1959accessibility' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `millward2013active' on page 4 undefined on input line 397.
+Package natbib Warning: Citation `meyer1984urban' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `hansen1959accessibility' on page 4 undefined on input line 402.
+Package natbib Warning: Citation `gutierrez1996european' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `fotheringham1989spatial' on page 4 undefined on input line 406.
+Package natbib Warning: Citation `kwan1998space' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `de2009exponential' on page 4 undefined on input line 406.
+Package natbib Warning: Citation `apparicio2008comparing' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `iacono2010' on page 4 undefined on input line 406.
+Package natbib Warning: Citation `iacono2008access' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `signorino2011gravity' on page 4 undefined on input line 406.
+Package natbib Warning: Citation `iacono2010' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `prins2014many' on page 4 undefined on input line 406.
+Package natbib Warning: Citation `larsen2010beyond' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `soukhov2024' on page 4 undefined on input line 413.
+Package natbib Warning: Citation `millward2013active' on page 5 undefined on input line 480.
 
 
-Package natbib Warning: Citation `dunn2023' on page 4 undefined on input line 422.
+Package natbib Warning: Citation `hansen1959accessibility' on page 5 undefined on input line 485.
 
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 432.
+
+Package natbib Warning: Citation `fotheringham1989spatial' on page 5 undefined on input line 489.
+
+
+Package natbib Warning: Citation `de2009exponential' on page 5 undefined on input line 489.
+
+
+Package natbib Warning: Citation `iacono2010' on page 5 undefined on input line 489.
+
+
+Package natbib Warning: Citation `signorino2011gravity' on page 5 undefined on input line 489.
+
+
+Package natbib Warning: Citation `prins2014many' on page 5 undefined on input line 489.
+
+
+Package natbib Warning: Citation `soukhov2024' on page 5 undefined on input line 496.
+
+
+Package natbib Warning: Citation `dunn2023' on page 5 undefined on input line 505.
+
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 515.
 (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
-LaTeX Warning: Reference `eq:uniform-equation' on page 4 undefined on input line 438.
+LaTeX Warning: Reference `eq:uniform-equaion' on page 5 undefined on input line 519.
 
 
-LaTeX Warning: Reference `eq:exponential-equation' on page 4 undefined on input line 464.
-
-
-
-[4{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
-
-LaTeX Warning: Reference `eq:gamma-equation' on page 5 undefined on input line 483.
-
-
-Package natbib Warning: Citation `soukhov2024' on page 5 undefined on input line 501.
-
-
-LaTeX Warning: Reference `eq:normal-equation' on page 5 undefined on input line 512.
-
-
-LaTeX Warning: Reference `eq:lognormal-equation' on page 5 undefined on input line 535.
-
-
-Package natbib Warning: Citation `dossantos2024ActiveCA' on page 5 undefined on input line 554.
-
-
-Package natbib Warning: Citation `statisticscanada2022' on page 5 undefined on input line 561.
+LaTeX Warning: Reference `eq:exponential-equation' on page 5 undefined on input line 543.
 
 
 
-[5]
+[5{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
 
-Package natbib Warning: Citation `statisticscanada2022' on page 6 undefined on input line 577.
-
-
-Package natbib Warning: Citation `dossantos2024ActiveCA' on page 6 undefined on input line 596.
+LaTeX Warning: Reference `eq:gamma-equation' on page 6 undefined on input line 561.
 
 
-Package natbib Warning: Citation `arribas-bel2021' on page 6 undefined on input line 616.
+Package natbib Warning: Citation `soukhov2024' on page 6 undefined on input line 580.
 
 
-Package natbib Warning: Citation `paez2021' on page 6 undefined on input line 616.
+LaTeX Warning: Reference `eq:normal-equation' on page 6 undefined on input line 588.
+
+
+LaTeX Warning: Reference `eq:lognormal-equation' on page 6 undefined on input line 610.
+
+
+Package natbib Warning: Citation `dossantos2024ActiveCA' on page 6 undefined on input line 642.
 
 
 
 [6]
 
-Package natbib Warning: Citation `statisticscanada2025' on page 7 undefined on input line 684.
+Package natbib Warning: Citation `arribas-bel2021' on page 7 undefined on input line 662.
 
 
-Package natbib Warning: Citation `delignette2015fitdistrplus' on page 7 undefined on input line 720.
+Package natbib Warning: Citation `paez2021' on page 7 undefined on input line 662.
 
 
 
 [7]
 
-LaTeX Warning: Reference `tab:episodes-count-percentages' on page 8 undefined on input line 759.
+Package natbib Warning: Citation `statisticscanada2025' on page 8 undefined on input line 730.
 
 
-Overfull \hbox (77.31912pt too wide) in alignment at lines 779--790
- [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] 
- []
-
-
-LaTeX Warning: Reference `tab:table-02' on page 8 undefined on input line 794.
+Package natbib Warning: Citation `delignette2015fitdistrplus' on page 8 undefined on input line 766.
 
 
 
 [8]
 
-LaTeX Warning: Reference `fig:figure-destmodeyearperc' on page 9 undefined on input line 854.
+LaTeX Warning: Reference `tab:episodes-count-percentages' on page 9 undefined on input line 805.
 
-<figures/destination_percentual.jpg, id=83, 867.24pt x 578.16pt>
-File: figures/destination_percentual.jpg Graphic file (type jpg)
-<use figures/destination_percentual.jpg>
-Package pdftex.def Info: figures/destination_percentual.jpg  used on input line 871.
-(pdftex.def)             Requested size: 468.0pt x 311.99884pt.
 
-LaTeX Warning: Reference `fig:figure-boxplot' on page 9 undefined on input line 882.
+Overfull \hbox (77.31912pt too wide) in alignment at lines 825--836
+ [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] 
+ []
 
-<figures/destination_boxplots.jpg, id=84, 867.24pt x 578.16pt>
-File: figures/destination_boxplots.jpg Graphic file (type jpg)
-<use figures/destination_boxplots.jpg>
-Package pdftex.def Info: figures/destination_boxplots.jpg  used on input line 898.
-(pdftex.def)             Requested size: 468.0pt x 311.99884pt.
+
+LaTeX Warning: Reference `tab:table-02' on page 9 undefined on input line 840.
+
 
 
 [9]
+
+LaTeX Warning: Reference `fig:figure-destmodeyearperc' on page 10 undefined on input line 900.
+
+<figures/destination_percentual.jpg, id=90, 867.24pt x 578.16pt>
+File: figures/destination_percentual.jpg Graphic file (type jpg)
+<use figures/destination_percentual.jpg>
+Package pdftex.def Info: figures/destination_percentual.jpg  used on input line 917.
+(pdftex.def)             Requested size: 468.0pt x 311.99884pt.
+
+LaTeX Warning: Reference `fig:figure-boxplot' on page 10 undefined on input line 928.
+
+
 
 [10
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.917 
+l.942 
        <./figures/destination_percentual.jpg>]
+<figures/destination_boxplots.jpg, id=96, 867.24pt x 578.16pt>
+File: figures/destination_boxplots.jpg Graphic file (type jpg)
+<use figures/destination_boxplots.jpg>
+Package pdftex.def Info: figures/destination_boxplots.jpg  used on input line 944.
+(pdftex.def)             Requested size: 468.0pt x 311.99884pt.
+
 
 [11
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.917 
+l.974 
        <./figures/destination_boxplots.jpg>]
 
-LaTeX Warning: Reference `fig:walking-heatmap' on page 12 undefined on input line 940.
+LaTeX Warning: Reference `fig:walking-heatmap' on page 12 undefined on input line 986.
 
 
-LaTeX Warning: Reference `fig:cycling-heatmap' on page 12 undefined on input line 940.
+LaTeX Warning: Reference `fig:cycling-heatmap' on page 12 undefined on input line 986.
 
-<figures/walking_hm_fig.jpg, id=101, 578.16pt x 361.35pt>
+<figures/walking_hm_fig.jpg, id=102, 578.16pt x 361.35pt>
 File: figures/walking_hm_fig.jpg Graphic file (type jpg)
 <use figures/walking_hm_fig.jpg>
-Package pdftex.def Info: figures/walking_hm_fig.jpg  used on input line 972.
+Package pdftex.def Info: figures/walking_hm_fig.jpg  used on input line 1018.
 (pdftex.def)             Requested size: 468.0pt x 292.49892pt.
-<figures/cycling_hm_fig.jpg, id=102, 578.16pt x 361.35pt>
+<figures/cycling_hm_fig.jpg, id=103, 578.16pt x 361.35pt>
 File: figures/cycling_hm_fig.jpg Graphic file (type jpg)
 <use figures/cycling_hm_fig.jpg>
-Package pdftex.def Info: figures/cycling_hm_fig.jpg  used on input line 976.
+Package pdftex.def Info: figures/cycling_hm_fig.jpg  used on input line 1022.
 (pdftex.def)             Requested size: 468.0pt x 292.49892pt.
 
-LaTeX Warning: Reference `fig:cycling-heatmap' on page 12 undefined on input line 979.
+LaTeX Warning: Reference `fig:cycling-heatmap' on page 12 undefined on input line 1025.
+
+
+LaTeX Warning: Reference `tab:result-stats' on page 12 undefined on input line 1054.
 
 
 
@@ -1187,55 +1084,75 @@ LaTeX Warning: Reference `fig:cycling-heatmap' on page 12 undefined on input lin
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1002 
+l.1066 
         <./figures/walking_hm_fig.jpg>]
 
 [14
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1002 
+l.1066 
         <./figures/cycling_hm_fig.jpg>]
 
-LaTeX Warning: Reference `tab:result-stats' on page 15 undefined on input line 1008.
+LaTeX Warning: Reference `tab:pop-stats-table' on page 15 undefined on input line 1207.
 
 
-LaTeX Warning: Reference `tab:pop-stats-table' on page 15 undefined on input line 1161.
-
-
-Overfull \hbox (110.00822pt too wide) in alignment at lines 1171--1190
+Overfull \hbox (110.00822pt too wide) in alignment at lines 1217--1236
  [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] 
  []
 
 
-Package natbib Warning: Citation `bryan2009patterns' on page 15 undefined on input line 1197.
+Package natbib Warning: Citation `bryan2009patterns' on page 15 undefined on input line 1243.
 
 
-Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1197.
+Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1243.
 
 
-Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1206.
+Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1252.
 
 
-Package natbib Warning: Citation `heesch2012' on page 15 undefined on input line 1224.
+Package natbib Warning: Citation `heesch2012' on page 15 undefined on input line 1263.
 
 
-Package natbib Warning: Citation `bryan2009patterns' on page 15 undefined on input line 1224.
+Package natbib Warning: Citation `bryan2009patterns' on page 15 undefined on input line 1263.
 
 
-Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1224.
+Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1263.
 
 
-Package natbib Warning: Citation `goel2023' on page 15 undefined on input line 1227.
+Package natbib Warning: Citation `goel2023' on page 15 undefined on input line 1266.
 
 
-Package natbib Warning: Citation `pollard2017' on page 15 undefined on input line 1227.
+Package natbib Warning: Citation `pollard2017' on page 15 undefined on input line 1266.
 
 
-Package natbib Warning: Citation `bryan2009patterns' on page 15 undefined on input line 1227.
+Package natbib Warning: Citation `bryan2009patterns' on page 15 undefined on input line 1266.
 
 
-Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1227.
+Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1266.
+
+<figures/combined_plot_gender.jpg, id=119, 569.0058pt x 511.9125pt>
+File: figures/combined_plot_gender.jpg Graphic file (type jpg)
+<use figures/combined_plot_gender.jpg>
+Package pdftex.def Info: figures/combined_plot_gender.jpg  used on input line 1272.
+(pdftex.def)             Requested size: 468.0pt x 421.04419pt.
+
+Package natbib Warning: Citation `dimock2019' on page 15 undefined on input line 1283.
+
+
+Package natbib Warning: Citation `haseeb2024' on page 15 undefined on input line 1286.
+
+
+Package natbib Warning: Citation `grimsrud2014' on page 15 undefined on input line 1286.
+
+
+Package natbib Warning: Citation `kuhnimhof2011' on page 15 undefined on input line 1286.
+
+
+Package natbib Warning: Citation `bryan2009patterns' on page 15 undefined on input line 1288.
+
+
+Package natbib Warning: Citation `borhani2024' on page 15 undefined on input line 1288.
 
 
 
@@ -1245,89 +1162,71 @@ Package natbib Warning: Citation `borhani2024' on page 15 undefined on input lin
 pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1231 
+l.1300 
        ]
-<figures/combined_plot_gender.jpg, id=130, 569.0058pt x 511.9125pt>
-File: figures/combined_plot_gender.jpg Graphic file (type jpg)
-<use figures/combined_plot_gender.jpg>
-Package pdftex.def Info: figures/combined_plot_gender.jpg  used on input line 1233.
-(pdftex.def)             Requested size: 468.0pt x 421.04419pt.
 
-Package natbib Warning: Citation `dimock2019' on page 17 undefined on input line 1244.
-
-
-Package natbib Warning: Citation `haseeb2024' on page 17 undefined on input line 1247.
-
-
-Package natbib Warning: Citation `grimsrud2014' on page 17 undefined on input line 1247.
-
-
-Package natbib Warning: Citation `kuhnimhof2011' on page 17 undefined on input line 1247.
-
-
-Package natbib Warning: Citation `bryan2009patterns' on page 17 undefined on input line 1249.
-
-
-Package natbib Warning: Citation `borhani2024' on page 17 undefined on input line 1249.
-
-<figures/combined_plot_age.jpg, id=131, 569.0058pt x 511.9125pt>
-File: figures/combined_plot_age.jpg Graphic file (type jpg)
-<use figures/combined_plot_age.jpg>
-Package pdftex.def Info: figures/combined_plot_age.jpg  used on input line 1263.
-(pdftex.def)             Requested size: 468.0pt x 421.04419pt.
-
-LaTeX Warning: Reference `tab:eps-total-pop' on page 17 undefined on input line 1270.
-
-
-LaTeX Warning: Reference `fig:gender-eps-figure' on page 17 undefined on input line 1275.
-
-
-LaTeX Warning: Reference `fig:gender-eps-figure' on page 17 undefined on input line 1287.
-
-
-LaTeX Warning: Reference `fig:age-eps-figure' on page 17 undefined on input line 1288.
-
-
-LaTeX Warning: Reference `fig:age-eps-figure' on page 17 undefined on input line 1302.
-
-
-
-[17]
-
-[18
+[17
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1328 
+l.1300 
         <./figures/combined_plot_gender.jpg>]
+<figures/combined_plot_age.jpg, id=137, 569.0058pt x 511.9125pt>
+File: figures/combined_plot_age.jpg Graphic file (type jpg)
+<use figures/combined_plot_age.jpg>
+Package pdftex.def Info: figures/combined_plot_age.jpg  used on input line 1302.
+(pdftex.def)             Requested size: 468.0pt x 421.04419pt.
+
+LaTeX Warning: Reference `tab:eps-total-pop' on page 18 undefined on input line 1309.
+
+
+LaTeX Warning: Reference `fig:gender-eps-figure' on page 18 undefined on input line 1314.
+
+
+LaTeX Warning: Reference `fig:gender-eps-figure' on page 18 undefined on input line 1326.
+
+
+LaTeX Warning: Reference `fig:age-eps-figure' on page 18 undefined on input line 1327.
+
+
+LaTeX Warning: Reference `fig:age-eps-figure' on page 18 undefined on input line 1341.
+
+
+Package natbib Warning: Citation `bryan2009patterns' on page 18 undefined on input line 1377.
+
+
+Package natbib Warning: Citation `borhani2024' on page 18 undefined on input line 1377.
+
+
+
+[18]
 
 [19
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1328 
+l.1389 
         <./figures/combined_plot_age.jpg>]
 
-Package natbib Warning: Citation `bryan2009patterns' on page 20 undefined on input line 1338.
+Package natbib Warning: Citation `delignette2015fitdistrplus' on page 20 undefined on input line 1405.
 
 
-Package natbib Warning: Citation `borhani2024' on page 20 undefined on input line 1338.
+Package natbib Warning: Citation `akaike1974' on page 20 undefined on input line 1408.
 
 
-Package natbib Warning: Citation `delignette2015fitdistrplus' on page 20 undefined on input line 1366.
+LaTeX Warning: Reference `tab:walking-functions-tab' on page 20 undefined on input line 1426.
 
 
-Package natbib Warning: Citation `akaike1974' on page 20 undefined on input line 1369.
+LaTeX Warning: Reference `tab:cycling-functions-tab' on page 20 undefined on input line 1427.
 
 
-LaTeX Warning: Reference `tab:walking-functions-tab' on page 20 undefined on input line 1387.
+LaTeX Warning: Reference `fig:outdoors-impedance-fig' on page 20 undefined on input line 1635.
 
-
-LaTeX Warning: Reference `tab:cycling-functions-tab' on page 20 undefined on input line 1388.
-
-
-LaTeX Warning: Reference `fig:outdoors-impedance-fig' on page 20 undefined on input line 1596.
-
+<figures/impf_Outdoors.jpg, id=148, 1011.78pt x 650.43pt>
+File: figures/impf_Outdoors.jpg Graphic file (type jpg)
+<use figures/impf_Outdoors.jpg>
+Package pdftex.def Info: figures/impf_Outdoors.jpg  used on input line 1650.
+(pdftex.def)             Requested size: 468.0pt x 300.85886pt.
 
 
 [20]
@@ -1336,52 +1235,46 @@ LaTeX Warning: Reference `fig:outdoors-impedance-fig' on page 20 undefined on in
 pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1608 
+l.1684 
        ]
 
 [22
 pdfTeX warning (ext4): destination with the same identifier (name{table.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1608 
+l.1684 
        ]
-<figures/impf_Outdoors.jpg, id=163, 1011.78pt x 650.43pt>
-File: figures/impf_Outdoors.jpg Graphic file (type jpg)
-<use figures/impf_Outdoors.jpg>
-Package pdftex.def Info: figures/impf_Outdoors.jpg  used on input line 1611.
-(pdftex.def)             Requested size: 468.0pt x 300.85886pt.
-
 
 [23
 pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1661 
+l.1684 
         <./figures/impf_Outdoors.jpg>]
 
-LaTeX Warning: Reference `fig:walking-evolution-fig' on page 24 undefined on input line 1670.
+LaTeX Warning: Reference `fig:walking-evolution-fig' on page 24 undefined on input line 1709.
 
 
-LaTeX Warning: Reference `fig:figure-boxplot' on page 24 undefined on input line 1679.
+LaTeX Warning: Reference `fig:figure-boxplot' on page 24 undefined on input line 1718.
 
-<figures/walking_temporal_evolution.jpg, id=169, 722.7pt x 505.89pt>
+<figures/walking_temporal_evolution.jpg, id=170, 722.7pt x 505.89pt>
 File: figures/walking_temporal_evolution.jpg Graphic file (type jpg)
 <use figures/walking_temporal_evolution.jpg>
-Package pdftex.def Info: figures/walking_temporal_evolution.jpg  used on input line 1684.
+Package pdftex.def Info: figures/walking_temporal_evolution.jpg  used on input line 1723.
 (pdftex.def)             Requested size: 468.0pt x 327.59723pt.
 
-Package natbib Warning: Citation `dossantos2024ActiveCA' on page 24 undefined on input line 1699.
+Package natbib Warning: Citation `dossantos2024ActiveCA' on page 24 undefined on input line 1738.
 
 
 
-[24
+[24]
+
+[25
 pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1704 
+l.1769 
         <./figures/walking_temporal_evolution.jpg>]
-
-[25]
 No file active-travel-behaviour-evolution-in-Canada.bbl.
 
 Package natbib Warning: There were undefined citations.
@@ -1406,21 +1299,21 @@ Package rerunfilecheck Warning: File `active-travel-behaviour-evolution-in-Canad
 
 Package rerunfilecheck Info: Checksums for `active-travel-behaviour-evolution-in-Canada.out':
 (rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  2ACEC8C86AB5384556267600D89DB583;2773.
+(rerunfilecheck)             After:  5E7728B5AAEC7C93DC0D3B162A91989D;3240.
  ) 
 Here is how much of TeX's memory you used:
- 13925 strings out of 471571
- 220935 string characters out of 5519050
- 673509 words of memory out of 5000000
- 40189 multiletter control sequences out of 15000+600000
+ 13928 strings out of 471571
+ 221048 string characters out of 5519050
+ 672637 words of memory out of 5000000
+ 40191 multiletter control sequences out of 15000+600000
  691141 words of font info for 83 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,14n,79p,674b,550s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,14n,79p,674b,555s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx6.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on active-travel-behaviour-evolution-in-Canada.pdf (26 pages, 3660394 bytes).
+Output written on active-travel-behaviour-evolution-in-Canada.pdf (26 pages, 3662730 bytes).
 PDF statistics:
- 304 PDF objects out of 1000 (max. 8388607)
- 218 compressed objects within 3 object streams
- 65 named destinations out of 1000 (max. 500000)
+ 305 PDF objects out of 1000 (max. 8388607)
+ 219 compressed objects within 3 object streams
+ 66 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

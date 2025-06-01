@@ -260,7 +260,7 @@ gss_main_2015_file <- gss_main_2015 %>%
 
 # 2022
 gss_main_2022_file <- gss_main_2022 %>% 
-  filter(LUC_RST == "Larger urban population centres (CMA/CA)") %>% # Selecting only people living in CMA/CA
+  filter(LUC_RST == "CMA/CA") %>% # Selecting only people living in CMA/CA
   dplyr::select(PUMFID, WGHT_PER, GENDER2, AGEGR10) %>%
   rename(AGE = AGEGR10) %>% 
   mutate(dest_label = list(unique(
@@ -906,7 +906,7 @@ After performing the Kruskal-Wallis test (to assess whether there was a statisti
 
 For both AT modes, the possible destinations had at least two year with statistically significant difference in travel times (p-value \< 2.2e-16). Considering the cycling mode and, for instance, the "Home" destination, there was a statistically significant difference for every possible combination of two survey cycles. This result indicates that the previously discussed increase in typical cycling travel time for home destinations when compared 2022 to 2010 is statistically significant.
 
-```{r kruskal-walking, include = FALSE, warning= FALSE}
+```{r kruskal-walking, include = FALSE, warning= FALSE, cache=TRUE}
 result_kw <- data.frame()
 anos_possiveis <- c("1992", "1998", "2005", "2010", "2015", "2022")
 result_pw <- data.frame(matrix(ncol = length(anos_possiveis) + 2, nrow = 0))
@@ -1652,7 +1652,7 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/duration_gender_g
        dpi = 300)
 ```
 
-```{r gender-duration-boxplot, include = FALSE}
+```{r gender-duration-boxplot, include = FALSE, cache=TRUE}
 # base_data <- gss_impedances_renamed %>%
 #    left_join(main_file %>% select(PUMFID, YEAR, GENDER2, WGHT_PER, dest_label),
 #              by = c("PUMFID", "YEAR", "dest_label")) %>%
@@ -1702,7 +1702,7 @@ knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/gender_
 
 An examination of average travel duration by age group reveals a general increase in walking trip durations across all groups since 1998 (Figure \ref{fig:age-dur-figure}). In 2022, the youngest cohort (ages 15 to 24) reported the shortest average walking duration at 17 minutes, while the 25 to 34 age group had the longest, averaging 21 minutes. For cycling trips, a notable increasing trend in duration emerges after 2010 - with the exception of the 55 to 64 age group, whose average duration stabilized following a peak in 2015. Notably, the 65 to 74 age group recorded the highest average cycling duration, with individuals in this cohort spending an average of 42 minutes cycling in 2022.
 
-```{r age-duration, include=FALSE}
+```{r age-duration, include=FALSE, cache=TRUE}
 # Age 
 duration_age_mode <- gss_impedances_renamed %>%
   left_join(main_file %>% select(PUMFID, YEAR, AGE, WGHT_PER, dest_label),

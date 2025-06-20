@@ -1,0 +1,264 @@
+\documentclass[preprint, 3p,
+authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
+%%% Begin My package additions %%%%%%%%%%%%%%%%%%%
+
+\usepackage[hyphens]{url}
+
+  \journal{An awesome journal} % Sets Journal name
+
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%% end my additions to header
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+% TODO: Currently lineno needs to be loaded after amsmath because of conflict
+% https://github.com/latex-lineno/lineno/issues/5
+\usepackage{lineno} % add
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \usepackage{fontspec}
+  \ifxetex
+    \usepackage{xltxtra,xunicode}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\usepackage[]{natbib}
+\bibliographystyle{elsarticle-harv}
+
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={A historical analysis of the evolution of active travel behaviour in Canada},
+            colorlinks=false,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+
+\setcounter{secnumdepth}{0}
+% Pandoc toggle for numbering sections (defaults to be off)
+\setcounter{secnumdepth}{0}
+
+
+% tightlist command for lists without linebreak
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+
+
+\begin{document}
+
+
+\begin{frontmatter}
+
+  \title{A historical analysis of the evolution of active travel
+behaviour in Canada}
+    \author[Some Institute of Technology]{Alice Anonymous%
+  \corref{cor1}%
+  }
+   \ead{alice@example.com} 
+    \author[Some Institute of Technology]{Bob Security%
+  %
+  }
+   \ead{bob@example.com} 
+    \author[Some Institute of Technology]{Cat Memes%
+  %
+  }
+   \ead{cat@example.com} 
+      \affiliation[Some Institute of Technology]{
+    organization={Big Wig University},addressline={1 main
+street},city={Gotham},postcode={123456},state={State},country={United
+States},}
+    \cortext[cor1]{Corresponding author}
+  
+  \begin{abstract}
+  
+  \end{abstract}
+  
+ \end{frontmatter}
+
+\section*{Appendix A}\label{appendix-a}
+\addcontentsline{toc}{section}{Appendix A}
+
+After performing the Kruskal-Wallis test (to assess whether there was a
+statistically significant difference between the distributions of
+empirical travel time values, considering the time differences for each
+destination and the weight of each episode) and the pairwise Wilcoxon
+test, we were able to identify the destinations where a statistically
+significant difference was detected. For both active transportation
+modes, the possible destinations had at least two year with
+statistically significant difference in travel times (p-value
+\textless{} 0.05, Table 1).
+
+\begin{table}
+\centering
+\caption{\label{tab:kruskal-walking}\label{tab:result-stats}P-values of the pairwise Wilcoxon test.}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{6}{8}\selectfont
+\begin{tabular}[t]{llllllll}
+\toprule
+Mode & Destination & Year & 1992 & 1998 & 2005 & 2010 & 2015\\
+\midrule
+ & Home & 1998 & 0.00e+00 &  &  &  & \\
+
+ & Home & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
+
+ & Home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
+
+ & Home & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
+
+ & Home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Work or school & 1998 & 7.09e-211 &  &  &  & \\
+
+ & Work or school & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
+
+ & Work or school & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
+
+ & Work or school & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
+
+ & Work or school & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Grocery store & 2010 &  &  & 0.00e+00 &  & \\
+
+ & Grocery store & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+
+ & Grocery store & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Neighbourhood & 2022 &  &  &  &  & 0.00e+00\\
+
+ & Sport area & 2022 &  &  &  &  & 0.00e+00\\
+
+ & Outdoors & 2010 &  &  & 4.33e-29 &  & \\
+
+ & Outdoors & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+
+ & Outdoors & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Restaurant & 2010 &  &  & 2.09e-295 &  & \\
+
+ & Restaurant & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+
+ & Restaurant & 2022 &  &  & 0.00e+00 & 0.00e+00 & 1.11e-179\\
+
+ & Other's home & 1998 & 0.00e+00 &  &  &  & \\
+
+ & Other's home & 2005 & 0.00e+00 & 1.79e-83 &  &  & \\
+
+ & Other's home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
+
+ & Other's home & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
+
+ & Other's home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Health clinic & 2022 &  &  &  &  & 4.12e-216\\
+
+ & Cultural venues & 2010 &  &  & 4.52e-273 &  & \\
+
+ & Cultural venues & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+
+ & Cultural venues & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Place of worship & 2010 &  &  & 0.00e+00 &  & \\
+
+ & Place of worship & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+
+ & Place of worship & 2022 &  &  & 0.00e+00 & 0.00e+00 & 3.76e-18\\
+
+\multirow[t]{-34}{*}{\raggedright\arraybackslash Walking} & Business & 2022 &  &  &  &  & 1.18e-305\\
+\cmidrule{1-8}
+ & Grocery store & 2010 &  &  & 0.00e+00 &  & \\
+
+ & Grocery store & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+
+ & Grocery store & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Home & 1998 & 1.08e-230 &  &  &  & \\
+
+ & Home & 2005 & 1.45e-24 & 0.00e+00 &  &  & \\
+
+ & Home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
+
+ & Home & 2015 & 0.00e+00 & 8.44e-236 & 0.00e+00 & 0.00e+00 & \\
+
+ & Home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Work or school & 1998 & 0.00e+00 &  &  &  & \\
+
+ & Work or school & 2005 & 9.62e-228 & 0.00e+00 &  &  & \\
+
+ & Work or school & 2010 & 1.30e-221 & 0.00e+00 & 0.00e+00 &  & \\
+
+ & Work or school & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
+
+ & Work or school & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Health clinic & 2022 &  &  &  &  & 0.00e+00\\
+
+ & Restaurant & 2010 &  &  & 1.03e-106 &  & \\
+
+ & Restaurant & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+
+ & Restaurant & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Sport area & 2022 &  &  &  &  & 0.00e+00\\
+
+ & Outdoors & 2010 &  &  & 0.00e+00 &  & \\
+
+ & Outdoors & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+
+ & Outdoors & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+
+ & Other's home & 1998 & 2.60e-122 &  &  &  & \\
+
+ & Other's home & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
+
+ & Other's home & 2010 & 6.63e-41 & 0.00e+00 & 3.60e-287 &  & \\
+
+ & Other's home & 2015 & 4.03e-81 & 0.00e+00 & 5.62e-266 & 1.84e-148 & \\
+
+ & Cultural venues & 2010 &  &  & 2.98e-142 &  & \\
+
+\multirow[t]{-27}{*}{\raggedright\arraybackslash Cycling} & Cultural venues & 2015 &  &  & 0.00e+00 & 9.65e-01 & \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\bibliography{mybibfile2}
+
+
+\end{document}

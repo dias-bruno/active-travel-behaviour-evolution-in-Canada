@@ -32,7 +32,7 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 % use microtype if available
 \IfFileExists{microtype.sty}{\usepackage{microtype}}{}
 \usepackage[]{natbib}
-\bibliographystyle{elsarticle-harv}
+\bibliographystyle{plainnat}
 
 \ifxetex
   \usepackage[setpagesize=false, % page size defined by xetex
@@ -62,6 +62,9 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 
 
 
+\renewcommand{\abstractname}{}
+\renewenvironment{abstract}{}{}
+\usepackage[makeroom]{cancel}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -113,150 +116,137 @@ States},}
 \section*{Appendix A}\label{appendix-a}
 \addcontentsline{toc}{section}{Appendix A}
 
-After performing the Kruskal-Wallis test (to assess whether there was a
-statistically significant difference between the distributions of
-empirical travel time values, considering the time differences for each
-destination and the weight of each episode) and the pairwise Wilcoxon
-test, we were able to identify the destinations where a statistically
-significant difference was detected. For both active transportation
-modes, the possible destinations had at least two year with
-statistically significant difference in travel times (p-value
-\textless{} 0.05, Table 1).
+\begingroup\fontsize{8}{10}\selectfont
 
-\begin{table}
-\centering
-\caption{\label{tab:kruskal-walking}\label{tab:result-stats}P-values of the pairwise Wilcoxon test.}
-\centering
-\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
-\fontsize{6}{8}\selectfont
-\begin{tabular}[t]{llllllll}
+\begin{longtable}[t]{llllllll}
+\caption{\label{tab:kruskal-walking}\label{tab:result-stats}P-values of the pairwise Wilcoxon test.}\\
 \toprule
 Mode & Destination & Year & 1992 & 1998 & 2005 & 2010 & 2015\\
 \midrule
  & Home & 1998 & 0.00e+00 &  &  &  & \\
-
+\nopagebreak
  & Home & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
-
+\nopagebreak
  & Home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
-
+\nopagebreak
  & Home & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Work or school & 1998 & 7.09e-211 &  &  &  & \\
-
+\nopagebreak
  & Work or school & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
-
+\nopagebreak
  & Work or school & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
-
+\nopagebreak
  & Work or school & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Work or school & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Grocery store & 2010 &  &  & 0.00e+00 &  & \\
-
+\nopagebreak
  & Grocery store & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Grocery store & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Neighbourhood & 2022 &  &  &  &  & 0.00e+00\\
-
+\nopagebreak
  & Sport area & 2022 &  &  &  &  & 0.00e+00\\
-
+\nopagebreak
  & Outdoors & 2010 &  &  & 4.33e-29 &  & \\
-
+\nopagebreak
  & Outdoors & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Outdoors & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Restaurant & 2010 &  &  & 2.09e-295 &  & \\
-
+\nopagebreak
  & Restaurant & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Restaurant & 2022 &  &  & 0.00e+00 & 0.00e+00 & 1.11e-179\\
-
+\nopagebreak
  & Other's home & 1998 & 0.00e+00 &  &  &  & \\
-
+\nopagebreak
  & Other's home & 2005 & 0.00e+00 & 1.79e-83 &  &  & \\
-
+\nopagebreak
  & Other's home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
-
+\nopagebreak
  & Other's home & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Other's home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Health clinic & 2022 &  &  &  &  & 4.12e-216\\
-
+\nopagebreak
  & Cultural venues & 2010 &  &  & 4.52e-273 &  & \\
-
+\nopagebreak
  & Cultural venues & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Cultural venues & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Place of worship & 2010 &  &  & 0.00e+00 &  & \\
-
+\nopagebreak
  & Place of worship & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Place of worship & 2022 &  &  & 0.00e+00 & 0.00e+00 & 3.76e-18\\
-
+\nopagebreak
 \multirow[t]{-34}{*}{\raggedright\arraybackslash Walking} & Business & 2022 &  &  &  &  & 1.18e-305\\
-\cmidrule{1-8}
+\cmidrule{1-8}\pagebreak[0]
  & Grocery store & 2010 &  &  & 0.00e+00 &  & \\
-
+\nopagebreak
  & Grocery store & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Grocery store & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Home & 1998 & 1.08e-230 &  &  &  & \\
-
+\nopagebreak
  & Home & 2005 & 1.45e-24 & 0.00e+00 &  &  & \\
-
+\nopagebreak
  & Home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
-
+\nopagebreak
  & Home & 2015 & 0.00e+00 & 8.44e-236 & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Work or school & 1998 & 0.00e+00 &  &  &  & \\
-
+\nopagebreak
  & Work or school & 2005 & 9.62e-228 & 0.00e+00 &  &  & \\
-
+\nopagebreak
  & Work or school & 2010 & 1.30e-221 & 0.00e+00 & 0.00e+00 &  & \\
-
+\nopagebreak
  & Work or school & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Work or school & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Health clinic & 2022 &  &  &  &  & 0.00e+00\\
-
+\nopagebreak
  & Restaurant & 2010 &  &  & 1.03e-106 &  & \\
-
+\nopagebreak
  & Restaurant & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Restaurant & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Sport area & 2022 &  &  &  &  & 0.00e+00\\
-
+\nopagebreak
  & Outdoors & 2010 &  &  & 0.00e+00 &  & \\
-
+\nopagebreak
  & Outdoors & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
-
+\nopagebreak
  & Outdoors & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
+\nopagebreak
  & Other's home & 1998 & 2.60e-122 &  &  &  & \\
-
+\nopagebreak
  & Other's home & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
-
+\nopagebreak
  & Other's home & 2010 & 6.63e-41 & 0.00e+00 & 3.60e-287 &  & \\
-
+\nopagebreak
  & Other's home & 2015 & 4.03e-81 & 0.00e+00 & 5.62e-266 & 1.84e-148 & \\
-
+\nopagebreak
  & Cultural venues & 2010 &  &  & 2.98e-142 &  & \\
-
+\nopagebreak
 \multirow[t]{-27}{*}{\raggedright\arraybackslash Cycling} & Cultural venues & 2015 &  &  & 0.00e+00 & 9.65e-01 & \\
 \bottomrule
-\end{tabular}}
-\end{table}
+\end{longtable}
+\endgroup{}
 
 \bibliography{mybibfile2}
 

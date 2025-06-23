@@ -62,6 +62,7 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 
 
 
+\usepackage{pdflscape}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -111,14 +112,14 @@ States},}
   moderate-to-vigorous physical activity per week. Despite the potential
   of Canada's Time Use Survey (TUS) from the General Social Survey (GSS)
   to inform AT research, no comprehensive historical analysis of AT
-  using all TUS cycles (from 1992 to 2022) has yet been conducted. This
-  study addresses that gap with two objectives: to examine temporal
-  trends in AT by destination, travel time, and demographic profiles;
-  and to calibrate impedance functions for AT modes across survey cycles
-  and destinations. After analyzing and processing over 13,500 AT
-  episodes representing 28 million weighted episodes, we performed
-  descriptive analyses and modeled 83 impedance functions. Results show
-  that ``Home,'' ``Work or study,'' and ``Grocery store'' were the most
+  using all TUS cycles has yet been conducted. This study addresses that
+  gap with two objectives: to examine temporal trends in AT by
+  destination, travel time, and demographic profiles; and to calibrate
+  impedance functions for AT modes across survey cycles and
+  destinations. After analyzing and processing over 13,500 AT recordins
+  representing 28 million weighted episodes, we performed descriptive
+  analyses and modeled 83 impedance functions. Results show that
+  ``Home,'' ``Work or study,'' and ``Grocery store'' were the most
   frequent destinations. Walking dominated AT (over 90\% of episodes),
   with median durations rising from 10 to 15 minutes in 2022; for
   cycling, durations rose from 15 to 30 minutes. Since 2010, the share
@@ -182,14 +183,14 @@ and promoting urban sustainability
 \citep{hino2014built, lamiquiz2015effects}, making them central to urban
 mobility research and policy-making
 \citep{vandenbulcke2009mapping, wu2019measuring}. Walking and cycling
-accessibility are closely related, jointly contributing to the concept
-of ``active accessibility'' or ``non-motorized accessibility'', and when
-incorporated into urban and transportation planning, they help to reduce
-the dependence on private vehicles and promote healthier, more
-sustainable travel behaviour among residents.
+accessibility, the ease of reaching destinations and opportunities
+\citep{hansen1959, paez2012} by walking and cycling, are closely related
+and together contribute to the concept of ``active accessibility'' or
+``non-motorized accessibility.'' When incorporated into urban and
+transportation planning, they help reduce dependence on private vehicles
+and promote healthier, more sustainable travel behavior among residents.
 
-In 2021, the Minister of Housing, Infrastructure and Communities
-released the ``National Active Transportation Strategy''
+In 2021, Canada released the ``National Active Transportation Strategy''
 \citep{canada2021} to support the expansion and enhancement of active
 transportation infrastructure in Canada. The federal government
 committed \$400 million over five years to build and improve networks of
@@ -221,20 +222,18 @@ The TUS allows researchers to identify the origin and destination of
 trips, travel times, and transportation modes used, providing a valuable
 dataset for analyzing active travel behavior. It also offers the
 empirical foundation for tools used in transportation analysis, such as
-the development of impedance functions for accessibility analysis, a
-measure of how easily people can reach destinations and opportunities
-\citep{hansen1959, paez2012}. Despite this potential, to our knowledge,
-no prior studies have conducted a historical analysis of active travel
-behavior in Canada using the full set of TUS GSS cycles.
+the development of impedance functions for accessibility analysis.
 
-Additionally, the lack of calibrated impedance functions, especially for
-destinations beyond work, poses a challenge for incorporating
-accessibility into urban and transportation planning
-\citep{pereira2023}. The impedance functions have different forms and
-all of them serve as a tool to understand the travel behaviour, since
-they work as measure of the willingness to travel a certain distance to
-achieve a desired destination, where a service or an opportunity is
-located
+Despite this potential, to our knowledge, no prior studies have
+conducted a historical analysis of active travel behavior in Canada
+using the full set of TUS GSS cycles. Additionally, the lack of
+calibrated impedance functions, especially for destinations beyond work,
+poses a challenge for incorporating accessibility into urban and
+transportation planning \citep{pereira2023}. The impedance functions
+have different forms and all of them serve as a tool to understand the
+travel behaviour, since they work as measure of the willingness to
+travel a certain distance to achieve a desired destination, where a
+service or an opportunity is located
 \citep{papa2012gravity, yang2012walking, millward2013active, vale2017influence}.
 In this concept, areas with higher accessibility are those characterized
 by a lower impedance when traveling to desirable destinations. In
@@ -249,7 +248,8 @@ desirability, and the characteristics of those embarking on the trip in
 different situations. Therefore, investigate the evolution and dynamics
 of impedance function over time becomes important, since they are easily
 impacted by changes in the transportation network or in urban spatial
-configurations \citep{iacono2008access, iacono2010}.
+configurations \citep{iacono2008access, iacono2010}, but also by the
+transport behaviour of the population.
 
 Given this context, the present study has two main objectives: to
 investigate the Canadian TUS GSS cycles from 1992 to 2022, offering an
@@ -257,24 +257,17 @@ overview of AT in terms of primary origins, destinations, travel times,
 and the demographic profile of individuals engaging in active travel;
 and to calibrate appropriate impedance functions for AT modes (walking
 and cycling), considering a wide range of destinations and time periods
-in Canadian metropolitan areas. Through this research, we aim to
-understand the evolution of typical travel times for AT modes, trends in
-the prevalence of active travel among the Canadian population, and to
-develop a set of calibrated impedance functions adapted to different
-destinations, time periods, and AT modes that can be used for
-transportation planning in Canada and in other countries with similar
-urban formation processes.
-
-To achieve both objectives, we utilize data provided by the
-\texttt{ActiveCA} R package \citep{dossantos2025}, an open data product
-in the form of an R data package with information about active travel in
-Canada. This data product is based on Public Use Microdata Files of TUS
-GSS cycles. To build this package, the authors extracted all walking and
-cycling episodes and their corresponding episode weights for GSS cycles,
-Cycles 7 (1992), 12 (1998), 19 (2005), 24 (2010), 29 (2015), and 34
-(2022), spanning a period of thirty years. Origins and destinations were
-labelled, enabling the investigation of active travel for broad
-destination categories and purposes.
+in Canadian metropolitan areas. To achieve both objectives, we utilize
+data provided by the \texttt{ActiveCA} R package \citep{dossantos2025},
+an open data product in the form of an R data package with information
+about active travel in Canada. This data product is based on Public Use
+Microdata Files of TUS GSS cycles. To build this package, the authors
+extracted all walking and cycling episodes and their corresponding
+episode weights for GSS cycles, Cycles 2 (1986), Cycles 7 (1992), 12
+(1998), 19 (2005), 24 (2010), 29 (2015), and 34 (2022), spanning a
+period of almost fourty years. Origins and destinations were labelled,
+enabling the investigation of active travel for broad destination
+categories and purposes.
 
 We recognize that non-work travel encompasses a range of trip purposes
 and diverse traveler behaviors, which makes impedance functions
@@ -285,13 +278,22 @@ analysis. Our investigation covers a variety of trip purposes, ranging
 from commutes to homes, workplaces, or educational institutions to
 social visits, outdoor activities, business trips, shopping, cultural
 outings to libraries, museums, or theaters, dining out, and engaging in
-religious practices. Our research aims to enhance the current knowledge
-about active travel behaviour and provide empirical data about frequency
-and duration of typical pedestrian and cycling trips for different
-purposes, by applying the methodology on a nationally representative
-samples of Canadian residents. Lastly, this analysis seeks to contribute
-to the ongoing conversation on AT, highlighting its role in influencing
-transportation plans to a more sustainable alternative.
+religious practices.
+
+Our research advances the current understanding of active travel
+behavior by analyzing of the evolution of travel times and frequency for
+AT modes, trends in the prevalence of AT in the Canadian population, and
+the development of calibrated impedance functions adapted to different
+destinations, periods and AT modes. We ensured the transparency and
+reproducibility of our study by sourcing all data from publicly
+available repositories. To facilitate collaboration and further
+analysis, we developed this paper using literate programming, with the
+data analysis code accessible through our GitHub page \emph{(link to be
+provided after review)}, in alignment with best practices in spatial
+data science \citep{arribas-bel2021}. These contributions enhance the
+understanding of active transportation, emphasize its role in shaping
+more sustainable mobility strategies, and provide a foundation for
+further research and policymaking.
 
 \section{Theoretical background}\label{theoretical-background}
 
@@ -341,9 +343,9 @@ adults.
 \subsection{The Time Use Surveys in
 Canada}\label{the-time-use-surveys-in-canada}
 
-Time-use diary surveys (TUS) provide a valuable source of information on
-the daily activities of individuals and households. According to Harms
-et al. \citeyearpar{harms2018}, more than 65 countries around the world
+TUS surveys provide a valuable source of information on the daily
+activities of individuals and households. According to Harms et al.
+\citeyearpar{harms2018}, more than 65 countries around the world
 (including in Europe, the Americas, Asia, Africa, Australia, and New
 Zealand) have conducted together over one hundred TUS. In Canada, the
 TUS cycles of the GSS have provided a comprehensive cross-sectional
@@ -352,47 +354,46 @@ snapshot of the Canadian population since 1986
 
 Until 2022, Statistics Canada used a telephone-based sampling frame,
 which was replaced by a dwelling-based frame in the most recent cycle.
-Most respondents to the 2022 Time Use Survey (TUS) answered the survey
-online. According to Statistics Canada
-\citeyearpar{statisticscanada2022}, this new approach reflected the need
-to adapt to changes in the use of technology and the increasing time
-demands of Canadians, offering respondents greater flexibility and
-convenience in completing the survey. However, it is important to note
-that significant changes in survey methodology can affect the
-comparability of data over time. It is not possible to determine with
-certainty whether, or to what extent, the differences observed in the
-variables are attributable to actual changes in the population or to
-methodological changes in data collection. At all stages of processing,
-verification and dissemination, considerable efforts have been made to
-produce data with a high level of accuracy and to ensure that the
-published estimates meet Statistics Canada's quality standards. Even so,
-there is reason to believe that the use of an electronic questionnaire
-may have influenced the estimates. The potential impact of the
-collection mode was analyzed by Statistics Canada for a selected set of
-key questions. Due to the limitations of the sample size, it was not
-possible to carry out this analysis for all the variables. It is worth
-mentioning that none of the variables used in this research are listed
-in Statistics Canada's 2022 Public Use Microdata File User Guide
-\citep{statisticscanada2022} as unsuitable for trend analysis due to
-differences in data collection mode.
+Most respondents to the 2022 TUS answered the survey online. According
+to Statistics Canada \citeyearpar{statisticscanada2022}, this new
+approach reflected the need to adapt to changes in the use of technology
+and the increasing time demands of Canadians, offering respondents
+greater flexibility and convenience in completing the survey. However,
+it is important to note that significant changes in survey methodology
+can affect the comparability of data over time. It is not possible to
+determine with certainty whether, or to what extent, the differences
+observed in the variables are attributable to actual changes in the
+population or to methodological changes in data collection. At all
+stages of processing, verification and dissemination, considerable
+efforts have been made to produce data with a high level of accuracy and
+to ensure that the published estimates meet Statistics Canada's quality
+standards. Even so, there is reason to believe that the use of an
+electronic questionnaire may have influenced the estimates. The
+potential impact of the collection mode was analyzed by Statistics
+Canada for a selected set of key questions. Due to the limitations of
+the sample size, it was not possible to carry out this analysis for all
+the variables. It is worth mentioning that none of the variables used in
+this research are listed in Statistics Canada's 2022 Public Use
+Microdata File User Guide \citep{statisticscanada2022} as unsuitable for
+trend analysis due to differences in data collection mode.
 
-The survey covers both rural and urban areas, encompassing metropolitan
-and non-metropolitan regions, thereby ensuring a diverse and
-representative sample of the Canadian population. For sampling purposes,
-the ten provinces of Canada were divided into distinct geographic
-strata. Several Census Metropolitan Areas (CMAs) - including St.~John's,
+Eligibility for participation requires individuals to be 15 years of age
+or older. Each survey cycle spans a full 12-month period, typically from
+July to July of the following year. The target population includes all
+Canadians aged 15 and older, with the exception of residents of the
+Yukon, Northwest Territories, and Nunavut, full-time residents of
+institutions, and individuals living on Indigenous reserves. The TUS
+covers both rural and urban areas, encompassing metropolitan and
+non-metropolitan regions, thereby ensuring a diverse and representative
+sample of the Canadian population. For sampling purposes, the ten
+provinces of Canada were divided into distinct geographic strata.
+Several Census Metropolitan Areas (CMAs) - including St.~John's,
 Halifax, Saint John, Montreal, Quebec City, Toronto, Ottawa, Hamilton,
-Winnipeg, Regina, Saskatoon, Calgary, Edmonton, and Vancouver- were
-treated as separate strata. Additional strata were created by grouping
-other CMAs within Quebec, Ontario, and British Columbia, as well as by
-categorizing non-CMA areas within each province into their own distinct
-strata. Eligibility for participation requires individuals to be 15
-years of age or older. Each survey cycle spans a full 12-month period,
-typically from July to July of the following year. The target population
-includes all Canadians aged 15 and older, with the exception of
-residents of the Yukon, Northwest Territories, and Nunavut, full-time
-residents of institutions, and individuals living on Indigenous
-reserves.
+Winnipeg, Regina, Saskatoon, Calgary, Edmonton, and Vancouver - and some
+Census Agglomerations (CAs) were treated as separate strata. Additional
+strata were created by grouping other CMAs within Quebec, Ontario, and
+British Columbia, as well as by categorizing non-CMA areas within each
+province into their own distinct strata.
 
 \subsection{Impedance functions in accessibility
 measures}\label{impedance-functions-in-accessibility-measures}
@@ -407,12 +408,11 @@ opportunities. Usually, the effect of travel costs is expressed by
 \citep{soukhov2024}. Overall, impedance functions are derived from
 estimates based on distributions of sample data that reflect variations
 in the willingness of individuals to travel different distances to reach
-opportunities \citep{li2020approach}. Their main objective is to
-describe the decrease in the intensity of interaction as the cost of
-travel between locations increases. The cost of travel is usually
-measured in terms of the distance between the places of origin and
-destination, or in terms of the time spent reaching the destination from
-the point of origin.
+opportunities \citep{li2020approach}. Their objective is to describe the
+decrease in the intensity of interaction as the cost of travel between
+locations increases. The cost of travel is usually measured in terms of
+the distance between the places of origin and destination, or in terms
+of the time spent reaching the destination from the point of origin.
 
 Examining the impedance functions across different modes of transport
 and destinations is a good way to understand the travel behavior
@@ -454,7 +454,7 @@ define a measure of travel behavior with precision: the relationship
 between the ``population'' at an origin and where they normally want to
 or can go to reach ``opportunities'' at destinations. The definition of
 the impedance function \(f(c_{ij})\) is very important from this
-perspective.
+perspective \citep{soukhov2024}.
 
 Since the beginning applications of the gravity-accessibility models, a
 range of impedance functions have been applied to describe the
@@ -471,14 +471,14 @@ gamma, and exponential function)
 Another type of family of accessibility measures are \emph{cumulative
 opportunity} metrics, commonly referred to as isochronous indices. The
 binary function Equation \ref{eq:cumulative-equation} forms the basis of
-the cumulative opportunities maeasure approach. This function determine
+the cumulative opportunities measure approach. This function determine
 accessibility by summing up the number of opportunities available within
-a specific limiar of travel time or distance from a reference point,
+a specific threshold of travel time or distance from a reference point,
 without discounting the potential of the trip in relation to the
 associated cost. They use a rectangular function, categorizing the trip
 as ``acceptable'' within certain limits and ``unacceptable'' beyond
 them. One of the main complexities of these metrics is deciding what the
-appropriate limiar point is. This decision may be based on the
+appropriate threshold point is. This decision may be based on the
 prevailing mobility patterns of the population or may reflect
 established norms, conventions or informed projections of the
 researcher. Note that the cumulative opportunity measure can be
@@ -674,8 +674,6 @@ we created this paper using literate programming in which the R markdown
 code to fully reproduce this article is available on our GitHub
 repository \emph{(include after the review)}, in line with the best
 practices of spatial data science \citep{arribas-bel2021, paez2021}.
-These contributions improve our understanding of active travel behaviour
-in Canada and provide a basis for future research and policy-making.
 
 \subsection{Analyzing active travel
 episodes}\label{analyzing-active-travel-episodes}
@@ -709,26 +707,19 @@ and ``Work or school.'' In the subsequent years (2005, 2010, 2015, and
 2022), these categories were expanded to include ``Business,''
 ``Restaurant'' ``Place of worship,'' ``Grocery store''
 ``Neighbourhood,'' ``Outdoors,'' ``Cultural venues'' (such as library,
-museum and theatre), and ``Sport area.'' This evolution in data
-collection reflects a growing understanding of the complex nature of
-urban mobility and the diverse purposes that motivate walking and
-cycling trips, providing a comprehensive foundation for analyzing
-distance decay and its implications for urban planning and sustainable
-transportation strategies.
+museum and theatre), and ``Sport area.''
 
 Statistical analysis was used to characterize active travel episodes
 using cross-tabulations and graphs. Summary statistics and visualization
 techniques, including median values as a measure of typical value and
-boxplots, were employed to describe active travel across years,
+box plots, were employed to describe active travel across years,
 destinations, and transportation modes. To assess the statistical
 significance of potential temporal differences in the empirical episode
-data set for each destination, we applied the Kruskal-Wallis test. This
-test was chosen because it does not assume a normal distribution for the
-data, an important consideration since we made no assumptions about the
-distribution of the empirical data. The identification of impedance
-functions serves as the step that captures the distributional
-characteristics of the empirical values. The Kruskal-Wallis test
-evaluates differences in the medians of the empirical data.
+data set for each destination, we applied the Kruskal-Wallis test - a
+test that evaluates differences in the medians of the empirical data.
+This test was chosen because it does not assume a normal distribution
+for the data, an important consideration since we made no assumptions
+about the distribution of the empirical data.
 
 \subsection{Analyzing the population with active travel
 records}\label{analyzing-the-population-with-active-travel-records}
@@ -747,13 +738,13 @@ is disseminated using a two-category gender variable. In this framework,
 individuals identifying as non-binary are distributed across the two
 other gender categories and are denoted by the ``+'' symbol. The
 category ``Men+'' includes men (and/or boys) as well as some non-binary
-persons, and the category ``Women+'' includes women (and/or girls) as
-well as some non-binary persons.
+persons, and the category women+ includes women (and/or girls) as well
+as some non-binary persons.
 
 We recognize that biological sex does not always align with gender
 identity. However, to enable comparison across survey years, we assumed
 that individuals recorded as ``female'' in earlier surveys correspond to
-``Women+'', and those recorded as ``male'' correspond to ``Men+''. We
+women+, and those recorded as ``male'' correspond to ``Men+''. We
 acknowledge that this approach does not fully capture gender diversity,
 particularly for trans and non-binary individuals, due to limitations in
 how gender was recorded in earlier surveys.
@@ -785,18 +776,17 @@ distributions. In order to calculate the impedance functions, two
 filters were applied in the GSS data set. The first is that we excluded
 all trips with travel times higher than 100 minutes (1.5 hours). An
 exploratory data analysis showed that, taking into account all the
-walking and cycling episodes (19,166 in total), less than 0.73\% of the
-episodes have a trip duration higher than this limit. When considering
-the weights of this episodes, travel times higher than 100 minutes
-represented 0.93\% of the episodes.
-
-It was also possible to know that trips with a duration higher than 100
-minutes are mainly composed of hiking and camping episodes. The second
-filter was realized to select only the population living in a larger
-urban population centre. We decided to apply this restriction because
-the travel behaviour of residents of CMA and CA areas tends to be very
-different from those outside these large urban centres in terms of
-active travel.
+walking and cycling records (19,166 in total), less than 0.73\% of them
+have a trip duration higher than this limit. When considering the
+weights of this episodes, travel times higher than 100 minutes
+represented 0.93\% of the episodes. Due to the description of the
+activities, it was also possible to know that trips with a duration
+higher than 100 minutes are mainly composed of hiking and camping
+episodes. The second filter was realized to select only the population
+living in a larger urban population centre. We decided to apply this
+restriction because the travel behaviour of residents of CMA and CA
+areas tends to be very different from those outside these large urban
+centres in terms of active travel.
 
 \section{Results and discussion}\label{results-and-discussion}
 
@@ -814,18 +804,14 @@ episode or person is determined by the weight or weighting factor.
 Because of this, every estimates of the number of episodes or persons
 need to be calculated applying the corresponding weighting factors.
 
-Considering the weights - and from this point onward, all counts
-estimates presented in this paper account for them - the 19,166 episodes
-represent a total of 28,066,620 episodes. Table
-\ref{tab:episodes-count-percentages} contains the weighted number of
-episodes about walking and cycling trips between 1992 and 2022, obtained
-from the GSS cycles. The year 2010 is the year with the most episodes,
-with 7,116,460 episodes (representing 25.36\% of the total). The year
-2010 is followed by 2005 with 6,152,778, representing approximately
-21.92\% of all active travel episodes; followed by 2015 (5,921,772
-episodes, 21.1\% of the total), 2022 (5,335,510 episodes, 19.01\% of the
-total), 1998 1,773,061 episodes, (6.32\% of the total), and 1992, with
-only 1,767,041 episodes, representing 6.3\% of the total.
+Considering the weights, the 19,166 episodes represent a total of
+28,066,620 episodes. Table \ref{tab:episodes-count-percentages} contains
+the weighted number of episodes about walking and cycling trips between
+1992 and 2022, obtained from the GSS cycles. The year 2010 is the year
+with the most episodes, with 7,116,460 episodes (representing 25.36\% of
+the total). The year 1992 has the lowest number of episodes, with only
+1,767,041 episodes, representing 6.3\% of the total. The most recent
+survey, 2022, counted with 5,335,510 episodes (19.01\% of the total).
 
 When analyzing the two AT modes, walking episodes account for 91.56\%,
 while the remaining 8.44\% are cycling episodes. The most recent survey
@@ -835,21 +821,28 @@ participation since 2005 - the year that marked the lowest
 representation, as opposed to 1992, when bicycle episodes marked the
 highest participation in all years (13\%).
 
-\begingroup\fontsize{5}{7}\selectfont
-
-\begin{longtable}[t]{lrrrrrrrrrrrrrr}
-\caption{\label{tab:bulding table-01}\label{tab:episodes-count-percentages}Weighted number of episodes identified in each active transportation mode by year}\\
+\begin{table}
+\centering
+\caption{\label{tab:bulding table-01}\label{tab:episodes-count-percentages}Weighted number of episodes identified in each active transportation mode by year.}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{lrrrrrr}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1992} & \multicolumn{2}{c}{1998} & \multicolumn{2}{c}{2005} & \multicolumn{2}{c}{2010} & \multicolumn{2}{c}{2015} & \multicolumn{2}{c}{2022} & \multicolumn{2}{c}{Total} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9} \cmidrule(l{3pt}r{3pt}){10-11} \cmidrule(l{3pt}r{3pt}){12-13} \cmidrule(l{3pt}r{3pt}){14-15}
-Mode &  & (\%) &  & (\%) &  & (\%) &  & (\%) &  & (\%) &  & (\%) &  & (\%)\\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Cycling} & \multicolumn{2}{c}{Walking} & \multicolumn{2}{c}{Both modes} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+Year &  & (\%) &  & (\%) &  & (\%)\\
 \midrule
-Cycling & 230316.9 & 13.03 & 156123.1 & 8.81 & 472839.5 & 7.68 & 559295.6 & 7.86 & 475626.6 & 8.03 & 474128.9 & 8.89 & 2368331 & 8.44\\
-Walking & 1536723.8 & 86.97 & 1616937.8 & 91.19 & 5679938.1 & 92.32 & 6557164.6 & 92.14 & 5446144.9 & 91.97 & 4861380.6 & 91.11 & 25698290 & 91.56\\
-Total & 1767040.7 & 6.30 & 1773060.9 & 6.32 & 6152777.6 & 21.92 & 7116460.2 & 25.36 & 5921771.5 & 21.10 & 5335509.5 & 19.01 & 28066620 & 100.00\\
+1992 & 230316.9 & 13.03 & 1536724 & 86.97 & 1767041 & 6.30\\
+1998 & 156123.1 & 8.81 & 1616938 & 91.19 & 1773061 & 6.32\\
+2005 & 472839.5 & 7.68 & 5679938 & 92.32 & 6152778 & 21.92\\
+2010 & 559295.6 & 7.86 & 6557165 & 92.14 & 7116460 & 25.36\\
+2015 & 475626.6 & 8.03 & 5446145 & 91.97 & 5921772 & 21.10\\
+\addlinespace
+2022 & 474128.9 & 8.89 & 4861381 & 91.11 & 5335510 & 19.01\\
+Total & 2368330.7 & 8.44 & 25698290 & 91.56 & 28066620 & 100.00\\
 \bottomrule
-\end{longtable}
-\endgroup{}
+\end{tabular}
+\end{table}
 
 Figure \ref{fig:figure-destmodeyearperc} shows the percentage of each
 destination by year and by mode of transport. For all the years
@@ -879,6 +872,66 @@ considering walking trips, `Restaurants' appears as another well chosen
 destination and, in the case of cycling trips, `Outdoors' appears as a
 well chosen destination.
 
+The maximum time spent on walking trips varied between 90 and 100
+minutes across the years (Table \ref{tab:decrip-analysis}) - it is
+important to remember that trips with duration greater than 100 minutes
+were excluded from the analysis. The mean walking time also varies,
+starting at 20 minutes in 1992, dropping to 12 minutes between 1992 to
+2005, and increasing survey after survey until it reaches 18 minutes in
+2022. However, it is known that the mean is a statistic that is highly
+influenced by extreme values. For this reason, we analyze the median
+travel time, as it is more representative of the typical travel time.
+The median time spent walking was 10 minutes in 1992, dropped to 5
+minutes in 1998, remained constant at 10 minutes from 2005 to 2015, and
+increased to the highest level in 2022, to 15 minutes.
+
+\begin{table}
+\centering
+\caption{\label{tab:table-02}\label{tab:decrip-analysis}Descriptive statistics for episodes with active transport records.}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{>{}llcccccc}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{6}{c}{Year} \\
+\cmidrule(l{3pt}r{3pt}){3-8}
+Mode & Statistic & 1992 & 1998 & 2005 & 2010 & 2015 & 2022\\
+\midrule
+ & Maximum & 90 & 100 & 100 & 90 & 95 & 90\\
+
+ & Mean & 20 & 12 & 12 & 13 & 16 & 18\\
+
+ & Median & 10 & 5 & 10 & 10 & 10 & 15\\
+
+ & Minimum & 5 & 1 & 1 & 1 & 5 & 5\\
+
+\multirow[t]{-5}{*}{\raggedright\arraybackslash \textbf{Walking}} & Standard deviation & 19 & 13 & 12 & 13 & 13 & 15\\
+\cmidrule{1-8}
+ & Maximum & 90 & 80 & 95 & 100 & 90 & 60\\
+
+ & Mean & 21 & 28 & 20 & 18 & 24 & 30\\
+
+ & Median & 20 & 25 & 15 & 10 & 20 & 30\\
+
+ & Minimum & 5 & 2 & 1 & 2 & 5 & 5\\
+
+\multirow[t]{-5}{*}{\raggedright\arraybackslash \textbf{Cycling}} & Standard deviation & 20 & 19 & 16 & 16 & 15 & 14\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For cycling trips, the maximum travel time ranges from 60 to 100
+minutes. Until 2022, maximum travel times had a similar pattern to
+walking trips, but the new survey showed that the maximum travel time
+for cycling trips was the lowest when considering all years for both
+modes (walking and cycling). The average median travel time fluctuated
+between the periods, starting at 20 minutes in 1992 and peaking at 30
+minutes in 2022. As was also the case with the walking travel times,
+these results show a trend of increasing for cycling trip duration
+throughout the years. The analysis of travel time statistics alone does
+not fully explain the reasons behind these fluctuations in travel time
+over the years. However, it is likely that these variations reflect
+changes in bicycle technology or cyclist behavior.
+
 Figure \ref{fig:figure-boxplot} presents box plots showing the
 distribution of travel times for active transport modes over the years,
 categorized by destination. During the period studied, the typical
@@ -905,15 +958,15 @@ observed at least in the most recent survey (2022). ``Restaurants'' and
 2005 to 10 minutes in 2022; ``Other's home'' rose to 10 minutes in 2022
 after remaining at 5 minutes since 1992; ``Place of worship'' increased
 from 10 minutes in 2005 to 20 minutes in 2022; and ``Cultural venues''
-rose from 10 minutes in 2005 and 2010 to 20 minutes in 2022. The three
-most popular types of destinations - ``Home,'' ``Work or school,'' and
+rose from 10 minutes in 2005 to 20 minutes in 2022. The three most
+popular types of destinations - ``Home,'' ``Work or school,'' and
 ``Grocery store'' - had an increase to 15 minutes after decades of
 stabilization at 10 minutes. In general, while ``Place of worship'' and
 ``Cultural venues'' displayed the highest median travel times of 20
 minutes, the overall median walking time cutoff across all surveys
-appears to be 10 minutes, with most trips occurring below this
-threshold. In this case, no destination shows a decrease in typical
-(median) travel time.
+appears to be 10 minutes, with most trips occurring below this threshold
+- except for 2022, when this limit was increased by 15 minutes. No
+destination shows a decrease in typical (median) travel time.
 
 For cycling trips, only ``Cultural venues'' did not show an increase in
 typical travel time when comparing 2022 to the previous years. In this
@@ -948,25 +1001,14 @@ trips often involved leisure activities, like short walks or dog
 walking. Following this, trips from `Home' to `Work or school' comprised
 18\% of walking trips. Overall, `Home' is the principal hub, either as
 an origin or destination, with only 7\% of trips not involving `Home.'
-By 1998, more than half of walking trips were between `Home' and
-`Other's home,' with `Home' to `Other's home' and `Other's home' to
-`Home' each representing 26\% of trips. During this year, `Home' to
-`Home' accounted for only 10\% of trips. In 2005, trips with origins or
-destinations involving `Home' and `Work or school' remained as the most
-common, but the introduction of new destinations led to a more dispersed
-trip distribution. Together, these two combinations accounted for 25\%
-of all trips. In 2010, trips between `Home' and `Work or school'
-continued as the most common type, representing 18\% of trips, tied with
-trips from `Grocery store' to `Home' (9\%). In 2015, the highest
-proportion of trips were from ``Home'' to ``Work or school'' (12\%) and
-vice versa (11\%). Trips from ``Home'' to ``Home'' accounted for 8\% of
-trips, and the ``Grocery store'' became a notable destination for trips
-originating from ``Home'' (8\%) - patterns that were reinforced, as
-shown in the 2022 survey. In the most recent survey, the most common
-trip was from ``Home'' to ``Work or school'' (17\%), followed by the
-return trip from ``Work or school'' to ``Home'' (13\%). After that,
-trips between ``Home'' and the ``Grocery store'' accounted for 20\% when
-both directions are combined.
+In 2005, trips with origins or destinations involving `Home' and `Work
+or school' remained as the most common, but the introduction of new
+destinations led to a more dispersed trip distribution. Together, these
+two combinations accounted for 25\% of all trips. In the most recent
+survey, the most common trip was from ``Home'' to ``Work or school''
+(17\%), followed by the return trip from ``Work or school'' to ``Home''
+(13\%). After that, trips between ``Home'' and the ``Grocery store''
+accounted for 20\% when both directions are combined.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{figures/walking_hm_fig} \caption{Percentage of walking trips categorized by origin and destination}\label{fig:walking-heatmap}
@@ -977,20 +1019,17 @@ both directions are combined.
 \end{figure}
 
 For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most
-common trip was from `Home' to `Work or school' (26\%), followed by
-trips from `Other's home' to `Home' (22\%). In all following years, the
-most frequent trip were between `Home' and `Work or school' in both
-direction. This combination accounted for 65\% of the trips in 1998,
-40\% in 2005, 52\% in 2010, and 58\% in 2015. However, in 2022, this
-combination dropped to 43\%, mainly due to an increase in trips between
-the ``Grocery store'' and ``Home'' (18\%). Additionally and unlike
-walking trips, `Home' to `Home' trips were not a common cycling trip in
-any of the surveys. This suggests that leisure trips, such as activities
-around the home, are predominantly done by foot rather than by bicycle.
-Additionally and unlike walking trips, `Home' to `Home' trips were not a
-common cycling trip in any of the surveys. This suggests that leisure
-trips, such as activities around the home, are predominantly done by
-foot rather than by bicycle.
+common trip was from ``Home'' to ``Work or school'' (26\%), followed by
+trips from ``Other's home'' to ``Home'' (22\%). In all following years,
+the most frequent trip were between ``Home'' and ``Work or school'' in
+both direction. This combination accounted for 65\% of the trips in
+1998, 40\% in 2005, 52\% in 2010, and 58\% in 2015. However, in 2022,
+this combination dropped to 43\%, mainly due to an increase in trips
+between the ``Grocery store'' and ``Home'' (18\%). Additionally and
+unlike walking trips, ``Home'' to ``Home'' trips were not a common
+cycling trip in any of the surveys. This suggests that leisure trips,
+such as activities around the home, are predominantly done by foot
+rather than by bicycle.
 
 We analyzed whether the temporal differences in travel times for the
 destinations were statistically significant. Only destinations that
@@ -1005,153 +1044,15 @@ statistically significant difference between the distributions of
 empirical travel time values, considering the time differences for each
 destination and the weight of each episode) and the pairwise Wilcoxon
 test, we were able to identify the destinations where a statistically
-significant difference was detected. Table \ref{tab:result-stats} shows
-only the destinations where a statistically significant difference was
-found, considering the two modes of active transport analyzed.
-
-For both AT modes, the possible destinations had at least two year with
-statistically significant difference in travel times (p-value
-\textless{} 2.2e-16). Considering the cycling mode and, for instance,
-the ``Home'' destination, there was a statistically significant
-difference for every possible combination of two survey cycles. This
-result indicates that the previously discussed increase in typical
-cycling travel time for home destinations when compared 2022 to 2010 is
-statistically significant.
-
-\begin{table}
-\centering
-\caption{\label{tab:kruskal-walking}\label{tab:result-stats}P-values of the pairwise Wilcoxon test.}
-\centering
-\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
-\fontsize{6}{8}\selectfont
-\begin{tabular}[t]{llllllll}
-\toprule
-Mode & Destination & Year & 1992 & 1998 & 2005 & 2010 & 2015\\
-\midrule
- & Home & 1998 & 0.00e+00 & NA & NA & NA & NA\\
-
- & Home & 2005 & 0.00e+00 & 0.00e+00 & NA & NA & NA\\
-
- & Home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 & NA & NA\\
-
- & Home & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & NA\\
-
- & Home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Work or school & 1998 & 7.09e-211 & NA & NA & NA & NA\\
-
- & Work or school & 2005 & 0.00e+00 & 0.00e+00 & NA & NA & NA\\
-
- & Work or school & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 & NA & NA\\
-
- & Work or school & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & NA\\
-
- & Work or school & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Grocery store & 2010 & NA & NA & 0.00e+00 & NA & NA\\
-
- & Grocery store & 2015 & NA & NA & 0.00e+00 & 0.00e+00 & NA\\
-
- & Grocery store & 2022 & NA & NA & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Neighbourhood & 2022 & NA & NA & NA & NA & 0.00e+00\\
-
- & Sport area & 2022 & NA & NA & NA & NA & 0.00e+00\\
-
- & Outdoors & 2010 & NA & NA & 4.33e-29 & NA & NA\\
-
- & Outdoors & 2015 & NA & NA & 0.00e+00 & 0.00e+00 & NA\\
-
- & Outdoors & 2022 & NA & NA & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Restaurant & 2010 & NA & NA & 2.09e-295 & NA & NA\\
-
- & Restaurant & 2015 & NA & NA & 0.00e+00 & 0.00e+00 & NA\\
-
- & Restaurant & 2022 & NA & NA & 0.00e+00 & 0.00e+00 & 1.11e-179\\
-
- & Other's home & 1998 & 0.00e+00 & NA & NA & NA & NA\\
-
- & Other's home & 2005 & 0.00e+00 & 1.79e-83 & NA & NA & NA\\
-
- & Other's home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 & NA & NA\\
-
- & Other's home & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & NA\\
-
- & Other's home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Health clinic & 2022 & NA & NA & NA & NA & 4.12e-216\\
-
- & Cultural venues & 2010 & NA & NA & 4.52e-273 & NA & NA\\
-
- & Cultural venues & 2015 & NA & NA & 0.00e+00 & 0.00e+00 & NA\\
-
- & Cultural venues & 2022 & NA & NA & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Place of worship & 2010 & NA & NA & 0.00e+00 & NA & NA\\
-
- & Place of worship & 2015 & NA & NA & 0.00e+00 & 0.00e+00 & NA\\
-
- & Place of worship & 2022 & NA & NA & 0.00e+00 & 0.00e+00 & 3.76e-18\\
-
-\multirow[t]{-34}{*}{\raggedright\arraybackslash Walking} & Business & 2022 & NA & NA & NA & NA & 1.18e-305\\
-\cmidrule{1-8}
- & Grocery store & 2010 & NA & NA & 0.00e+00 & NA & NA\\
-
- & Grocery store & 2015 & NA & NA & 0.00e+00 & 0.00e+00 & NA\\
-
- & Grocery store & 2022 & NA & NA & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Home & 1998 & 1.08e-230 & NA & NA & NA & NA\\
-
- & Home & 2005 & 1.45e-24 & 0.00e+00 & NA & NA & NA\\
-
- & Home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 & NA & NA\\
-
- & Home & 2015 & 0.00e+00 & 8.44e-236 & 0.00e+00 & 0.00e+00 & NA\\
-
- & Home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Work or school & 1998 & 0.00e+00 & NA & NA & NA & NA\\
-
- & Work or school & 2005 & 9.62e-228 & 0.00e+00 & NA & NA & NA\\
-
- & Work or school & 2010 & 1.30e-221 & 0.00e+00 & 0.00e+00 & NA & NA\\
-
- & Work or school & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & NA\\
-
- & Work or school & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Health clinic & 2022 & NA & NA & NA & NA & 0.00e+00\\
-
- & Restaurant & 2010 & NA & NA & 1.03e-106 & NA & NA\\
-
- & Restaurant & 2015 & NA & NA & 0.00e+00 & 0.00e+00 & NA\\
-
- & Restaurant & 2022 & NA & NA & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Sport area & 2022 & NA & NA & NA & NA & 0.00e+00\\
-
- & Outdoors & 2010 & NA & NA & 0.00e+00 & NA & NA\\
-
- & Outdoors & 2015 & NA & NA & 0.00e+00 & 0.00e+00 & NA\\
-
- & Outdoors & 2022 & NA & NA & 0.00e+00 & 0.00e+00 & 0.00e+00\\
-
- & Other's home & 1998 & 2.60e-122 & NA & NA & NA & NA\\
-
- & Other's home & 2005 & 0.00e+00 & 0.00e+00 & NA & NA & NA\\
-
- & Other's home & 2010 & 6.63e-41 & 0.00e+00 & 3.60e-287 & NA & NA\\
-
- & Other's home & 2015 & 4.03e-81 & 0.00e+00 & 5.62e-266 & 1.84e-148 & NA\\
-
- & Cultural venues & 2010 & NA & NA & 2.98e-142 & NA & NA\\
-
-\multirow[t]{-27}{*}{\raggedright\arraybackslash Cycling} & Cultural venues & 2015 & NA & NA & 0.00e+00 & NA & NA\\
-\bottomrule
-\end{tabular}}
-\end{table}
+significant difference was detected. For both AT modes, the possible
+destinations had at least two year with statistically significant
+difference in travel times (p-value \textless{} 0.05, Appendix A).
+Considering the cycling mode and, for instance, the ``Home''
+destination, there was a statistically significant difference for every
+possible combination of two survey cycles. This result indicates that
+the previously discussed increase in typical cycling travel time for
+home destinations when compared 2022 to 1992 is statistically
+significant.
 
 \subsubsection{Population with records of active
 trip}\label{population-with-records-of-active-trip}
@@ -1166,12 +1067,12 @@ population fell to 9.45\%, the lowest level since 2005, representing
 \emph{2,605,395} people out of a total population of \emph{27,584,823}
 people.
 
-\begingroup\fontsize{5.5}{7.5}\selectfont
+\begin{landscape}\begingroup\fontsize{10}{12}\selectfont
 
 \begin{longtable}[t]{>{}lrrrrr>{}r|rrrrr>{}r|rrrrrr}
 \caption{\label{tab:pop-table-with-prevalence}\label{tab:pop-stats-table}Prevalence of active trip by transportation mode, year of analysis, gender and age group.}\\
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Walking} & \multicolumn{6}{c}{Cycling} & \multicolumn{6}{c}{Walking and Cycling} \\
+\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Walking} & \multicolumn{6}{c}{Cycling} & \multicolumn{6}{c}{Both modes} \\
 \cmidrule(l{3pt}r{3pt}){2-7} \cmidrule(l{3pt}r{3pt}){8-13} \cmidrule(l{3pt}r{3pt}){14-19}
   & 1992 & 1998 & 2005 & 2010 & 2015 & 2022 & 1992 & 1998 & 2005 & 2010 & 2015 & 2022 & 1992 & 1998 & 2005 & 2010 & 2015 & 2022\\
 \midrule
@@ -1189,15 +1090,16 @@ people.
 \bottomrule
 \end{longtable}
 \endgroup{}
+\end{landscape}
 
 Our results show a decrease in the active population since 2010 for both
-genders \ref{fig:gender-perc-figure}. However, the decline was more
-pronounced among ``Women+'' than Men+, leading to a shift in the
-historical pattern in which ``Women+'' had been the more active gender
-in Canada \citep{bryan2009, borhani2024}. ``Women+'' peaked at 14.82\%
-of the population with a record of active episodes in 2010 but dropped
-to the second-lowest level of 8.84\% in 2022 - only higher than the
-7.66\% recorded in 1998. In contrast, Men+, who also peaked in 2010 with
+genders (Figure \ref{fig:gender-perc-figure}). However, the decline was
+more pronounced among women+ than men+, leading to a shift in the
+historical pattern in which women+ had been the more active gender in
+Canada \citep{bryan2009, borhani2024}. Women+ peaked at 14.82\% of the
+population with a record of active episodes in 2010 but dropped to the
+second-lowest level of 8.84\% in 2022 - only higher than the 7.66\%
+recorded in 1998. In contrast, Men+, who also peaked in 2010 with
 15.31\% of the population reporting active episodes, declined to 10.05\%
 in 2022, thus becoming the gender with the higher share of the active
 population.
@@ -1210,16 +1112,15 @@ they also observed that this gender gap appears to have narrowed over
 time.
 
 When analyzing by transportation mode, in all survey years a higher
-proportion of ``Men+'' reported at least one cycling episode on the
-previous day compared to ``Women+'' (ranging from 1.18\% to 1.87\% for
-``Men+'' and 0.18\% to 0.66\% for Women+). This pattern of more ``Men+''
-participating in cycling activities when compared to ``Women+'' is
-consistent with previous research
-\citep{heesch2012, bryan2009, borhani2024}. Conversely, ``Women+''
-historically reported more walking trips than Men+, also consistent with
+proportion of men+ reported at least one cycling episode on the previous
+day compared to women+ (ranging from 1.18\% to 1.87\% for men+ and
+0.18\% to 0.66\% for women+). This pattern of more men+ participating in
+cycling activities when compared to women+ is consistent with previous
+research \citep{heesch2012, bryan2009, borhani2024}. Conversely, women+
+historically reported more walking trips than men+, also consistent with
 previous research \citep{goel2023, pollard2017, bryan2009, borhani2024},
 but this pattern changed in the most recent survey (2022), reinforcing a
-trend already present in 2015. In 2022, 8.43\% of ``Women+'' reported at
+trend already present in 2015. In 2022, 8.43\% of women+ reported at
 least one walking episode, compared to 8.89\% of Men+.
 
 \begin{figure}
@@ -1232,18 +1133,17 @@ stand out as the most active group, ranging from 9.3\% to 26.88\%, and
 marking 21.47\% in the most recent survey. This is the only group that
 did not show a decrease in the prevalence of active participation over
 the last decade, increasing from a low of 17.91\% in 2015 to 21.47\% in
-2022 - although still below the levels recorded in 2010 (24.01\%) and
-2005 (26.88\%). The survey of 2022 is one more evidence of caracterists
-of the Generation z (born between 1997 and 2012) \citep{dimock2019} are
-noticeably less dependent on cars and instead use environmentally
-friendly modes of travel, such as public transport, cycling and walking,
-more often than not \citep{haseeb2024, grimsrud2014, kuhnimhof2011}.
-Historically, and in consistency with the literature
-\citep{bryan2009, borhani2024}, prevalence decreases as age increases.
-However, in the most recent survey (2022), as well as in 2005, the
-oldest group (75 years and older) presented the third-highest prevalence
-(7.02\%), surpassing the groups aged 35 to 44 years (5.78\%), 45 to 54
-years (6.30\%), 55 to 64 years (6.24\%), and 65 to 74 years (6.96\%).
+2022 - although still below the levels recorded 2005 (26.88\%). The
+survey of 2022 is one more evidence of caracterists of the Generation z
+(born between 1997 and 2012) \citep{dimock2019} are noticeably less
+dependent on cars and instead use environmentally friendly modes of
+travel, such as public transport, cycling and walking, more often than
+not \citep{haseeb2024, grimsrud2014, kuhnimhof2011}. Historically, and
+in consistency with the literature \citep{bryan2009, borhani2024},
+prevalence decreases as age increases. However, in the most recent
+survey (2022), as well as in 2005, the oldest group (75 years and older)
+presented the third-highest prevalence (7.02\%), surpassing younger
+groups.
 
 The analysis by mode shows a similar trend (Figure
 \ref{fig:age-perc-figure}). However, for cycling, the second youngest
@@ -1259,22 +1159,19 @@ age groups, cycling prevalence decreases as age increases, approaching
 The number of people with active trip episodes is mainly influenced by
 walking episodes, since over 90\% of the recorded active trips involve
 individuals with walking episodes. Analyzing the number of episodes per
-person for the general population, the rate ranges from a minimum of
-0.13 in 1998 to a maximum of 0.31, in an average of 0.20 episodes per
-person. Considering only the population with active episodes recorded,
-the average is around 1.96 active episodes per person, varying from a
-maximum of 2.10 episodes in 2005 to a minimum of 1.72 episodes per
-person in 1992. Figure \ref{fig:gender-eps-figure} presents, for each
-survey year, the total number of active episodes divided by the
-population with active records, the number of walking episodes per
-person who walked, and the number of cycling episodes per person who
-cycled - all disaggregated by gender. Until 2022, ``Men+'' historically
-had more number of active episodes when compared to Women+, but this
-pattern changed in the last survey when ``Men+'' scored 2.07 active
-episodes, when compared to 2.11 active episodes made by Women+. This was
+person with records of AT, the average is around 1.96 active episodes
+per person, varying from a maximum of 2.10 episodes in 2005 to a minimum
+of 1.72 episodes per person in 1992. Figure \ref{fig:gender-eps-figure}
+presents, for each survey year, the total number of active episodes
+divided by the population with active records, the number of walking
+episodes per person who walked, and the number of cycling episodes per
+person who cycled - all disaggregated by gender. Until 2022, men+
+historically had more number of active episodes when compared to women+,
+but this pattern changed in the last survey when men+ scored 2.07 active
+episodes, when compared to 2.11 active episodes made by women+. This was
 mainly caused by the decreasing of number of walking episodes made by
-``Men+'' (from 2.16 to 2.07 from 2015 to 2022), and increase of walking
-episodes made by ``Women+'' (from 1.92 to 2.11 in the same period).
+men+ (from 2.16 to 2.07 from 2015 to 2022), and increase of walking
+episodes made by women+ (from 1.92 to 2.11 in the same period).
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{figures/eps_gender_graph} \caption{Episodes per active person by gender.}\label{fig:gender-eps-figure}
@@ -1296,135 +1193,50 @@ episodes (15\% of reduction).
 When the age group analysis is split by transportation mode, walking
 episodes per walker follow a pattern similar to that of total active
 episodes per active person (Figure \ref{fig:age-eps-figure}). However,
-the pattern for cycling differs. For almost every group, the data can be
-divided into two distinct time periods: before and after 2005. From 1992
-to 2005, there was a general trend of increasing cycling episodes per
-cyclist (from 1.72 to 2.10). This trend is exemplified by the 55 to 64
-age group, which increased from 1.58 to 2.61 episodes (a 65\% rise).
-This period was followed by a decline in cycling episodes per cyclist
-from 2005 to 2022 (from 2.10 to 2.04). A clear example of this trend is
-the 65 to 74 age group, which saw a decrease from 2.73 to 1.60 episodes
-(a reduction of 41\%). In more recent years, only two age groups show an
-increasing trend in cycling episodes per cyclist when comparing the last
-two surveys (2015 and 2022): the youngest group (15 to 24 years) and the
-oldest (75 and over). In both cases, there was a significant increase.
-The youngest group rose from 1.78 to 3.00 episodes (a 40\% increase),
-while the oldest group doubled its average from 1.00 to 2.00 episodes
-over the seven years.
+the pattern for cycling differs. For almost every age group, the data
+can be divided into two distinct time periods: before and after 2005.
+From 1992 to 2005, there was a general trend of increasing cycling
+episodes per cyclist (from 1.72 to 2.10). This trend is exemplified by
+the 55 to 64 age group, which increased from 1.58 to 2.61 episodes (a
+65\% rise). This period was followed by a decline in cycling episodes
+per cyclist from 2005 to 2022 (from 2.10 to 2.04). A clear example of
+this trend is the 65 to 74 age group, which saw a decrease from 2.73 to
+1.60 episodes (a reduction of 41\%). In more recent years, only two age
+groups show an increasing trend in cycling episodes per cyclist when
+comparing the last two surveys (2015 and 2022): the youngest group (15
+to 24 years) and the oldest (75 and over). In both cases, there was a
+significant increase. The youngest group rose from 1.78 to 3.00 episodes
+(a 40\% increase), while the oldest group doubled its average from 1.00
+to 2.00 episodes over the seven years.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{figures/eps_age_graph} \caption{Episodes per active person by age group.}\label{fig:age-eps-figure}
 \end{figure}
 
-The maximum time spent on walking trips varied between 90 and 100
-minutes across the years (\ref{tab:decrip-analysis}) - it is important
-to remember that trips with duration greater than 100 minutes were
-excluded from the analysis. The mean walking time also varies, starting
-at 20 minutes in 1992, dropping to 12 minutes between 1992 to 2005, and
-increasing again to 13 minutes in 2010, to 16 minutes in 2015, and to 18
-minutes in 2022. However, it is known that the mean is a statistic that
-is highly influenced by extreme values. For this reason, we analyze the
-median travel time, as it is more representative of the typical travel
-time. The median time spent walking was 10 minutes in 1992, dropped to 5
-minutes in 1998, remained constant at 10 minutes from 2005 to 2015, and
-increased to the highest level in 2022, to 15 minutes.
-
-\begingroup\fontsize{8}{10}\selectfont
-
-\begin{longtable}[t]{>{}llcccccc}
-\caption{\label{tab:table-02}\label{tab:decrip-analysis}Descriptive statistics for episodes with active transport records}\\
-\toprule
-\multicolumn{2}{c}{ } & \multicolumn{6}{c}{Year} \\
-\cmidrule(l{3pt}r{3pt}){3-8}
-Mode & Statistic & 1992 & 1998 & 2005 & 2010 & 2015 & 2022\\
-\midrule
- & Maximum & 90 & 100 & 100 & 90 & 95 & 90\\
-\nopagebreak
- & Mean & 20 & 12 & 12 & 13 & 16 & 18\\
-\nopagebreak
- & Median & 10 & 5 & 10 & 10 & 10 & 15\\
-\nopagebreak
- & Minimum & 5 & 1 & 1 & 1 & 5 & 5\\
-\nopagebreak
-\multirow[t]{-5}{*}{\raggedright\arraybackslash \textbf{Walking}} & Standard deviation & 19 & 13 & 12 & 13 & 13 & 15\\
-\cmidrule{1-8}\pagebreak[0]
- & Maximum & 90 & 80 & 95 & 100 & 90 & 60\\
-\nopagebreak
- & Mean & 21 & 28 & 20 & 18 & 24 & 30\\
-\nopagebreak
- & Median & 20 & 25 & 15 & 10 & 20 & 30\\
-\nopagebreak
- & Minimum & 5 & 2 & 1 & 2 & 5 & 5\\
-\nopagebreak
-\multirow[t]{-5}{*}{\raggedright\arraybackslash \textbf{Cycling}} & Standard deviation & 20 & 19 & 16 & 16 & 15 & 14\\
-\bottomrule
-\end{longtable}
-\endgroup{}
-
-For cycling trips, the maximum travel time ranges from 60 to 100
-minutes. Until 2022, maximum travel times had a similar pattern to
-walking trips, but the new survey showed that the maximum travel time
-for cycling trips was the lowest when considering all years for both
-modes (walking and cycling). The average cycling travel time varied
-considerably, ranging from 18 minutes in 2010 to 30 minutes in 2022.
-When we analyze the median travel time, we see that the typical cycling
-travel time also fluctuated between the periods, starting at 20 minutes
-in 1992 and peaking at 30 minutes in 2022. As was also the case with the
-walking travel times, these results show a trend of increasing for
-cycling trip duration throughout the years. The analysis of travel time
-statistics alone does not fully explain the reasons behind these
-fluctuations in travel time over the years. However, it is likely that
-these variations reflect changes in bicycle technology or cyclist
-behavior.
-
-We observe an increase in the average duration of active travel for both
-genders and both transportation modes after 2010 (Figure
-\ref{fig:gender-dur-figure}). When analyzing the typical duration
-(median) by gender, we find no differences in general active travel. The
-median remained stable at 10 minutes for both ``Men+'' and ``Women+''
-from 2005 to 2015, increasing to 15 minutes in 2022.
-
-For cycling trips, ``Men+'' increased their average duration from 19
-minutes in 2010 to 33 minutes in 2022, while ``Women+'' went from 15
-minutes in 2010 to 22 minutes in 2022 - although this follows a slight
-decline from a peak of 24 minutes in 2015. This upward trend in travel
-time contrasts with the period from 1992 to 2010, during which both
-genders experienced a reduction in duration, reaching their lowest
-levels in 2010. In this mode, the median cycling duration shows a clear
-gender difference: ``Men+'' reported a median of 30 minutes in 2022, up
-from 15 minutes in 2005. This represents the highest median duration
-recorded across the entire historical series. In contrast, ``Women+''
-tended to maintain a median duration around 15 minutes, which was also
-the value reported in the most recent survey.
-
-For walking trips, the highest average travel times were recorded in
-1992, with ``Men+'' averaging 19 minutes and ``Women+'' 21 minutes.
-These values dropped to their lowest point in 1998 (12 minutes for
-``Men+'' and 11 for Women+) before gradually increasing again through to
-2022. Since 2015, ``Women+'' have reported longer walking durations than
-``Men+'' (19 minutes compared to 17 minutes in 2022). Regardless of the
-mode, ``Men+'' reported slightly longer overall active travel durations
-than ``Women+'' in 2022 (19 minutes and 21 seconds vs.~19 minutes and 11
-seconds). These results align with findings from previous studies on the
-Canadian population \citep{bryan2009, borhani2024}. Again, when we
-consider the median, the values remained stable at 10 minutes between
-2005 and 2015, increasing to 15 minutes in the most recent survey both
-genders.
+Regarding the duration of the AT episodes, we observe an increase in the
+typical duration of active travel for both genders and both
+transportation modes after 2010 (Figure \ref{fig:gender-dur-figure}),
+without gender difference in general AT. The median remained stable at
+10 minutes for both men+ and women+ from 2005 to 2015, increasing to 15
+minutes in 2022. However, for cycling trips, the median cycling duration
+shows a clear gender difference: men+ reported a median of 30 minutes in
+2022, up from 15 minutes in 2005. This represents the highest median
+duration recorded across the entire historical series. In contrast,
+women+ tended to maintain a median duration around 15 minutes, which was
+also the value reported in the most recent survey.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{figures/gender_duration_boxplots} \caption{Duration (in minutes) of active episodes by gender.}\label{fig:gender-dur-figure}
 \end{figure}
 
-An examination of average travel duration by age group reveals a general
-increase in walking trip durations across all groups since 1998 (Figure
-\ref{fig:age-dur-figure}). In 2022, the youngest cohort (ages 15 to 24)
-reported the shortest average walking duration at 17 minutes, while the
-25 to 34 age group had the longest, averaging 21 minutes. For cycling
-trips, a notable increasing trend in duration emerges after 2010 - with
-the exception of the 55 to 64 age group, whose average duration
-stabilized following a peak in 2015. Notably, the 65 to 74 age group
-recorded the highest average cycling duration, with individuals in this
-cohort spending an average of 42 minutes cycling in 2022.
+An examination of typical trip length by age group reveals a general
+increase in AT trip duration across all groups since 1998 (Figure
+\ref{fig:age-dur-figure}). With the exception of the 65 to 74 age group,
+where the average duration has remained at 10 minutes, all other groups
+have increased to a typical duration of 15 minutes. Regarding median
+values, the typical trip duration was 25 minutes for most groups, except
+for the 35 to 54 age group, which recorded a median of 20 minutes, and
+the 65 to 74 group, which recorded a median of 60 minutes.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{figures/age_duration_boxplots} \caption{Duration (in minutes) of active episodes by Age group.}\label{fig:age-dur-figure}
@@ -1468,8 +1280,7 @@ applied in active accessibility studies may not be adequately measuring
 travel behavior, especially for cases when the travel time is close to 0
 minute. Table \ref{tab:walking-functions-tab} displays the selected
 functions for walking trips, while Table \ref{tab:cycling-functions-tab}
-presents the functions for cycling trips. Appendix A includes the AIC,
-BIC, and log-likelihood values for all candidate distributions.
+presents the functions for cycling trips.
 
 \begin{table}
 \centering
@@ -1790,17 +1601,14 @@ Survey (GSS) from 1992 to 2022, covering a twelve different type of
 destinations and considering walking and cycling as transportation
 modes.
 
-Among the general population, the average number of active trips per
-person was near zero, while among those active, the average was two
-trips. An increasing trend in active episodes per person was observed
-for both walking and cycling. Historically, ``Men+'' recorded more
-active episodes than Women+, but in 2022 this trend reversed: ``Men+''
-averaged 2.07 episodes, while ``Women+'' averaged 2.11. This change was
-driven by a decrease in walking episodes among ``Men+'' (from 2.16 in
-2015 to 2.07 in 2022) and an increase among ``Women+'' (from 1.92 to
-2.11 in the same period). In summary, ``Women+'' made more active trips,
-while ``Men+'' traveled longer distances and had higher overall
-participation in AT.
+The rate of active trips per person with active record was around two
+trips, with an increasing trend in active episodes per person being
+observed for both walking and cycling. Historically, men+ recorded more
+active episodes than Women+, but in 2022 this trend reversed: men+
+averaged 2.07 episodes, while women+ averaged 2.11. This change was
+driven by a decrease in walking episodes among men+ (from 2.16 in 2015
+to 2.07 in 2022) and an increase among women+ (from 1.92 to 2.11 in the
+same period).
 
 Our results show that the typical duration of walking trips increased to
 15 minutes by 2022, following years of stability at 10 minutes. For
@@ -1810,18 +1618,13 @@ trips had consistently shorter durations than cycling trips. Although
 this study does not explain the causes of these fluctuations, the
 differences by year and mode were statistically significant.
 
-When analyzed by gender, both ``Men+'' and ``Women+'' experienced
-increases in trip duration for both walking and cycling after 2010.
-``Men+'' increased their average cycling trip duration from 19 minutes
-in 2010 to 33 minutes in 2022, and median trip duration from 15 to 30
-minutes in the same period. ``Women+'' increased their average from 15
-to 22 minutes and their median from 10 to 15 minutes. Since 2015,
-``Women+'' have reported longer walking durations averages than Men+,
-but when analyzed in terms of median, both presented the same value
-since 2005, marking 10 minutes until 2015 and 15 minutes in 2022. When
-analyzing by age groups, all of them increased their active travel times
-compared to 1992, especially for walking. For cycling, a marked increase
-in duration emerged after 2010.
+When analyzed by gender, men+ increased their median cycling trip
+duration from 15 minutes in 2005 to 30 minutes in 2022. Women+ increased
+their median from 10 to 15 minutes. No gender differences were
+identified in the duration of walking trips. When analyzing by age
+groups, all of them increased their active travel times compared to
+1992, especially for walking. For cycling, a marked increase in duration
+emerged after 2010.
 
 For both transportation modes trips to ``Other's home'' declined over
 time, likely reflecting changing social behavior enabled by technology
@@ -1844,17 +1647,19 @@ most recent GSS survey (2022), participation dropped to 9.45\%. Walking
 dominated active trips, representing over 90\% of all episodes.
 
 Since 2010, the active population has declined for both genders, with a
-steeper decrease among Women+. This reversed a long-standing pattern in
-which ``Women+'' had higher AT participation than Men+. In 2022,
-``Men+'' showed higher prevalence than ``Women+'' regardless of mode,
-with 10.05\% for ``Men+'' and 8.84\% for Women+. Regarding age cohorts,
-the youngest group (15 - 24 years) remained the most active, with a
-prevalence of 21.47\% in 2022. This was the only group to show increased
-participation over the past decade, up from 17.91\% in 2015. Generally,
-AT prevalence decreases with age. However, in both 2005 and 2022, the
-oldest group (75 years and older) reported the third-highest AT
-prevalence (7.02\%) and showed a steady increase in active episodes
-since 2010.
+steeper decrease among women+. This reversed a long-standing pattern in
+which women+ had higher AT participation than Men+. In 2022, men+ showed
+higher prevalence than women+ regardless of mode, with 10.05\% for men+
+and 8.84\% for Women+. In summary, women+ made more active trips, while
+men+ had higher overall participation in AT.
+
+Regarding age cohorts, the youngest group (15 to 24 years) remained the
+most active, with a prevalence of 21.47\% in 2022. This was the only
+group to show increased participation over the past decade, up from
+17.91\% in 2015. Generally, AT prevalence decreases with age. However,
+in both 2005 and 2022, the oldest group (75 years and older) reported
+the third-highest AT prevalence (7.02\%) and showed a steady increase in
+active episodes since 2010.
 
 The study underscores the importance of applying destination-specific
 impedance functions when measuring cost decay effects in accessibility
@@ -1863,7 +1668,7 @@ over a 30-year period, considering destination types and transportation
 modes. The results indicate that none of the fitted functions followed
 an exponential distribution, suggesting that commonly used functions in
 AT accessibility studies may not adequately capture actual behavior -
-especially for very short trips (under 3 minutes), which tend to be
+especially for very short trips (under 5 minutes), which tend to be
 overrepresented in these models. Destinations with many episodes were
 best modeled using gamma functions, followed by lognormal and normal
 distributions. In contrast, destinations with fewer than six episodes

@@ -24,7 +24,6 @@ date: "`r Sys.Date()`"
 linenumbers: false
 numbersections: false
 bibliography: mybibfile2
-biblio-style: elsarticle-harv # author year style for natbib - use 'elsarticle-num' or 'elsarticle-num-names' for numbered scheme
 classoption: preprint, 3p, authoryear # remove authoryear is not using `elsarticle-harv`
 # Use a CSL with `citation_package = "default"`
 # csl: https://www.zotero.org/styles/elsevier-harvard
@@ -32,6 +31,10 @@ output:
   rticles::elsevier_article:
     keep_tex: true
     citation_package: natbib
+header-includes:
+- \renewcommand{\abstractname}{}
+- \renewenvironment{abstract}{}{}
+- \usepackage[makeroom]{cancel}
 ---
 
 ```{r install-activeCA, include = FALSE}
@@ -134,8 +137,6 @@ gss_episodes_renamed <- gss_episodes %>%
 
 # Appendix A {.unnumbered}
 
-After performing the Kruskal-Wallis test (to assess whether there was a statistically significant difference between the distributions of empirical travel time values, considering the time differences for each destination and the weight of each episode) and the pairwise Wilcoxon test, we were able to identify the destinations where a statistically significant difference was detected. For both active transportation modes, the possible destinations had at least two year with statistically significant difference in travel times (p-value \< 0.05, Table 1).
-
 ```{r kruskal-walking, include = FALSE, warning= FALSE, cache=TRUE}
 result_kw <- data.frame()
 anos_possiveis <- c("1992", "1998", "2005", "2010", "2015", "2022")
@@ -209,10 +210,11 @@ result_pw_style <- result_pw_style %>%
 table_stats <- result_pw_style %>%
   kable(format = "latex",
         booktabs = TRUE,
+        longtable = TRUE,
         caption = paste0("\\label{tab:result-stats}P-values of the pairwise Wilcoxon test.")) %>% 
   kable_styling(full_width = FALSE, 
                 latex_options = c("scale_down"),
-                font_size = 6) %>%
+                font_size = 8) %>%
   collapse_rows(columns = 1, valign = "top", latex_hline = "major")
 ```
 

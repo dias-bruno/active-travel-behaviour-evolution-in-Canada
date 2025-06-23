@@ -41,6 +41,8 @@ output:
   rticles::elsevier_article:
     keep_tex: true
     citation_package: natbib
+header-includes:
+- \usepackage{pdflscape}
 ---
 
 ```{r install-activeCA, include = FALSE}
@@ -529,17 +531,36 @@ gss_summary[gss_summary$Mode == 'Total', ]$"2015 (%)" <- round(gss_summary[gss_s
 gss_summary[gss_summary$Mode == 'Total', ]$"2022 (%)" <- round(gss_summary[gss_summary$Mode == 'Total', ]$"2022"/gss_summary[gss_summary$Mode == 'Total', ]$"Total" *100, 2)
 
 
-gss_totals_table <- gss_summary %>%
-  kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
-        caption = "\\label{tab:episodes-count-percentages}Weighted number of episodes identified in each active transportation mode by year", align = NULL, 
-    col.names = c("Mode","","(%)","","(%)","","(%)","","(%)","","(%)","","(%)","","(%)")) %>% 
-  kable_styling(full_width = FALSE, font_size = 5) %>%
-  add_header_above(c(" " = 1, "1992" = 2, "1998" = 2, "2005" = 2, "2010" = 2, "2015"=2, "2022"=2, "Total" = 2))
+gss_summary_pivot_long <- gss_summary %>%
+  pivot_longer(cols = -Mode,
+               names_to = "Year",
+               values_to = "Value") %>%
+  mutate(Measure = ifelse(grepl("\\(\\%\\)", Year), "Percent", "Count"),
+         Year = gsub(" \\(\\%\\)", "", Year)) %>%
+  pivot_wider(names_from = c("Mode", "Measure"),
+              values_from = Value) %>%
+  arrange(Year)
+
+# gss_totals_table <- gss_summary %>%
+#   kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
+#         caption = "\\label{tab:episodes-count-percentages}Weighted number of episodes identified in each active transportation mode by year.", align = NULL, 
+#     col.names = c("Mode","","(%)","","(%)","","(%)","","(%)","","(%)","","(%)","","(%)")) %>% 
+#   kable_styling(full_width = FALSE, font_size = 5) %>%
+#   add_header_above(c(" " = 1, "1992" = 2, "1998" = 2, "2005" = 2, "2010" = 2, "2015"=2, "2022"=2, "Total" = 2))
+
+gss_totals_table <- gss_summary_pivot_long %>% 
+  kable(format = "latex", 
+        booktabs = TRUE, 
+        longtable = FALSE,
+        caption = "\\label{tab:episodes-count-percentages}Weighted number of episodes identified in each active transportation mode by year.", align = NULL,
+    col.names = c("Year","","(%)","","(%)","","(%)")) %>%
+    kable_styling(full_width = FALSE, font_size = 10) %>%
+    add_header_above(c(" " = 1, "Cycling" = 2, "Walking" = 2, "Both modes" = 2))
 ```
 
 After applying the filters to the GSS surveys, we obtained a total of 19,166 cases of active travel episodes. However, GSS surveys apply a probability sampling methodology, in which each episode or person selected in the sample represents several other episodes or persons not in the sample. The number of episodes and persons represented by a episode or person is determined by the weight or weighting factor. Because of this, every estimates of the number of episodes or persons need to be calculated applying the corresponding weighting factors.
 
-Considering the weights - and from this point onward, all counts estimates presented in this paper account for them - the 19,166 episodes represent a total of `r format(gss_summary[gss_summary$Mode == 'Total',]$Total, big.mark = ",", scientific = FALSE)` episodes. Table \ref{tab:episodes-count-percentages} contains the weighted number of episodes about walking and cycling trips between 1992 and 2022, obtained from the GSS cycles. The year 2010 is the year with the most episodes, with `r gss_summary[gss_summary$Mode == 'Total',]$'2010'` episodes (representing `r gss_summary[gss_summary$Mode == 'Total',]$'2010 (%)'`% of the total). The year 2010 is followed by 2005 with `r gss_summary[gss_summary$Mode == 'Total',]$'2005'`, representing approximately `r gss_summary[gss_summary$Mode == 'Total',]$'2005 (%)'`% of all active travel episodes; followed by 2015 (`r gss_summary[gss_summary$Mode == 'Total',]$'2015'` episodes, `r gss_summary[gss_summary$Mode == 'Total',]$'2015 (%)'`% of the total), 2022 (`r gss_summary[gss_summary$Mode == 'Total',]$'2022'` episodes, `r gss_summary[gss_summary$Mode == 'Total',]$'2022 (%)'`% of the total), 1998 `r gss_summary[gss_summary$Mode == 'Total',]$'1998'` episodes, (`r gss_summary[gss_summary$Mode == 'Total',]$'1998 (%)'`% of the total), and 1992, with only `r gss_summary[gss_summary$Mode == 'Total',]$'1992'` episodes, representing `r gss_summary[gss_summary$Mode == 'Total',]$'1992 (%)'`% of the total.
+Considering the weights, the 19,166 episodes represent a total of `r format(gss_summary[gss_summary$Mode == 'Total',]$Total, big.mark = ",", scientific = FALSE)` episodes. Table \ref{tab:episodes-count-percentages} contains the weighted number of episodes about walking and cycling trips between 1992 and 2022, obtained from the GSS cycles. The year 2010 is the year with the most episodes, with `r gss_summary[gss_summary$Mode == 'Total',]$'2010'` episodes (representing `r gss_summary[gss_summary$Mode == 'Total',]$'2010 (%)'`% of the total).  The year 1992 has the lowest number of episodes, with only `r gss_summary[gss_summary$Mode == 'Total',]$'1992'` episodes, representing `r gss_summary[gss_summary$Mode == 'Total',]$'1992 (%)'`% of the total. The most recent survey, 2022, counted with `r gss_summary[gss_summary$Mode == 'Total',]$'2022'` episodes (`r gss_summary[gss_summary$Mode == 'Total',]$'2022 (%)'`% of the total).
 
 When analyzing the two AT modes, walking episodes account for `r gss_summary[gss_summary$Mode == 'Walking',]$'Total (%)'`%, while the remaining `r gss_summary[gss_summary$Mode == 'Cycling',]$'Total (%)'`% are cycling episodes. The most recent survey (2022) showed that cycling trips accounted for almost 10% of active travel episodes, reinforcing an increasing trend in the cycling participation since 2005 - the year that marked the lowest representation, as opposed to 1992, when bicycle episodes marked the highest participation in all years (13%).
 
@@ -753,7 +774,7 @@ start -->
 
 <!-- duration  -->
 
-The maximum time spent on walking trips varied between 90 and 100 minutes across the years (Table \ref{tab:decrip-analysis}) - it is important to remember that trips with duration greater than 100 minutes were excluded from the analysis. The mean walking time also varies, starting at 20 minutes in 1992, dropping to 12 minutes between 1992 to 2005, and increasing again to 13 minutes in 2010, to 16 minutes in 2015, and to 18 minutes in 2022. However, it is known that the mean is a statistic that is highly influenced by extreme values. For this reason, we analyze the median travel time, as it is more representative of the typical travel time. The median time spent walking was 10 minutes in 1992, dropped to 5 minutes in 1998, remained constant at 10 minutes from 2005 to 2015, and increased to the highest level in 2022, to 15 minutes.
+The maximum time spent on walking trips varied between 90 and 100 minutes across the years (Table \ref{tab:decrip-analysis}) - it is important to remember that trips with duration greater than 100 minutes were excluded from the analysis. The mean walking time also varies, starting at 20 minutes in 1992, dropping to 12 minutes between 1992 to 2005,  and increasing survey after survey until it reaches 18 minutes in 2022. However, it is known that the mean is a statistic that is highly influenced by extreme values. For this reason, we analyze the median travel time, as it is more representative of the typical travel time. The median time spent walking was 10 minutes in 1992, dropped to 5 minutes in 1998, remained constant at 10 minutes from 2005 to 2015, and increased to the highest level in 2022, to 15 minutes.
 
 ```{r table-02, echo=FALSE, cache=FALSE}
 # Calculate min, mean, and max statistic (duration)
@@ -792,10 +813,10 @@ stats_data <- stats_data %>%
 
 # Creating a latex table
 styled_table_02 <- stats_data %>%
-  kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
-        caption = "\\label{tab:decrip-analysis}Descriptive statistics for episodes with active transport records",  
+  kable(format = "latex", booktabs = TRUE, longtable = FALSE, 
+        caption = "\\label{tab:decrip-analysis}Descriptive statistics for episodes with active transport records.",  
         align = c('l', 'l', rep('c', ncol(stats_data) - 2))) %>%
-  kable_styling(full_width = FALSE, font_size = 8) %>%
+  kable_styling(full_width = FALSE, font_size = 10) %>%
   column_spec(1, bold = TRUE) %>%
   add_header_above(c(" " = 2, "Year" = ncol(stats_data) - 2)) %>%
   collapse_rows(columns = 1, valign = "top", latex_hline = "major")
@@ -804,7 +825,7 @@ styled_table_02 <- stats_data %>%
 styled_table_02
 ```
 
-For cycling trips, the maximum travel time ranges from 60 to 100 minutes. Until 2022, maximum travel times had a similar pattern to walking trips, but the new survey showed that the maximum travel time for cycling trips was the lowest when considering all years for both modes (walking and cycling). The average cycling travel time varied considerably, ranging from 18 minutes in 2010 to 30 minutes in 2022. When we analyze the median travel time, we see that the typical cycling travel time also fluctuated between the periods, starting at 20 minutes in 1992 and peaking at 30 minutes in 2022. As was also the case with the walking travel times, these results show a trend of increasing for cycling trip duration throughout the years. The analysis of travel time statistics alone does not fully explain the reasons behind these fluctuations in travel time over the years. However, it is likely that these variations reflect changes in bicycle technology or cyclist behavior.
+For cycling trips, the maximum travel time ranges from 60 to 100 minutes. Until 2022, maximum travel times had a similar pattern to walking trips, but the new survey showed that the maximum travel time for cycling trips was the lowest when considering all years for both modes (walking and cycling). The average median travel time fluctuated between the periods, starting at 20 minutes in 1992 and peaking at 30 minutes in 2022. As was also the case with the walking travel times, these results show a trend of increasing for cycling trip duration throughout the years. The analysis of travel time statistics alone does not fully explain the reasons behind these fluctuations in travel time over the years. However, it is likely that these variations reflect changes in bicycle technology or cyclist behavior.
 
 Figure \ref{fig:figure-boxplot} presents box plots showing the distribution of travel times for active transport modes over the years, categorized by destination. During the period studied, the typical duration of walking trips was consistently shorter than that of cycling trips. While we can compare the temporal evolution of travel times, some destinations appear only in the two most recent surveys, such as "Neighborhood," "Health clinic," "Sports area," and "Business." The first three showed a constant median walking travel time of 10 minutes in both surveys, while the median travel time to "Business" increased from 10 to 15 minutes. For cycling trips, "Business" recorded no trips, while "Neighborhood" had a typical travel time of 30 minutes in 2015 but no records for 2022. "Health clinic" showed a constant cycling travel time of 15 minutes, and "Sports area" doubled its typical duration, from 15 to 30 minutes.
 
@@ -878,13 +899,13 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_media
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_boxplots.jpg"))
 ```
 
-For the other destinations, starting with walking trips, we note a trend of increasing travel times for almost all destinations, with an increase observed at least in the most recent survey (2022). "Restaurants" and "Outdoors" both increased their typical travel time from 5 minutes in 2005 to 10 minutes in 2022; "Other's home" rose to 10 minutes in 2022 after remaining at 5 minutes since 1992; "Place of worship" increased from 10 minutes in 2005 to 20 minutes in 2022; and "Cultural venues" rose from 10 minutes in 2005 and 2010 to 20 minutes in 2022. The three most popular types of destinations - "Home," "Work or school," and "Grocery store" - had an increase to 15 minutes after decades of stabilization at 10 minutes. In general, while "Place of worship" and "Cultural venues" displayed the highest median travel times of 20 minutes, the overall median walking time cutoff across all surveys appears to be 10 minutes, with most trips occurring below this threshold. In this case, no destination shows a decrease in typical (median) travel time.
+For the other destinations, starting with walking trips, we note a trend of increasing travel times for almost all destinations, with an increase observed at least in the most recent survey (2022). "Restaurants" and "Outdoors" both increased their typical travel time from 5 minutes in 2005 to 10 minutes in 2022; "Other's home" rose to 10 minutes in 2022 after remaining at 5 minutes since 1992; "Place of worship" increased from 10 minutes in 2005 to 20 minutes in 2022; and "Cultural venues" rose from 10 minutes in 2005 to 20 minutes in 2022. The three most popular types of destinations - "Home," "Work or school," and "Grocery store" - had an increase to 15 minutes after decades of stabilization at 10 minutes. In general, while "Place of worship" and "Cultural venues" displayed the highest median travel times of 20 minutes, the overall median walking time cutoff across all surveys appears to be 10 minutes, with most trips occurring below this threshold - except for 2022, when this limit was increased by 15 minutes. No destination shows a decrease in typical (median) travel time.
 
 For cycling trips, only "Cultural venues" did not show an increase in typical travel time when comparing 2022 to the previous years. In this case, the travel time dropped from 25 minutes in 2010 to 15 minutes in 2015, although it remained higher than the 2005 value (10 minutes), and no trips were recorded in the most recent survey (2022). "Other's home" is the other destination with no cycling records for the 2022 survey. An increasing trend in travel times is evident for destinations such as "Grocery store" (rising from a median of 10 to 60 minutes between 2005 and 2022) and "Restaurant" (rising to a median of 30 minutes in 2022).
 
 Other destinations seem to follow a similar pattern of increasing travel time, where higher values were recorded in earlier survey cycles, dropped over time, and then rose again in the most recent surveys. This is the case for "Home," which reached its highest typical travel time of 25 minutes after dropping to 10 minutes in 2010. It is also worth mentioning "Work or school," which had a typical cycling travel time of 15 minutes in 1992, peaked at 30 minutes in 1998, dropped back to 15 minutes in 2005 and 2010, and then increased to 25 minutes in 2022. In this case, no destination shows a decrease in typical (median) travel time.
 
-Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show walking and cycling trips from 1992 to 2022 through heat maps. These maps use color gradients to represent the percentage of trips between origins and destinations, with darker colors indicating higher percentages and lighter colors representing less frequent routes. In 1992, walking trips with 'Home' as both the origin and destination made up the majority, accounting for almost 31% of all walking trips. These trips often involved leisure activities, like short walks or dog walking. Following this, trips from 'Home' to 'Work or school' comprised 18% of walking trips. Overall, 'Home' is the principal hub, either as an origin or destination, with only 7% of trips not involving 'Home.' By 1998, more than half of walking trips were between 'Home' and 'Other's home,' with 'Home' to 'Other's home' and 'Other's home' to 'Home' each representing 26% of trips. During this year, 'Home' to 'Home' accounted for only 10% of trips. In 2005, trips with origins or destinations involving 'Home' and 'Work or school' remained as the most common, but the introduction of new destinations led to a more dispersed trip distribution. Together, these two combinations accounted for 25% of all trips. In 2010, trips between 'Home' and 'Work or school' continued as the most common type, representing 18% of trips, tied with trips from 'Grocery store' to 'Home' (9%). In 2015, the highest proportion of trips were from "Home" to "Work or school" (12%) and vice versa (11%). Trips from "Home" to "Home" accounted for 8% of trips, and the "Grocery store" became a notable destination for trips originating from "Home" (8%) - patterns that were reinforced, as shown in the 2022 survey. In the most recent survey, the most common trip was from "Home" to "Work or school" (17%), followed by the return trip from "Work or school" to "Home" (13%). After that, trips between "Home" and the "Grocery store" accounted for 20% when both directions are combined.
+Figures \ref{fig:walking-heatmap} and \ref{fig:cycling-heatmap} show walking and cycling trips from 1992 to 2022 through heat maps. These maps use color gradients to represent the percentage of trips between origins and destinations, with darker colors indicating higher percentages and lighter colors representing less frequent routes. In 1992, walking trips with 'Home' as both the origin and destination made up the majority, accounting for almost 31% of all walking trips. These trips often involved leisure activities, like short walks or dog walking. Following this, trips from 'Home' to 'Work or school' comprised 18% of walking trips. Overall, 'Home' is the principal hub, either as an origin or destination, with only 7% of trips not involving 'Home.' In 2005, trips with origins or destinations involving 'Home' and 'Work or school' remained as the most common, but the introduction of new destinations led to a more dispersed trip distribution. Together, these two combinations accounted for 25% of all trips. In the most recent survey, the most common trip was from "Home" to "Work or school" (17%), followed by the return trip from "Work or school" to "Home" (13%). After that, trips between "Home" and the "Grocery store" accounted for 20% when both directions are combined.
 
 ```{r make-figs-heatmaps, include=FALSE}
 # Walking heat map
@@ -955,7 +976,7 @@ knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/walking
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_hm_fig.jpg"))
 ```
 
-For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common trip was from 'Home' to 'Work or school' (26%), followed by trips from 'Other's home' to 'Home' (22%). In all following years, the most frequent trip were between 'Home' and 'Work or school' in both direction. This combination accounted for 65% of the trips in 1998, 40% in 2005, 52% in 2010, and 58% in 2015. However, in 2022, this combination dropped to 43%, mainly due to an increase in trips between the "Grocery store" and "Home" (18%). Additionally and unlike walking trips, 'Home' to 'Home' trips were not a common cycling trip in any of the surveys. This suggests that leisure trips, such as activities around the home, are predominantly done by foot rather than by bicycle. 
+For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common trip was from "Home" to "Work or school" (26%), followed by trips from "Other's home" to "Home" (22%). In all following years, the most frequent trip were between "Home" and "Work or school" in both direction. This combination accounted for 65% of the trips in 1998, 40% in 2005, 52% in 2010, and 58% in 2015. However, in 2022, this combination dropped to 43%, mainly due to an increase in trips between the "Grocery store" and "Home" (18%). Additionally and unlike walking trips, "Home" to "Home" trips were not a common cycling trip in any of the surveys. This suggests that leisure trips, such as activities around the home, are predominantly done by foot rather than by bicycle. 
 
 We analyzed whether the temporal differences in travel times for the destinations were statistically significant. Only destinations that appear in more than one survey year can have their temporal evolution analyzed. Therefore, out of the twelve possible destinations, some cycling locations could not be temporally analyzed: "Business," "Neighborhood," and "Place of worship." In the case of walking trips, all destinations could be analyzed over time.
 
@@ -965,7 +986,7 @@ After performing the Kruskal-Wallis test (to assess whether there was a statisti
 
 <!-- prevalence  -->
 
-```{r pop-table-with-prevalence, include = FALSE}
+```{r pop-table-with-prevalence, include = FALSE, cache = FALSE}
 # Checking if the person has or active episode 
 person_activity <- main_act_eps %>%
   group_by(PUMFID, YEAR, GENDER2, AGE) %>%
@@ -1044,28 +1065,34 @@ pop_stats <- pop_stats %>%
     names_glue = "{.value}_{YEAR}"
   )
 
-pop_stats[,2:19] <- round(pop_stats[,2:19],2)
+pop_stats <- pop_stats %>%
+  mutate(across(where(is.numeric) & !all_of("group"), ~ round(.x, 2)))
 
 total_pop_year <- person_activity %>%
   group_by(YEAR) %>%
   summarise(total_pop = sum(WGHT_PER), .groups = "drop") %>%
   mutate(YEAR = as.character(YEAR))
 
-pop_stats_table <- pop_stats  %>% 
-   kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
-         caption = "\\label{tab:pop-stats-table}Prevalence of active trip by transportation mode, year of analysis, gender and age group.",  
-         col.names = c(" ","1992","1998", "2005", "2010", "2015", "2022",
-                       "1992","1998", "2005", "2010", "2015", "2022", 
-                       "1992","1998", "2005", "2010", "2015", "2022"), 
-         align = NULL) %>% 
-   kable_styling(full_width = FALSE, font_size = 5.5) %>%
-   add_header_above(c(" " = 1, 
-                      "Walking" = 6,
-                      "Cycling" = 6, 
-                      "Walking and Cycling" = 6)) %>% 
-  column_spec(1, bold = TRUE) %>% 
-  column_spec(7, border_right = TRUE) %>% 
-  column_spec(13, border_right = TRUE)
+pop_stats_table <- as.data.frame(pop_stats)  %>% 
+    kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
+          caption = "\\label{tab:pop-stats-table}Prevalence of active trip by transportation mode, year of analysis, gender and age group.",  
+           col.names = c(" ","1992","1998", "2005", "2010", "2015", "2022",
+                         "1992","1998", "2005", "2010", "2015", "2022", 
+                         "1992","1998", "2005", "2010", "2015", "2022"), 
+          align = NULL) %>% 
+    kable_styling(full_width = FALSE, font_size = 10) %>%
+      add_header_above(c(" " = 1, 
+                         "Walking" = 6,
+                         "Cycling" = 6, 
+                         "Both modes" = 6)) %>% 
+   column_spec(1, bold = TRUE) %>% 
+   column_spec(7, border_right = TRUE) %>% 
+   column_spec(13, border_right = TRUE) %>%
+  landscape()
+
+# pop_stats_table <- pop_stats %>%
+#   kable(format = "latex", booktabs = TRUE, longtable = TRUE) %>%
+#   kable_styling()
 ```
 
 The share of the population with active trip records varied between 6.93%, value of 1992, and 15.06%, value of 2015, from 1992 to 2022 (Table \ref{tab:pop-stats-table}). In 2015, the trend of increasing participation in walking and cycling trips was reversed to the beginning of a decline, confirmed by the 2022 survey. In 2015, around 12% of the population recorded at least one active trip. In 2022, this share of the population fell to 9.45%, the lowest level since 2005, representing *2,605,395* people out of a total population of *27,584,823* people.
@@ -1074,11 +1101,11 @@ The share of the population with active trip records varied between 6.93%, value
 pop_stats_table
 ```
 
-Our results show a decrease in the active population since 2010 for both genders (Figure \ref{fig:gender-perc-figure}). However, the decline was more pronounced among women+ than Men+, leading to a shift in the historical pattern in which women+ had been the more active gender in Canada [@bryan2009; @borhani2024]. Women+ peaked at 14.82% of the population with a record of active episodes in 2010 but dropped to the second-lowest level of 8.84% in 2022 - only higher than the 7.66% recorded in 1998. In contrast, Men+, who also peaked in 2010 with 15.31% of the population reporting active episodes, declined to 10.05% in 2022, thus becoming the gender with the higher share of the active population.
+Our results show a decrease in the active population since 2010 for both genders (Figure \ref{fig:gender-perc-figure}). However, the decline was more pronounced among women+ than men+, leading to a shift in the historical pattern in which women+ had been the more active gender in Canada [@bryan2009; @borhani2024]. Women+ peaked at 14.82% of the population with a record of active episodes in 2010 but dropped to the second-lowest level of 8.84% in 2022 - only higher than the 7.66% recorded in 1998. In contrast, Men+, who also peaked in 2010 with 15.31% of the population reporting active episodes, declined to 10.05% in 2022, thus becoming the gender with the higher share of the active population.
 
 This result aligns with a trend identified by Borhani et al. [-@borhani2024]. In their study, the authors found that a higher proportion of females than males reported engaging in any form of AT, whether walking or cycling, in the last 7 days or 3 months. However, they also observed that this gender gap appears to have narrowed over time.
 
-When analyzing by transportation mode, in all survey years a higher proportion of men+ reported at least one cycling episode on the previous day compared to women+ (ranging from 1.18% to 1.87% for men+ and 0.18% to 0.66% for Women+). This pattern of more men+ participating in cycling activities when compared to women+ is consistent with previous research [@heesch2012; @bryan2009; @borhani2024]. Conversely, women+ historically reported more walking trips than Men+, also consistent with previous research [@goel2023; @pollard2017; @bryan2009; @borhani2024], but this pattern changed in the most recent survey (2022), reinforcing a trend already present in 2015. In 2022, 8.43% of women+ reported at least one walking episode, compared to 8.89% of Men+.
+When analyzing by transportation mode, in all survey years a higher proportion of men+ reported at least one cycling episode on the previous day compared to women+ (ranging from 1.18% to 1.87% for men+ and 0.18% to 0.66% for women+). This pattern of more men+ participating in cycling activities when compared to women+ is consistent with previous research [@heesch2012; @bryan2009; @borhani2024]. Conversely, women+ historically reported more walking trips than men+, also consistent with previous research [@goel2023; @pollard2017; @bryan2009; @borhani2024], but this pattern changed in the most recent survey (2022), reinforcing a trend already present in 2015. In 2022, 8.43% of women+ reported at least one walking episode, compared to 8.89% of Men+.
 
 ```{r gender-graphs, include = FALSE}
 # Transforming the previous table in a long table to create graphs
@@ -1093,13 +1120,12 @@ long_gender <- gender_stats %>%
     names_pattern = "perc_(.*)_(\\d+)",
     values_to = "Value"  
   ) %>%
-  mutate(
-    Year = as.numeric(Year),
-    Mode = case_when(
-      Mode == "walk" ~ "Walking",
-      Mode == "cycle" ~ "Cycling",
-      Mode == "active" ~ "Active",
-      TRUE ~ Mode
+  mutate(Year = as.numeric(Year),
+          Mode = case_when(
+          Mode == "walk" ~ "Walking",
+          Mode == "cycle" ~ "Cycling",
+          Mode == "active" ~ "Active",
+          TRUE ~ Mode
     )
   ) %>%
   select(Year, Gender, Mode, Value)
@@ -1128,7 +1154,7 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/active_pop_gender
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/active_pop_gender_graph.jpg"))
 ```
 
-When we analyze the population by age group (Figure \ref{fig:age-perc-figure}), the youngest (those between 15 and 24 years) stand out as the most active group, ranging from 9.3% to 26.88%, and marking 21.47% in the most recent survey. This is the only group that did not show a decrease in the prevalence of active participation over the last decade, increasing from a low of 17.91% in 2015 to 21.47% in 2022 - although still below the levels recorded in 2010 (24.01%) and 2005 (26.88%). The survey of 2022 is one more evidence of caracterists of the Generation z (born between 1997 and 2012) [@dimock2019] are noticeably less dependent on cars and instead use environmentally friendly modes of travel, such as public transport, cycling and walking, more often than not [@haseeb2024; @grimsrud2014; @kuhnimhof2011]. Historically, and in consistency with the literature [@bryan2009; @borhani2024], prevalence decreases as age increases. However, in the most recent survey (2022), as well as in 2005, the oldest group (75 years and older) presented the third-highest prevalence (7.02%), surpassing the groups aged 35 to 44 years (5.78%), 45 to 54 years (6.30%), 55 to 64 years (6.24%), and 65 to 74 years (6.96%).
+When we analyze the population by age group (Figure \ref{fig:age-perc-figure}), the youngest (those between 15 and 24 years) stand out as the most active group, ranging from 9.3% to 26.88%, and marking 21.47% in the most recent survey. This is the only group that did not show a decrease in the prevalence of active participation over the last decade, increasing from a low of 17.91% in 2015 to 21.47% in 2022 - although still below the levels recorded 2005 (26.88%). The survey of 2022 is one more evidence of caracterists of the Generation z (born between 1997 and 2012) [@dimock2019] are noticeably less dependent on cars and instead use environmentally friendly modes of travel, such as public transport, cycling and walking, more often than not [@haseeb2024; @grimsrud2014; @kuhnimhof2011]. Historically, and in consistency with the literature [@bryan2009; @borhani2024], prevalence decreases as age increases. However, in the most recent survey (2022), as well as in 2005, the oldest group (75 years and older) presented the third-highest prevalence (7.02%), surpassing younger groups.
 
 The analysis by mode shows a similar trend (Figure \ref{fig:age-perc-figure}). However, for cycling, the second youngest group (aged 25 to 34 years) had the highest prevalence in the 2022 survey (1.62%), surpassing the youngest group (1.58%). For all other age groups, cycling prevalence decreases as age increases, approaching 0.10% for the oldest group (75 years and older).
 
@@ -1254,24 +1280,24 @@ episodes_stats <- episodes_stats %>%
     values_from = c(eps_per_person_walk, eps_per_person_cycle, eps_per_person_active),
     names_glue = "{.value}_{YEAR}") 
 
-eps_person_stats_table <- episodes_stats  %>% 
-   kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
-         caption = "\\label{tab:eps-total-pop}Episodes of active trip per person by transportation mode, year of analysis, gender and age group.",  
-         col.names = c(" ","1992","1998", "2005", "2010", "2015", "2022",
-                       "1992","1998", "2005", "2010", "2015", "2022", 
-                       "1992","1998", "2005", "2010", "2015", "2022"), 
-         align = c('l', rep('c', ncol(pop_stats) - 1))) %>% 
-   kable_styling(full_width = FALSE, font_size = 6) %>%
-   add_header_above(c(" " = 1, 
-                      "Walking" = 6,
-                      "Cycling" = 6, 
-                      "Walking and Cycling" = 6)) %>% 
-  column_spec(1, bold = TRUE) %>% 
-  column_spec(7, border_right = TRUE) %>% 
-  column_spec(13, border_right = TRUE)
+# eps_person_stats_table <- episodes_stats  %>% 
+#    kable(format = "latex", booktabs = TRUE, longtable = TRUE, 
+#          caption = "\\label{tab:eps-total-pop}Episodes of active trip per person by transportation mode, year of analysis, gender and age group.",  
+#          col.names = c(" ","1992","1998", "2005", "2010", "2015", "2022",
+#                        "1992","1998", "2005", "2010", "2015", "2022", 
+#                        "1992","1998", "2005", "2010", "2015", "2022"), 
+#          align = c('l', rep('c', ncol(pop_stats) - 1))) %>% 
+#    kable_styling(full_width = FALSE, font_size = 6) %>%
+#    add_header_above(c(" " = 1, 
+#                       "Walking" = 6,
+#                       "Cycling" = 6, 
+#                       "Walking and Cycling" = 6)) %>% 
+#   column_spec(1, bold = TRUE) %>% 
+#   column_spec(7, border_right = TRUE) %>% 
+#   column_spec(13, border_right = TRUE)
 ```
 
-The number of people with active trip episodes is mainly influenced by walking episodes, since over 90% of the recorded active trips involve individuals with walking episodes. Analyzing the number of episodes per person with records of AT, the average is around 1.96 active episodes per person, varying from a maximum of 2.10 episodes in 2005 to a minimum of 1.72 episodes per person in 1992. Figure \ref{fig:gender-eps-figure} presents, for each survey year, the total number of active episodes divided by the population with active records, the number of walking episodes per person who walked, and the number of cycling episodes per person who cycled - all disaggregated by gender. Until 2022, men+ historically had more number of active episodes when compared to Women+, but this pattern changed in the last survey when men+ scored 2.07 active episodes, when compared to 2.11 active episodes made by Women+. This was mainly caused by the decreasing of number of walking episodes made by men+ (from 2.16 to 2.07 from 2015 to 2022), and increase of walking episodes made by women+ (from 1.92 to 2.11 in the same period).
+The number of people with active trip episodes is mainly influenced by walking episodes, since over 90% of the recorded active trips involve individuals with walking episodes. Analyzing the number of episodes per person with records of AT, the average is around 1.96 active episodes per person, varying from a maximum of 2.10 episodes in 2005 to a minimum of 1.72 episodes per person in 1992. Figure \ref{fig:gender-eps-figure} presents, for each survey year, the total number of active episodes divided by the population with active records, the number of walking episodes per person who walked, and the number of cycling episodes per person who cycled - all disaggregated by gender. Until 2022, men+ historically had more number of active episodes when compared to women+, but this pattern changed in the last survey when men+ scored 2.07 active episodes, when compared to 2.11 active episodes made by women+. This was mainly caused by the decreasing of number of walking episodes made by men+ (from 2.16 to 2.07 from 2015 to 2022), and increase of walking episodes made by women+ (from 1.92 to 2.11 in the same period).
 
 ```{r active-pop-gender-eps, include = FALSE}
 # Code to create graphs about the active population|
@@ -1357,8 +1383,9 @@ episodes_stats_active_only <- episodes_stats_active_only %>%
     names_glue = "{.value}_{YEAR}"
   ) 
 
-episodes_stats_active_only[,2:19] <- round(episodes_stats_active_only[,2:19],2)
-  
+episodes_stats_active_only <- episodes_stats_active_only %>%
+  mutate(across(where(is.numeric) & !all_of("group"), ~ round(.x, 2)))
+
 eps_gender_stats <- episodes_stats_active_only %>%
   filter(group %in% c("Total", "Men+","Women+")) %>% 
   rename(Gender = group)
@@ -1415,7 +1442,7 @@ knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/eps_gen
 
 The same type of metric shown in Figure \ref{fig:gender-eps-figure} can also be calculated by age group. Figure \ref{fig:age-eps-figure} shows that active individuals in the oldest age group (those aged 75 and over) have been on an increasing trend in the number of active episodes since 2010. In 2010, this group ranked last in the number of active episodes per active person (1.94), and by 2022, it had taken first place with 2.21 episodes per active person (a 14% increase). In general, all age groups have improved their performance compared to 1992. However, over a shorter period between the two most recent surveys (2015 and 2022), the group aged 25 to 34 is the only one that showed a decrease in the number of active episodes per active person, decreasing from 2.27 to 1.93 episodes (15% of reduction).
 
-When the age group analysis is split by transportation mode, walking episodes per walker follow a pattern similar to that of total active episodes per active person (Figure \ref{fig:age-eps-figure}). However, the pattern for cycling differs. For almost every group, the data can be divided into two distinct time periods: before and after 2005. From 1992 to 2005, there was a general trend of increasing cycling episodes per cyclist (from 1.72 to 2.10). This trend is exemplified by the 55 to 64 age group, which increased from 1.58 to 2.61 episodes (a 65% rise). This period was followed by a decline in cycling episodes per cyclist from 2005 to 2022 (from 2.10 to 2.04). A clear example of this trend is the 65 to 74 age group, which saw a decrease from 2.73 to 1.60 episodes (a reduction of 41%). In more recent years, only two age groups show an increasing trend in cycling episodes per cyclist when comparing the last two surveys (2015 and 2022): the youngest group (15 to 24 years) and the oldest (75 and over). In both cases, there was a significant increase. The youngest group rose from 1.78 to 3.00 episodes (a 40% increase), while the oldest group doubled its average from 1.00 to 2.00 episodes over the seven years.
+When the age group analysis is split by transportation mode, walking episodes per walker follow a pattern similar to that of total active episodes per active person (Figure \ref{fig:age-eps-figure}). However, the pattern for cycling differs. For almost every age group, the data can be divided into two distinct time periods: before and after 2005. From 1992 to 2005, there was a general trend of increasing cycling episodes per cyclist (from 1.72 to 2.10). This trend is exemplified by the 55 to 64 age group, which increased from 1.58 to 2.61 episodes (a 65% rise). This period was followed by a decline in cycling episodes per cyclist from 2005 to 2022 (from 2.10 to 2.04). A clear example of this trend is the 65 to 74 age group, which saw a decrease from 2.73 to 1.60 episodes (a reduction of 41%). In more recent years, only two age groups show an increasing trend in cycling episodes per cyclist when comparing the last two surveys (2015 and 2022): the youngest group (15 to 24 years) and the oldest (75 and over). In both cases, there was a significant increase. The youngest group rose from 1.78 to 3.00 episodes (a 40% increase), while the oldest group doubled its average from 1.00 to 2.00 episodes over the seven years.
 
 ```{r age-eps, include = FALSE}
 age_stats_eps <- episodes_stats_active_only %>%
@@ -1469,13 +1496,9 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/eps_age_graph.jpg
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/eps_age_graph.jpg"))
 ```
 
-Regarding the duration of the AT epsiodes, we observe an increase in the average duration of active travel for both genders and both transportation modes after 2010 (Figure \ref{fig:gender-dur-figure}). When analyzing the typical duration (median) by gender, we find no differences in general active travel. The median remained stable at 10 minutes for both men+ and women+ from 2005 to 2015, increasing to 15 minutes in 2022.
+Regarding the duration of the AT episodes, we observe an increase in the typical duration of active travel for both genders and both transportation modes after 2010 (Figure \ref{fig:gender-dur-figure}), without gender difference in general AT. The median remained stable at 10 minutes for both men+ and women+ from 2005 to 2015, increasing to 15 minutes in 2022. However, for cycling trips, the median cycling duration shows a clear gender difference: men+ reported a median of 30 minutes in 2022, up from 15 minutes in 2005. This represents the highest median duration recorded across the entire historical series. In contrast, women+ tended to maintain a median duration around 15 minutes, which was also the value reported in the most recent survey.
 
-For cycling trips, men+ increased their average duration from 19 minutes in 2010 to 33 minutes in 2022, while women+ went from 15 minutes in 2010 to 22 minutes in 2022 - although this follows a slight decline from a peak of 24 minutes in 2015. This upward trend in travel time contrasts with the period from 1992 to 2010, during which both genders experienced a reduction in duration, reaching their lowest levels in 2010. In this mode, the median cycling duration shows a clear gender difference: men+ reported a median of 30 minutes in 2022, up from 15 minutes in 2005. This represents the highest median duration recorded across the entire historical series. In contrast, women+ tended to maintain a median duration around 15 minutes, which was also the value reported in the most recent survey.
-
-For walking trips, the highest average travel times were recorded in 1992, with men+ averaging 19 minutes and women+ 21 minutes. These values dropped to their lowest point in 1998 (12 minutes for men+ and 11 for Women+) before gradually increasing again through to 2022. Since 2015, women+ have reported longer walking durations than men+ (19 minutes compared to 17 minutes in 2022). Regardless of the mode, men+ reported slightly longer overall active travel durations than women+ in 2022 (19 minutes and 21 seconds vs. 19 minutes and 11 seconds). These results align with findings from previous studies on the Canadian population [@bryan2009; @borhani2024]. Again, when we consider the median, the values remained stable at 10 minutes between 2005 and 2015, increasing to 15 minutes in the most recent survey both genders.
-
-```{r gender-duration, include = FALSE}
+```{r gender-duration, include = FALSE, cache = FALSE}
 # Average
 # Gender
 duration_gender_mode <- gss_impedances_renamed %>%
@@ -1619,7 +1642,7 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/duration_gender_g
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/gender_duration_boxplots.jpg"))
 ```
 
-An examination of average travel duration by age group reveals a general increase in walking trip durations across all groups since 1998 (Figure \ref{fig:age-dur-figure}). In 2022, the youngest cohort (ages 15 to 24) reported the shortest average walking duration at 17 minutes, while the 25 to 34 age group had the longest, averaging 21 minutes. For cycling trips, a notable increasing trend in duration emerges after 2010 - with the exception of the 55 to 64 age group, whose average duration stabilized following a peak in 2015. Notably, the 65 to 74 age group recorded the highest average cycling duration, with individuals in this cohort spending an average of 42 minutes cycling in 2022.
+An examination of typical trip length by age group reveals a general increase in AT trip duration across all groups since 1998 (Figure \ref{fig:age-dur-figure}). With the exception of the 65 to 74 age group, where the average duration has remained at 10 minutes, all other groups have increased to a typical duration of 15 minutes. Regarding median values, the typical trip duration was 25 minutes for most groups, except for the 35 to 54 age group, which recorded a median of 20 minutes, and the 65 to 74 group, which recorded a median of 60 minutes. 
 
 ```{r age-duration, include=FALSE, cache=TRUE}
 # Age 
@@ -2106,13 +2129,13 @@ The main objectives of this study were to provide an overview of AT in Canadian 
 
 <!-- episodes  -->
 
-The rate of active trips per person with active record was around two trips, with an increasing trend in active episodes per person being observed for both walking and cycling. Historically, men+ recorded more active episodes than Women+, but in 2022 this trend reversed: men+ averaged 2.07 episodes, while women+ averaged 2.11. This change was driven by a decrease in walking episodes among men+ (from 2.16 in 2015 to 2.07 in 2022) and an increase among women+ (from 1.92 to 2.11 in the same period). In summary, women+ made more active trips, while men+ traveled longer distances and had higher overall participation in AT.
+The rate of active trips per person with active record was around two trips, with an increasing trend in active episodes per person being observed for both walking and cycling. Historically, men+ recorded more active episodes than Women+, but in 2022 this trend reversed: men+ averaged 2.07 episodes, while women+ averaged 2.11. This change was driven by a decrease in walking episodes among men+ (from 2.16 in 2015 to 2.07 in 2022) and an increase among women+ (from 1.92 to 2.11 in the same period).
 
 <!-- durations  -->
 
 Our results show that the typical duration of walking trips increased to 15 minutes by 2022, following years of stability at 10 minutes. For cycling, the typical duration rose to 30 minutes, recovering from a decline that began in 1998 and lasted until 2010. Generally, walking trips had consistently shorter durations than cycling trips. Although this study does not explain the causes of these fluctuations, the differences by year and mode were statistically significant.
 
-When analyzed by gender, both men+ and women+ experienced increases in trip duration for both walking and cycling after 2010. Men+ increased their average cycling trip duration from 19 minutes in 2010 to 33 minutes in 2022, and median trip duration from 15 to 30 minutes in the same period. Women+ increased their average from 15 to 22 minutes and their median from 10 to 15 minutes. Since 2015, women+ have reported longer walking durations averages than Men+, but when analyzed in terms of median, both presented the same value since 2005, marking 10 minutes until 2015 and 15 minutes in 2022. When analyzing by age groups, all of them increased their active travel times compared to 1992, especially for walking. For cycling, a marked increase in duration emerged after 2010.
+When analyzed by gender, men+ increased their median cycling trip duration from 15 minutes in 2005 to 30 minutes in 2022. Women+ increased their median from 10 to 15 minutes. No gender differences were identified in the duration of walking trips. When analyzing by age groups, all of them increased their active travel times compared to 1992, especially for walking. For cycling, a marked increase in duration emerged after 2010.
 
 For both transportation modes trips to "Other's home" declined over time, likely reflecting changing social behavior enabled by technology that allows people to stay connected without visiting in person. Walking trips were predominantly associated with "Home" as either the origin or destination. For cycling, the combination of "Home" and "Work or school" accounted for the majority of trips. Walking trip durations to "Restaurants" and "Outdoors" increased from 5 minutes in 2005 to 10 minutes in 2022. Travel to "Places of worship" also rose from 10 minutes in 2005 to 20 minutes in 2022, tying with "Cultural venues" for the highest typical walking travel time. Walking times to "Home" and "Work or school" increased to 15 minutes in 2022, following three GSS cycles where they remained stable at 10 minutes. For cycling, 2015 marked the beginning of a trend toward longer travel times across nearly all destinations.
 
@@ -2122,11 +2145,13 @@ The share of the population with at least one recorded active trip ranged from a
 
 <!--  About 84% of individuals who walked and 90% who cycled made only one trip. The maximum number of trips recorded by a single individual was 10 (in 1992, 2005, and 2010) for walking and 4 (in 2005) for cycling.  -->
 
-Since 2010, the active population has declined for both genders, with a steeper decrease among Women+. This reversed a long-standing pattern in which women+ had higher AT participation than Men+. In 2022, men+ showed higher prevalence than women+ regardless of mode, with 10.05% for men+ and 8.84% for Women+. Regarding age cohorts, the youngest group (15 - 24 years) remained the most active, with a prevalence of 21.47% in 2022. This was the only group to show increased participation over the past decade, up from 17.91% in 2015. Generally, AT prevalence decreases with age. However, in both 2005 and 2022, the oldest group (75 years and older) reported the third-highest AT prevalence (7.02%) and showed a steady increase in active episodes since 2010.
+Since 2010, the active population has declined for both genders, with a steeper decrease among women+. This reversed a long-standing pattern in which women+ had higher AT participation than Men+. In 2022, men+ showed higher prevalence than women+ regardless of mode, with 10.05% for men+ and 8.84% for Women+. In summary, women+ made more active trips, while men+ had higher overall participation in AT. 
+
+Regarding age cohorts, the youngest group (15 to 24 years) remained the most active, with a prevalence of 21.47% in 2022. This was the only group to show increased participation over the past decade, up from 17.91% in 2015. Generally, AT prevalence decreases with age. However, in both 2005 and 2022, the oldest group (75 years and older) reported the third-highest AT prevalence (7.02%) and showed a steady increase in active episodes since 2010.
 
 <!-- destinations  -->
 
-The study underscores the importance of applying destination-specific impedance functions when measuring cost decay effects in accessibility analyses. To this end, we fitted 83 impedance functions for AT trips over a 30-year period, considering destination types and transportation modes. The results indicate that none of the fitted functions followed an exponential distribution, suggesting that commonly used functions in AT accessibility studies may not adequately capture actual behavior - especially for very short trips (under 3 minutes), which tend to be overrepresented in these models. Destinations with many episodes were best modeled using gamma functions, followed by lognormal and normal distributions. In contrast, destinations with fewer than six episodes were best represented by uniform distributions.
+The study underscores the importance of applying destination-specific impedance functions when measuring cost decay effects in accessibility analyses. To this end, we fitted 83 impedance functions for AT trips over a 30-year period, considering destination types and transportation modes. The results indicate that none of the fitted functions followed an exponential distribution, suggesting that commonly used functions in AT accessibility studies may not adequately capture actual behavior - especially for very short trips (under 5 minutes), which tend to be overrepresented in these models. Destinations with many episodes were best modeled using gamma functions, followed by lognormal and normal distributions. In contrast, destinations with fewer than six episodes were best represented by uniform distributions.
 
 Given similarities in urbanization processes between Canada, the United States, Australia, and West Europe, these findings may also be applicable to metropolitan areas in those regions. Finally, this study contributes to the ongoing discussion on AT, emphasizing its importance in promoting sustainable transportation planning.
 

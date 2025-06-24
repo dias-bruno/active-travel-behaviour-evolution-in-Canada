@@ -19,7 +19,7 @@ address:
     state: State
     postcode: 123456
     country: United States
-journal: "An awesome journal"
+journal: "Journal of Transport Geography"
 date: "`r Sys.Date()`"
 linenumbers: false
 numbersections: false

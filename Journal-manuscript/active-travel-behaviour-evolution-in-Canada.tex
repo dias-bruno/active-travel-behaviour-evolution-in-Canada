@@ -4,7 +4,7 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 
 \usepackage[hyphens]{url}
 
-  \journal{An awesome journal} % Sets Journal name
+  \journal{Journal of Transport Geography} % Sets Journal name
 
 \usepackage{graphicx}
 %%%%%%%%%%%%%%%% end my additions to header
@@ -15,7 +15,6 @@ authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
 % TODO: Currently lineno needs to be loaded after amsmath because of conflict
 % https://github.com/latex-lineno/lineno/issues/5
 \usepackage{lineno} % add
-  \linenumbers % turns line numbering on
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 % use upquote if available, for straight quotes in verbatim environments
@@ -116,10 +115,10 @@ States},}
   gap with two objectives: to examine temporal trends in AT by
   destination, travel time, and demographic profiles; and to calibrate
   impedance functions for AT modes across survey cycles and
-  destinations. After analyzing and processing over 13,500 AT recordins
+  destinations. After analyzing and processing over 13,500 AT records
   representing 28 million weighted episodes, we performed descriptive
-  analyses and modeled 83 impedance functions. Results show that
-  ``Home,'' ``Work or study,'' and ``Grocery store'' were the most
+  analyses and modeled a wide range of impedance functions. Results show
+  that ``Home,'' ``Work or study,'' and ``Grocery store'' were the most
   frequent destinations. Walking dominated AT (over 90\% of episodes),
   with median durations rising from 10 to 15 minutes in 2022; for
   cycling, durations rose from 15 to 30 minutes. Since 2010, the share
@@ -1046,7 +1045,7 @@ destination and the weight of each episode) and the pairwise Wilcoxon
 test, we were able to identify the destinations where a statistically
 significant difference was detected. For both AT modes, the possible
 destinations had at least two year with statistically significant
-difference in travel times (p-value \textless{} 0.05, Appendix A).
+difference in travel times (p-value \textless{} 0.05, Table A.1).
 Considering the cycling mode and, for instance, the ``Home''
 destination, there was a statistically significant difference for every
 possible combination of two survey cycles. This result indicates that
@@ -1679,6 +1678,170 @@ States, Australia, and West Europe, these findings may also be
 applicable to metropolitan areas in those regions. Finally, this study
 contributes to the ongoing discussion on AT, emphasizing its importance
 in promoting sustainable transportation planning.
+
+\section*{CRediT authorship contribution
+statement}\label{credit-authorship-contribution-statement}
+\addcontentsline{toc}{section}{CRediT authorship contribution statement}
+
+\emph{(include after the review)}
+
+\section*{Funding sources}\label{funding-sources}
+\addcontentsline{toc}{section}{Funding sources}
+
+This research was funded through project \emph{project name provided
+after review)}, supported by the Social Sciences and Humanities Research
+Council of Canada.
+
+\section*{Data availability}\label{data-availability}
+\addcontentsline{toc}{section}{Data availability}
+
+We updated the \texttt{ActiveCA} R Package to include the methodology to
+obtain impedance functions from the raw data files (GSS surveys).
+Additionally, we created this paper using literate programming in which
+the R markdown code to fully reproduce this article is available on our
+GitHub repository \emph{(include after the review)}.
+
+\section{Declaration of competing
+interest}\label{declaration-of-competing-interest}
+
+The authors declare no conflicts of interest
+
+\section*{Appendix}\label{appendix}
+\addcontentsline{toc}{section}{Appendix}
+
+\renewcommand{\thetable}{A.1}
+
+\begingroup\fontsize{8}{10}\selectfont
+
+\begin{longtable}[t]{llllllll}
+\caption{\label{tab:kruskal-walking}\label{tab:result-stats}P-values of the pairwise Wilcoxon test.}\\
+\toprule
+Mode & Destination & Year & 1992 & 1998 & 2005 & 2010 & 2015\\
+\midrule
+ & Home & 1998 & 0.00e+00 &  &  &  & \\
+\nopagebreak
+ & Home & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
+\nopagebreak
+ & Home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
+\nopagebreak
+ & Home & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Work or school & 1998 & 7.09e-211 &  &  &  & \\
+\nopagebreak
+ & Work or school & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
+\nopagebreak
+ & Work or school & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
+\nopagebreak
+ & Work or school & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Work or school & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Grocery store & 2010 &  &  & 0.00e+00 &  & \\
+\nopagebreak
+ & Grocery store & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Grocery store & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Neighbourhood & 2022 &  &  &  &  & 0.00e+00\\
+\nopagebreak
+ & Sport area & 2022 &  &  &  &  & 0.00e+00\\
+\nopagebreak
+ & Outdoors & 2010 &  &  & 4.33e-29 &  & \\
+\nopagebreak
+ & Outdoors & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Outdoors & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Restaurant & 2010 &  &  & 2.09e-295 &  & \\
+\nopagebreak
+ & Restaurant & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Restaurant & 2022 &  &  & 0.00e+00 & 0.00e+00 & 1.11e-179\\
+\nopagebreak
+ & Other's home & 1998 & 0.00e+00 &  &  &  & \\
+\nopagebreak
+ & Other's home & 2005 & 0.00e+00 & 1.79e-83 &  &  & \\
+\nopagebreak
+ & Other's home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
+\nopagebreak
+ & Other's home & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Other's home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Health clinic & 2022 &  &  &  &  & 4.12e-216\\
+\nopagebreak
+ & Cultural venues & 2010 &  &  & 4.52e-273 &  & \\
+\nopagebreak
+ & Cultural venues & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Cultural venues & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Place of worship & 2010 &  &  & 0.00e+00 &  & \\
+\nopagebreak
+ & Place of worship & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Place of worship & 2022 &  &  & 0.00e+00 & 0.00e+00 & 3.76e-18\\
+\nopagebreak
+\multirow[t]{-34}{*}{\raggedright\arraybackslash Walking} & Business & 2022 &  &  &  &  & 1.18e-305\\
+\cmidrule{1-8}\pagebreak[0]
+ & Grocery store & 2010 &  &  & 0.00e+00 &  & \\
+\nopagebreak
+ & Grocery store & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Grocery store & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Home & 1998 & 1.08e-230 &  &  &  & \\
+\nopagebreak
+ & Home & 2005 & 1.45e-24 & 0.00e+00 &  &  & \\
+\nopagebreak
+ & Home & 2010 & 0.00e+00 & 0.00e+00 & 0.00e+00 &  & \\
+\nopagebreak
+ & Home & 2015 & 0.00e+00 & 8.44e-236 & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Home & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Work or school & 1998 & 0.00e+00 &  &  &  & \\
+\nopagebreak
+ & Work or school & 2005 & 9.62e-228 & 0.00e+00 &  &  & \\
+\nopagebreak
+ & Work or school & 2010 & 1.30e-221 & 0.00e+00 & 0.00e+00 &  & \\
+\nopagebreak
+ & Work or school & 2015 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Work or school & 2022 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Health clinic & 2022 &  &  &  &  & 0.00e+00\\
+\nopagebreak
+ & Restaurant & 2010 &  &  & 1.03e-106 &  & \\
+\nopagebreak
+ & Restaurant & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Restaurant & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Sport area & 2022 &  &  &  &  & 0.00e+00\\
+\nopagebreak
+ & Outdoors & 2010 &  &  & 0.00e+00 &  & \\
+\nopagebreak
+ & Outdoors & 2015 &  &  & 0.00e+00 & 0.00e+00 & \\
+\nopagebreak
+ & Outdoors & 2022 &  &  & 0.00e+00 & 0.00e+00 & 0.00e+00\\
+\nopagebreak
+ & Other's home & 1998 & 2.60e-122 &  &  &  & \\
+\nopagebreak
+ & Other's home & 2005 & 0.00e+00 & 0.00e+00 &  &  & \\
+\nopagebreak
+ & Other's home & 2010 & 6.63e-41 & 0.00e+00 & 3.60e-287 &  & \\
+\nopagebreak
+ & Other's home & 2015 & 4.03e-81 & 0.00e+00 & 5.62e-266 & 1.84e-148 & \\
+\nopagebreak
+ & Cultural venues & 2010 &  &  & 2.98e-142 &  & \\
+\nopagebreak
+\multirow[t]{-27}{*}{\raggedright\arraybackslash Cycling} & Cultural venues & 2015 &  &  & 0.00e+00 & 9.65e-01 & \\
+\bottomrule
+\end{longtable}
+\endgroup{}
 
 \renewcommand\refname{References}
 \bibliography{mybibfile2}

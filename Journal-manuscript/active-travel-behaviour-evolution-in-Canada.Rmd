@@ -20,7 +20,7 @@ address:
     postcode: 123456
     country: United States
 abstract: |
-    Active transportation (AT), defined as self-powered modes such as walking and cycling, can help individuals meet the Canadian Society for Exercise Physiology’s recommendation of 150 minutes of moderate-to-vigorous physical activity per week. Despite the potential of Canada’s Time Use Survey (TUS) from the General Social Survey (GSS) to inform AT research, no comprehensive historical analysis of AT using all TUS cycles has yet been conducted. This study addresses that gap with two objectives: to examine temporal trends in AT by destination, travel time, and demographic profiles; and to calibrate impedance functions for AT modes across survey cycles and destinations. After analyzing and processing over 13,500 AT recordins representing 28 million weighted episodes, we performed descriptive analyses and modeled 83 impedance functions. Results show that "Home," "Work or study," and "Grocery store" were the most frequent destinations. Walking dominated AT (over 90% of episodes), with median durations rising from 10 to 15 minutes in 2022; for cycling, durations rose from 15 to 30 minutes. Since 2010, the share of individuals with AT episodes declined, especially among Women+, reversing a previous gender pattern. The group cohort between 15 to 24 years remained as the most active, while adults older than 75 years showed steady increases. All fitted impedance functions deviated from exponential form, indicating that standard assumptions about patterns of distance decay functions may misrepresent AT behavior, particularly for short trips. These findings improve  our understanding of active travel trends and provide empirical support for AT accessibility measures and transportation policy.
+    Active transportation (AT), defined as self-powered modes such as walking and cycling, can help individuals meet the Canadian Society for Exercise Physiology’s recommendation of 150 minutes of moderate-to-vigorous physical activity per week. Despite the potential of Canada’s Time Use Survey (TUS) from the General Social Survey (GSS) to inform AT research, no comprehensive historical analysis of AT using all TUS cycles has yet been conducted. This study addresses that gap with two objectives: to examine temporal trends in AT by destination, travel time, and demographic profiles; and to calibrate impedance functions for AT modes across survey cycles and destinations. After analyzing and processing over 13,500 AT records representing 28 million weighted episodes, we performed descriptive analyses and modeled a wide range of impedance functions. Results show that "Home," "Work or study," and "Grocery store" were the most frequent destinations. Walking dominated AT (over 90% of episodes), with median durations rising from 10 to 15 minutes in 2022; for cycling, durations rose from 15 to 30 minutes. Since 2010, the share of individuals with AT episodes declined, especially among Women+, reversing a previous gender pattern. The group cohort between 15 to 24 years remained as the most active, while adults older than 75 years showed steady increases. All fitted impedance functions deviated from exponential form, indicating that standard assumptions about patterns of distance decay functions may misrepresent AT behavior, particularly for short trips. These findings improve  our understanding of active travel trends and provide empirical support for AT accessibility measures and transportation policy.
 
 keywords: 
   - Active mobility
@@ -28,9 +28,9 @@ keywords:
   - Cycling
   - Impedance function
   - Temporal evolution 
-journal: "An awesome journal"
+journal: "Journal of Transport Geography"
 date: "`r Sys.Date()`"
-linenumbers: true
+linenumbers: false
 numbersections: true
 bibliography: mybibfile2
 biblio-style: elsarticle-harv # author year style for natbib - use 'elsarticle-num' or 'elsarticle-num-names' for numbered scheme
@@ -980,7 +980,7 @@ For cycling trips (Figure \ref{fig:cycling-heatmap}), in 1992, the most common t
 
 We analyzed whether the temporal differences in travel times for the destinations were statistically significant. Only destinations that appear in more than one survey year can have their temporal evolution analyzed. Therefore, out of the twelve possible destinations, some cycling locations could not be temporally analyzed: "Business," "Neighborhood," and "Place of worship." In the case of walking trips, all destinations could be analyzed over time.
 
-After performing the Kruskal-Wallis test (to assess whether there was a statistically significant difference between the distributions of empirical travel time values, considering the time differences for each destination and the weight of each episode) and the pairwise Wilcoxon test, we were able to identify the destinations where a statistically significant difference was detected. For both AT modes, the possible destinations had at least two year with statistically significant difference in travel times (p-value \< 0.05, Appendix A). Considering the cycling mode and, for instance, the "Home" destination, there was a statistically significant difference for every possible combination of two survey cycles. This result indicates that the previously discussed increase in typical cycling travel time for home destinations when compared 2022 to 1992 is statistically significant.
+After performing the Kruskal-Wallis test (to assess whether there was a statistically significant difference between the distributions of empirical travel time values, considering the time differences for each destination and the weight of each episode) and the pairwise Wilcoxon test, we were able to identify the destinations where a statistically significant difference was detected. For both AT modes, the possible destinations had at least two year with statistically significant difference in travel times (p-value \< 0.05, Table A.1). Considering the cycling mode and, for instance, the "Home" destination, there was a statistically significant difference for every possible combination of two survey cycles. This result indicates that the previously discussed increase in typical cycling travel time for home destinations when compared 2022 to 1992 is statistically significant.
 
 ### Population with records of active trip
 
@@ -2154,5 +2154,110 @@ Regarding age cohorts, the youngest group (15 to 24 years) remained the most act
 The study underscores the importance of applying destination-specific impedance functions when measuring cost decay effects in accessibility analyses. To this end, we fitted 83 impedance functions for AT trips over a 30-year period, considering destination types and transportation modes. The results indicate that none of the fitted functions followed an exponential distribution, suggesting that commonly used functions in AT accessibility studies may not adequately capture actual behavior - especially for very short trips (under 5 minutes), which tend to be overrepresented in these models. Destinations with many episodes were best modeled using gamma functions, followed by lognormal and normal distributions. In contrast, destinations with fewer than six episodes were best represented by uniform distributions.
 
 Given similarities in urbanization processes between Canada, the United States, Australia, and West Europe, these findings may also be applicable to metropolitan areas in those regions. Finally, this study contributes to the ongoing discussion on AT, emphasizing its importance in promoting sustainable transportation planning.
+
+# CRediT authorship contribution statement {.unnumbered}
+*(include after the review)*
+
+# Funding sources {.unnumbered}
+
+This research was funded through project _project name provided after review)_, supported by the Social Sciences and Humanities Research Council of Canada.
+
+# Data availability {.unnumbered}
+
+We updated the `ActiveCA` R Package to include the methodology to obtain impedance functions from the raw data files (GSS surveys). Additionally, we created this paper using literate programming in which the R markdown code to fully reproduce this article is available on our GitHub repository *(include after the review)*.
+
+# Declaration of competing interest
+
+The authors declare no conflicts of interest 
+
+# Appendix {.unnumbered}
+
+```{r kruskal-walking, include = FALSE, warning= FALSE, cache=TRUE}
+result_kw <- data.frame()
+anos_possiveis <- c("1992", "1998", "2005", "2010", "2015", "2022")
+result_pw <- data.frame(matrix(ncol = length(anos_possiveis) + 2, nrow = 0))
+colnames(result_pw) <- c(anos_possiveis, "Mode", "Destination")
+
+for(mode in unique(gss_impedances_renamed$MODE)){
+  
+  for(destino in unique(gss_impedances_renamed[gss_impedances_renamed$MODE == mode, ]$dest_label)){
+    
+    subset <- gss_impedances_renamed[gss_impedances_renamed$MODE == mode & gss_impedances_renamed$dest_label == destino, ]
+    
+    if(length(unique(subset$YEAR)) > 1){
+      
+    subset <- subset %>% 
+      uncount(weights = round(WGHT_EPI))
+
+    kw <- kruskal.test(DURATION ~ YEAR, data = subset)
+    
+    pv_analise <- ifelse(kw$p.value <= 0.05, 'Significant', 'Not significant')
+    
+    kw_df <- data.frame("Mode" = mode, "Destination" = destino, "KWpvalue" = kw$p.value, "pvalue" = pv_analise)
+    
+    result_kw <- rbind(result_kw, kw_df)  
+    
+    if(kw$p.value <= 0.05){
+      
+      pw <- pairwise.wilcox.test(subset$DURATION, subset$YEAR, p.adjust.method = "bonferroni")
+      
+      pf_df <- as.data.frame(pw$p.value)
+
+      for (ano in anos_possiveis) {
+    if (!(ano %in% colnames(pf_df))) {
+      pf_df[[ano]] <- NA  
+    }
+  }
+  
+  pf_df <- pf_df[, anos_possiveis, drop = FALSE]
+  
+  pf_df$Mode <- mode
+  pf_df$Destination <- destino
+  
+  
+  result_pw <- rbind(result_pw, pf_df)
+    }
+      
+    }
+  }
+}
+
+result_pw$Year <- substr(rownames(result_pw), 1, 4)
+rownames(result_pw) <- NULL
+
+result_pw_style <- result_pw %>%
+  filter(rowSums(select(., `1992`:`2022`) <= 0.05, na.rm = TRUE) > 0)
+
+result_pw_style <- result_pw_style[, colSums(!is.na(result_pw_style)) > 0]
+
+result_pw_style <- result_pw_style[,c("Mode","Destination","Year","1992","1998","2005","2010","2015")]
+
+# result_pw_style <- result_pw_style %>%
+#   mutate(across(where(is.numeric), ~ ifelse(. > 0.05, NA, .)))
+
+# result_pw_style <- result_pw_style %>%
+#   mutate(across(where(is.numeric), ~ sprintf("%.2e", .x)))
+
+result_pw_style <- result_pw_style %>%
+  mutate(across(all_of(c("1992","1998","2005","2010","2015")),
+                ~ ifelse(is.na(.x), "", formatC(.x, format = "e", digits = 2))))
+
+table_stats <- result_pw_style %>%
+  kable(format = "latex",
+        booktabs = TRUE,
+        longtable = TRUE,
+        caption = paste0("\\label{tab:result-stats}P-values of the pairwise Wilcoxon test.")) %>% 
+  kable_styling(full_width = FALSE, 
+                latex_options = c("scale_down"),
+                font_size = 8) %>%
+  collapse_rows(columns = 1, valign = "top", latex_hline = "major")
+```
+
+\renewcommand{\thetable}{A.1}
+
+```{r pvalues-table,echo=FALSE, cache=FALSE, warning=FALSE}
+
+table_stats
+```
 
 # References {.unnumbered}

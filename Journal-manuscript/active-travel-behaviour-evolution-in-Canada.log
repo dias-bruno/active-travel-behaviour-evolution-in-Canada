@@ -1,28 +1,28 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.6.20)  24 JUN 2025 12:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.2)  7 JUL 2025 15:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **active-travel-behaviour-evolution-in-Canada.tex
 (./active-travel-behaviour-evolution-in-Canada.tex
 LaTeX2e <2025-06-01> patch level 1
-L3 programming layer <2025-05-26>
+L3 programming layer <2025-06-09>
 (./elsarticle.cls
 Document Class: elsarticle 2020/11/20, 3.3: Elsevier Ltd
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2025-05-26 L3 programming layer (loader) 
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
-File: l3backend-pdftex.def 2025-04-14 L3 backend support: PDF output (pdfTeX)
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2025-06-09 L3 programming layer (loader) 
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2025-06-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count275
-)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+)) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
 Package: xparse 2024-08-16 L3 Experimental document command parser
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 Package: etoolbox 2025/02/11 v2.5l e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count276
 )
 \@bls=\dimen148
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/article.cls
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/size10.clo
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count277
@@ -36,20 +36,20 @@ File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 \abovecaptionskip=\skip49
 \belowcaptionskip=\skip50
 \bibindent=\dimen149
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/keyval.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks17
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/graphics.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/trig.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen150
@@ -74,7 +74,7 @@ File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
 \@enLab=\toks19
 \@sep=\skip51
 \@@sep=\skip52
-(./active-travel-behaviour-evolution-in-Canada.spl) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/natbib/natbib.sty
+(./active-travel-behaviour-evolution-in-Canada.spl) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/natbib/natbib.sty
 Package: natbib 2010/09/13 8.31b (PWD, AO)
 \bibhang=\skip53
 \bibsep=\skip54
@@ -84,11 +84,11 @@ LaTeX Info: Redefining \cite on input line 694.
 \splwrite=\write3
 \openout3 = `active-travel-behaviour-evolution-in-Canada.spl'.
 
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
 \Gm@cnth=\count292
@@ -105,12 +105,12 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 \Gm@dimlist=\toks20
 )
 \appnamewidth=\dimen163
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/url/url.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip17
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2024/12/21 v2.1c Standard LaTeX package
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lm/lmodern.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/lmodern.sty
 Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
@@ -144,9 +144,9 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \@emptytoks=\toks21
 \symAMSa=\mathgroup4
@@ -154,20 +154,20 @@ Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+)) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2025/06/16 v2.17y AMS math features
 \@mathmargin=\skip55
 For additional information on amsmath, use the `?' option.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks22
 \ex@=\dimen164
-)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty
+)) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen165
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
 \inf@bad=\count295
@@ -217,13 +217,13 @@ LaTeX Info: Redefining \Relbar on input line 970.
 \mathdisplay@stack=\toks26
 LaTeX Info: Redefining \[ on input line 2949.
 LaTeX Info: Redefining \] on input line 2950.
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lineno/lineno.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lineno/lineno.sty
 Package: lineno 2025/05/13 line numbers on paragraphs v5.5
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
 ))
 \linenopenalty=\count307
@@ -241,11 +241,11 @@ Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
 \bframesep=\dimen177
 \bframebox=\box61
 \@LN@amsmath@ams@eqpen=\count314
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/iftex/ifxetex.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/ifxetex.sty
 Package: ifxetex 2019/10/25 v0.7 ifxetex legacy package. Use iftex instead.
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/iftex/ifluatex.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/ifluatex.sty
 Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/fixltx2e.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/fixltx2e.sty
 Package: fixltx2e 2016/12/29 v2.1a fixes to LaTeX (obsolete)
 Applying: [2015/01/01] Old fixltx2e package on input line 46.
 
@@ -254,49 +254,49 @@ Package fixltx2e Warning: fixltx2e is not required with releases after 2015
 (fixltx2e)                See the latexrelease package for details.
 
 Already applied: [0000/00/00] Old fixltx2e package on input line 53.
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/inputenc.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks28
 \inpenc@posthook=\toks29
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2025-06-21 v7.01n Hypertext links for LaTeX
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
 Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty
+)) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count315
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
 )
 \@linkdim=\dimen178
 \Hy@linkcounter=\count316
 \Hy@pagecounter=\count317
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2025-06-21 v7.01n Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
 \Hy@SavedSpaceFactor=\count318
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def
 File: puenc.def 2025-06-21 v7.01n Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
@@ -312,9 +312,9 @@ Package hyperref Info: Bookmarks ON on input line 4448.
 \c@Hy@tempcnt=\count319
 LaTeX Info: Redefining \url on input line 4787.
 \XeTeXLinkMargin=\dimen179
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
 ))
 \Fld@menulength=\count320
@@ -332,13 +332,13 @@ Package hyperref Info: PDF/A mode OFF on input line 6096.
 \c@Hfootnote=\count323
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
 File: hpdftex.def 2025-06-21 v7.01n Hyperref driver for pdfTeX
 \Fld@listcount=\count324
 \c@bookmark@seq@number=\count325
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 284.
@@ -351,15 +351,15 @@ Package hyperref Warning: Option `bookmarks' has already been used,
 (hyperref)                setting the option has no effect on input line 51.
 
 Package hyperref Info: Option `colorlinks' set `false' on input line 51.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pdflscape/pdflscape.sty
 Package: pdflscape 2025-06-23 v0.14 Display of landscape pages in PDF
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
 Package: pdflscape-nometadata 2025-06-23 v0.14 Display of landscape pages in PDF (HO)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/lscape.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/lscape.sty
 Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 )
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
-)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.sty
+)) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \heavyrulewidth=\dimen182
 \lightrulewidth=\dimen183
@@ -378,7 +378,7 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@thisruleclass=\count328
 \@lastruleclass=\count329
 \@thisrulewidth=\dimen194
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2024-12-18 v4.23 Multi-page Table package (DPC)
 \LTleft=\skip59
 \LTright=\skip60
@@ -396,7 +396,7 @@ Package: longtable 2024-12-18 v4.23 Multi-page Table package (DPC)
 \c@LT@tables=\count333
 \c@LT@chunks=\count334
 \LT@p@ftn=\toks30
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/array.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/array.sty
 Package: array 2025/06/08 v2.6j Tabular extension package (FMi)
 \col@sep=\dimen196
 \ar@mcellbox=\box67
@@ -405,41 +405,41 @@ Package: array 2025/06/08 v2.6j Tabular extension package (FMi)
 \extratabsurround=\skip63
 \backup@length=\skip64
 \ar@cellbox=\box68
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/multirow/multirow.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/multirow/multirow.sty
 Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
 \multirow@colwidth=\skip65
 \multirow@cntb=\count335
 \multirow@dima=\skip66
 \bigstrutjot=\dimen198
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/wrapfig/wrapfig.sty
 \wrapoverhang=\dimen199
 \WF@size=\dimen256
 \c@WF@wrappedlines=\count336
 \WF@box=\box69
 \WF@everypar=\toks32
 Package: wrapfig 2003/01/31  v 3.6
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/float/float.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count337
 \float@exts=\toks33
 \float@box=\box70
 \@float@everytoks=\toks34
 \@floatcapt=\box71
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/colortbl/colortbl.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/colortbl/colortbl.sty
 Package: colortbl 2024/10/29 v1.0k Color table columns (DPC)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/color.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/color.sty
 Package: color 2025/01/14 v1.3e Standard LaTeX Color (DPC)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 149.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx))
 \everycr=\toks35
 \minrowclearance=\skip67
 \rownum=\count338
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tabu/tabu.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tabu/tabu.sty
 Package: tabu 2019/01/11 v2.9 - flexible LaTeX tabulars (FC+tabu-fixed)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/varwidth/varwidth.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/varwidth/varwidth.sty
 Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 \@vwid@box=\box72
 \sift@deathcycles=\count339
@@ -469,18 +469,18 @@ Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 \tabu@hleads=\box75
 \tabu@vleads=\box76
 \tabu@cellskip=\skip68
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/threeparttable/threeparttable.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/threeparttable/threeparttable.sty
 Package: threeparttable 2003/06/13  v 3.0
 \@tempboxb=\box77
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/threeparttablex/threeparttablex.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/threeparttablex/threeparttablex.sty
 Package: threeparttablex 2013/07/23 v0.3 by daleif
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/environ/environ.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/environ/environ.sty
 Package: environ 2014/05/04 v0.3 A new way to define environments
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/trimspaces/trimspaces.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/trimspaces/trimspaces.sty
 Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 ))
 \TPTL@width=\skip69
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/ulem/ulem.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/ulem/ulem.sty
 \UL@box=\box78
 \UL@hyphenbox=\box79
 \UL@skip=\skip70
@@ -491,19 +491,19 @@ Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 \ULC@box=\box80
 Package: ulem 2019/11/18
 \ULdepth=\dimen270
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/makecell/makecell.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/makecell/makecell.sty
 Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
 \rotheadsize=\dimen271
 \c@nlinenum=\count347
 \TeXr@lab=\toks39
-) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/xcolor/xcolor.sty
+) (c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 274.
 LaTeX Info: Redefining \color on input line 762.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
 Package xcolor Info: Model `RGB' extended on input line 1365.
@@ -515,7 +515,7 @@ Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
 )
 LaTeX Font Info:    Trying to load font information for T1+lmr on input line 82.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lm/t1lmr.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (./active-travel-behaviour-evolution-in-Canada.aux
 
@@ -542,10 +542,10 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 82.
 LaTeX Font Info:    ... okay on input line 82.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 82.
 LaTeX Font Info:    ... okay on input line 82.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 *geometry* driver: auto-detecting
@@ -590,19 +590,19 @@ Package hyperref Info: Link coloring OFF on input line 82.
 \openout4 = `active-travel-behaviour-evolution-in-Canada.out'.
 
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 141.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 141.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 141.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 141.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
@@ -612,11 +612,11 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 141.
 LaTeX Font Info:    Trying to load font information for U+msa on input line 141.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 141.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
@@ -624,7 +624,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <6> on input line 141.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 141.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
@@ -651,7 +651,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 [1
 
-{c:/ProgramData/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
+{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
 
 [2]
 
@@ -659,13 +659,13 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 [4]
 
-[5{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
+[5{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 535.
-(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
+(c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
-[6{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
+[6{c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
 
 [7]
 
@@ -873,24 +873,24 @@ l.1642
 [31] (./active-travel-behaviour-evolution-in-Canada.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
-L3 programming layer <2025-05-26>
+L3 programming layer <2025-06-09>
  ***********
 
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `active-travel-behaviour-evolution-in-Canada.out' has not changed.
-(rerunfilecheck)             Checksum: 0863BCE835DB5BA8695A5B4AE4A9D272;4053.
+(rerunfilecheck)             Checksum: 3277E413F7805BC71589D216A7B23133;4004.
  ) 
 Here is how much of TeX's memory you used:
- 14230 strings out of 469867
- 224085 string characters out of 5484221
- 682900 words of memory out of 5000000
- 42121 multiletter control sequences out of 15000+600000
+ 14229 strings out of 469869
+ 227621 string characters out of 5482772
+ 681879 words of memory out of 5000000
+ 42118 multiletter control sequences out of 15000+600000
  685700 words of font info for 82 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  72i,14n,79p,674b,683s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt8.pfb>
-Output written on active-travel-behaviour-evolution-in-Canada.pdf (31 pages, 3951913 bytes).
+<c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/brdia/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt8.pfb>
+Output written on active-travel-behaviour-evolution-in-Canada.pdf (31 pages, 3952079 bytes).
 PDF statistics:
  787 PDF objects out of 1000 (max. 8388607)
  692 compressed objects within 7 object streams

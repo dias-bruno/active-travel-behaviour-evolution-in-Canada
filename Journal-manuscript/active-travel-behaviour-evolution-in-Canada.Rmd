@@ -323,7 +323,7 @@ Our research advances the current understanding of active travel behavior by ana
 
 # Theoretical background
 
-## Evolution of activity transportation in Canada
+## Evolution of active travel in Canada
 
 When analyzing patterns and trends in walking and cycling behavior among Canadian adults on a national scale, two important studies are particularly prominent. The first, conducted by Bryan et al. [-@bryan2009], examined walking behaviours among Canadian adults aged 18 to 55 using nationally representative cross-sectional data from the National Population Health Survey and the Canadian Community Health Survey spanning from 1994/95 to 2007. The authors calculated the weighted and age-standardized prevalence of walking for exercise, walking duration, regular walking (defined as walking at least four times per week), and whether 100% of leisure-time physical activity energy expenditure (LTPAEE) was derived from walking. Overall, 70% of Canadian adults reported walking for exercise at least once during the previous three months; however, only 30% reported walking regularly - a figure that remained relatively stable since 2001. Regular walking was more commonly reported among women, older adults, individuals with lower body mass index (BMI), and those in lower-income households. Similarly, women, older adults, and lower-income Canadians were more likely to derive 100% of their total LTPAEE from walking compared to men, younger adults, and those in higher-income groups. The study concluded that while walking is a widely practiced form of physical activity across demographic groups, the prevalence of regular walking varies considerably by age, sex, BMI, and income.
 
@@ -446,7 +446,7 @@ Statistical analysis was used to characterize active travel episodes using cross
 
 After assessing the active travel episodes, we analyzed the population with records of active travel for each year of the analysis, stratifying the analysis by gender and age group. To stratify by gender, we adopted the definition used in the most recent TUS (2022), which was the first in the series to consider gender - recognizing a broader spectrum of gender identities - instead of biological sex, which had previously been limited to female and male categories. In the 2022 survey, due to the small size of the non-binary population, data aggregation was necessary to protect the confidentiality of respondents [@statisticscanada2025]. As a result, information from the TUS 2022 is disseminated using a two-category gender variable. In this framework, individuals identifying as non-binary are distributed across the two other gender categories and are denoted by the "+" symbol. The category "Men+" includes men (and/or boys) as well as some non-binary persons, and the category women+ includes women (and/or girls) as well as some non-binary persons.
 
-We recognize that biological sex does not always align with gender identity. However, to enable comparison across survey years, we assumed that individuals recorded as "female" in earlier surveys correspond to women+, and those recorded as "male" correspond to "Men+". We acknowledge that this approach does not fully capture gender diversity, particularly for trans and non-binary individuals, due to limitations in how gender was recorded in earlier surveys.
+We recognize that biological sex does not always align with gender identity. However, to enable comparison across survey years, we assumed that individuals recorded as "female" in earlier surveys correspond to women+, and those recorded as "male" correspond to men+. We acknowledge that this approach does not fully capture gender diversity, particularly for trans and non-binary individuals, due to limitations in how gender was recorded in earlier surveys.
 
 We also stratified the analysis by age group. To ensure the consistency across all survey years, we defined the following cohorts: "15 to 24 years", "25 to 34 years", "35 to 44 years", "45 to 54 years", "55 to 64 years", "65 to 74 years", and "75 years and over".
 
@@ -549,6 +549,8 @@ gss_summary_pivot_long <- gss_summary %>%
 #   add_header_above(c(" " = 1, "1992" = 2, "1998" = 2, "2005" = 2, "2010" = 2, "2015"=2, "2022"=2, "Total" = 2))
 
 gss_totals_table <- gss_summary_pivot_long %>% 
+  mutate(across(c(Cycling_Count, Walking_Count, Total_Count), 
+                ~ number(., accuracy = 1, big.mark = ","))) %>% 
   kable(format = "latex", 
         booktabs = TRUE, 
         longtable = FALSE,
@@ -894,7 +896,7 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/destination_media
 #        dpi = 300)
 ```
 
-```{r figure-boxplot, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination"}
+```{r figure-boxplot, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination."}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/destination_boxplots.jpg"))
 ```
@@ -966,12 +968,12 @@ ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/cycling_hm_fig.jp
        dpi = 300)
 ```
 
-```{r walking-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination"}
+```{r walking-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination."}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/walking_hm_fig.jpg"))
 ```
 
-```{r cycling-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination"}
+```{r cycling-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination."}
 
 knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_hm_fig.jpg"))
 ```
@@ -1101,11 +1103,11 @@ The share of the population with active trip records varied between 6.93%, value
 pop_stats_table
 ```
 
-Our results show a decrease in the active population since 2010 for both genders (Figure \ref{fig:gender-perc-figure}). However, the decline was more pronounced among women+ than men+, leading to a shift in the historical pattern in which women+ had been the more active gender in Canada [@bryan2009; @borhani2024]. Women+ peaked at 14.82% of the population with a record of active episodes in 2010 but dropped to the second-lowest level of 8.84% in 2022 - only higher than the 7.66% recorded in 1998. In contrast, Men+, who also peaked in 2010 with 15.31% of the population reporting active episodes, declined to 10.05% in 2022, thus becoming the gender with the higher share of the active population.
+Our results show a decrease in the active population since 2010 for both genders (Figure \ref{fig:gender-perc-figure}). However, the decline was more pronounced among women+ than men+, leading to a shift in the historical pattern in which women+ had been the more active gender in Canada [@bryan2009; @borhani2024]. Women+ peaked at 14.82% of the population with a record of active episodes in 2010 but dropped to the second-lowest level of 8.84% in 2022 - only higher than the 7.66% recorded in 1998. In contrast, men+, who also peaked in 2010 with 15.31% of the population reporting active episodes, declined to 10.05% in 2022, thus becoming the gender with the higher share of the active population.
 
 This result aligns with a trend identified by Borhani et al. [-@borhani2024]. In their study, the authors found that a higher proportion of females than males reported engaging in any form of AT, whether walking or cycling, in the last 7 days or 3 months. However, they also observed that this gender gap appears to have narrowed over time.
 
-When analyzing by transportation mode, in all survey years a higher proportion of men+ reported at least one cycling episode on the previous day compared to women+ (ranging from 1.18% to 1.87% for men+ and 0.18% to 0.66% for women+). This pattern of more men+ participating in cycling activities when compared to women+ is consistent with previous research [@heesch2012; @bryan2009; @borhani2024]. Conversely, women+ historically reported more walking trips than men+, also consistent with previous research [@goel2023; @pollard2017; @bryan2009; @borhani2024], but this pattern changed in the most recent survey (2022), reinforcing a trend already present in 2015. In 2022, 8.43% of women+ reported at least one walking episode, compared to 8.89% of Men+.
+When analyzing by transportation mode, in all survey years a higher proportion of men+ reported at least one cycling episode on the previous day compared to women+ (ranging from 1.18% to 1.87% for men+ and 0.18% to 0.66% for women+). This pattern of more men+ participating in cycling activities when compared to women+ is consistent with previous research [@heesch2012; @bryan2009; @borhani2024]. Conversely, women+ historically reported more walking trips than men+, also consistent with previous research [@goel2023; @pollard2017; @bryan2009; @borhani2024], but this pattern changed in the most recent survey (2022), reinforcing a trend already present in 2015. In 2022, 8.43% of women+ reported at least one walking episode, compared to 8.89% of men+.
 
 ```{r gender-graphs, include = FALSE}
 # Transforming the previous table in a long table to create graphs
@@ -1817,7 +1819,9 @@ selected_functions <- gss_impedances_renamed %>%
 walking_functions_table <- selected_functions %>%
   arrange(Year, Destination) %>% 
   filter(Mode == 'Walking') %>% 
-  select(Year, Destination, Function,est_1,est_2, AIC, count) %>%
+  select(Year, Destination, Function,est_1,est_2, AIC, count) %>% 
+  mutate(across(c(AIC, count), 
+                ~ number(., accuracy = 1, big.mark = ","))) %>% 
   kable(format = "latex",
         booktabs = TRUE,
         caption = paste0("\\label{tab:walking-functions-tab}Impedance functions and AIC for walking trips."), 
@@ -1833,6 +1837,8 @@ biking_functions_table <- selected_functions %>%
   arrange(Year, Destination) %>% 
   filter(Mode == 'Cycling') %>% 
   select(Year, Destination, Function, est_1, est_2, AIC, count) %>%
+  mutate(across(c(AIC, count), 
+                ~ number(., accuracy = 1, big.mark = ","))) %>% 
   kable(format = "latex",
         booktabs = TRUE,
         caption = paste0("\\label{tab:cycling-functions-tab}Impedance functions and AIC for cycling trips."), 
@@ -2002,7 +2008,7 @@ combined_plot <- gss_impedances_renamed %>%
 }
 ```
 
-```{r outdoors-impedance-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Empirical data and impedance functions fitted for walking trips with `work or school` as destination."), fig.align="center"}
+```{r outdoors-impedance-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Empirical data and impedance functions fitted for walking trips for Outdoors destination."), fig.align="center"}
 # selecting mode and destination to display impedance functions
 mode <- "Walking" 
 destino <- "Outdoors"
@@ -2129,7 +2135,7 @@ The main objectives of this study were to provide an overview of AT in Canadian 
 
 <!-- episodes  -->
 
-The rate of active trips per person with active record was around two trips, with an increasing trend in active episodes per person being observed for both walking and cycling. Historically, men+ recorded more active episodes than Women+, but in 2022 this trend reversed: men+ averaged 2.07 episodes, while women+ averaged 2.11. This change was driven by a decrease in walking episodes among men+ (from 2.16 in 2015 to 2.07 in 2022) and an increase among women+ (from 1.92 to 2.11 in the same period).
+The rate of active trips per person with active record was around two trips, with an increasing trend in active episodes per person being observed for both walking and cycling. Historically, men+ recorded more active episodes than women+, but in 2022 this trend reversed: men+ averaged 2.07 episodes, while women+ averaged 2.11. This change was driven by a decrease in walking episodes among men+ (from 2.16 in 2015 to 2.07 in 2022) and an increase among women+ (from 1.92 to 2.11 in the same period).
 
 <!-- durations  -->
 
@@ -2145,7 +2151,7 @@ The share of the population with at least one recorded active trip ranged from a
 
 <!--  About 84% of individuals who walked and 90% who cycled made only one trip. The maximum number of trips recorded by a single individual was 10 (in 1992, 2005, and 2010) for walking and 4 (in 2005) for cycling.  -->
 
-Since 2010, the active population has declined for both genders, with a steeper decrease among women+. This reversed a long-standing pattern in which women+ had higher AT participation than Men+. In 2022, men+ showed higher prevalence than women+ regardless of mode, with 10.05% for men+ and 8.84% for Women+. In summary, women+ made more active trips, while men+ had higher overall participation in AT. 
+Since 2010, the active population has declined for both genders, with a steeper decrease among women+. This reversed a long-standing pattern in which women+ had higher AT participation than men+. In 2022, men+ showed higher prevalence than women+ regardless of mode, with 10.05% for men+ and 8.84% for women+. In summary, women+ made more active trips, while men+ had higher overall participation in AT. 
 
 Regarding age cohorts, the youngest group (15 to 24 years) remained the most active, with a prevalence of 21.47% in 2022. This was the only group to show increased participation over the past decade, up from 17.91% in 2015. Generally, AT prevalence decreases with age. However, in both 2005 and 2022, the oldest group (75 years and older) reported the third-highest AT prevalence (7.02%) and showed a steady increase in active episodes since 2010.
 
@@ -2166,9 +2172,9 @@ This research was funded through project _project name provided after review)_, 
 
 We updated the `ActiveCA` R Package to include the methodology to obtain impedance functions from the raw data files (GSS surveys). Additionally, we created this paper using literate programming in which the R markdown code to fully reproduce this article is available on our GitHub repository *(include after the review)*.
 
-# Declaration of competing interest
+# Declaration of competing interest {.unnumbered}
 
-The authors declare no conflicts of interest 
+The authors declare no conflicts of interest.
 
 # Appendix {.unnumbered}
 

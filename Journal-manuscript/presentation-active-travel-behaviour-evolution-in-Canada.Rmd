@@ -1,0 +1,634 @@
+---
+title: A historical analysis of the evolution of active travel behaviour in Canada
+author:
+  - name: Alice Anonymous
+    email: alice@example.com
+    affiliation: Some Institute of Technology
+    correspondingauthor: true
+  - name: Bob Security
+    email: bob@example.com
+    affiliation: Some Institute of Technology
+  - name: Cat Memes
+    email: cat@example.com
+    affiliation: Some Institute of Technology
+address:
+  - code: Some Institute of Technology
+    organization: Big Wig University
+    addressline: 1 main street
+    city: Gotham
+    state: State
+    postcode: 123456
+    country: United States
+abstract: |
+    Active transportation (AT), defined as self-powered modes such as walking and cycling, can help individuals meet the Canadian Society for Exercise Physiology’s recommendation of 150 minutes of moderate-to-vigorous physical activity per week. Despite the potential of Canada’s Time Use Survey (TUS) from the General Social Survey (GSS) to inform AT research, no comprehensive historical analysis of AT using all TUS cycles has yet been conducted. This study addresses that gap with two objectives: to examine temporal trends in AT by destination, travel time, and demographic profiles; and to calibrate impedance functions for AT modes across survey cycles and destinations. After analyzing and processing over 13,500 AT records representing 28 million weighted episodes, we performed descriptive analyses and modeled a wide range of impedance functions. Results show that "Home," "Work or study," and "Grocery store" were the most frequent destinations. Walking dominated AT (over 90% of episodes), with median durations rising from 10 to 15 minutes in 2022; for cycling, durations rose from 15 to 30 minutes. Since 2010, the share of individuals with AT episodes declined, especially among Women+, reversing a previous gender pattern. The group cohort between 15 to 24 years remained as the most active, while adults older than 75 years showed steady increases. All fitted impedance functions deviated from exponential form, indicating that standard assumptions about patterns of distance decay functions may misrepresent AT behavior, particularly for short trips. These findings improve  our understanding of active travel trends and provide empirical support for AT accessibility measures and transportation policy.
+
+keywords: 
+  - Active mobility
+  - Walking
+  - Cycling
+  - Impedance function
+  - Temporal evolution 
+journal: "Journal of Transport Geography"
+date: "`r Sys.Date()`"
+linenumbers: false
+numbersections: true
+bibliography: mybibfile2
+biblio-style: elsarticle-harv # author year style for natbib - use 'elsarticle-num' or 'elsarticle-num-names' for numbered scheme
+classoption: preprint, 3p, authoryear # remove authoryear is not using `elsarticle-harv`
+# Use a CSL with `citation_package = "default"`
+# csl: https://www.zotero.org/styles/elsevier-harvard
+output: 
+  rticles::elsevier_article:
+    keep_tex: true
+    citation_package: natbib
+header-includes:
+- \usepackage{pdflscape}
+---
+
+```{r install-activeCA, include = FALSE}
+# install.packages("pak")
+# pak::pak("dias-bruno/ActiveCA")
+opts <- options(knitr.kable.NA = "")
+
+knitr::knit_hooks$set(inline = function(x) {
+   if (is.numeric(x)) {
+     format(x, big.mark = ",", scientific = FALSE)
+   } else {
+     x
+   }
+ })
+
+rm(list=ls())
+```
+
+```{r load-packages, include=FALSE, cache=FALSE}
+# Load packages
+library(ActiveCA)
+library(here)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(kableExtra)
+library(reshape2)
+library(rlang)
+library(scales)
+library(gridExtra)
+library(ggpubr)
+library(grid)
+library(stats)
+library(Hmisc)
+library(stringr)
+library(patchwork)
+```
+
+```{r load-data, include = FALSE}
+# Load data
+data(gss_impedances)
+data(gss_episodes)
+data(gss_main_1992)
+data(gss_main_1998)
+data(gss_main_2005)
+data(gss_main_2010)
+data(gss_main_2015)
+data(gss_main_2022)
+```
+
+```{r renaming-destinations, echo=FALSE, cache=FALSE, include=FALSE}
+# Filtering episodes and impedances functions 
+gss_episodes <- gss_episodes %>%
+  filter(YEAR > 1986)
+  
+gss_impedances <- gss_impedances %>%
+  filter(YEAR > 1986)
+
+# Renaming 'dest_label' and 'orig_label' values to reduce table space
+gss_impedances_renamed <- gss_impedances %>%
+  mutate(dest_label = case_when(
+    dest_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    dest_label == "Restaurant, bar or club" ~ "Restaurant",
+    dest_label == "Sports centre, field or arena" ~ "Sport area",
+    dest_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    dest_label == "In the neighbourhood" ~ "Neighbourhood",
+    dest_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ dest_label  # Keep all other values as they are
+  ), 
+  orig_label = case_when(
+    orig_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    orig_label == "Restaurant, bar or club" ~ "Restaurant",
+    orig_label == "Sports centre, field or arena" ~ "Sport area",
+    orig_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    orig_label == "In the neighbourhood" ~ "Neighbourhood",
+    orig_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ orig_label))
+
+# Renaming 'dest_label' and 'orig_label' values to reduce table space
+gss_episodes_renamed <- gss_episodes %>%
+  mutate(dest_label = case_when(
+    dest_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    dest_label == "Restaurant, bar or club" ~ "Restaurant",
+    dest_label == "Sports centre, field or arena" ~ "Sport area",
+    dest_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    dest_label == "In the neighbourhood" ~ "Neighbourhood",
+    dest_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ dest_label  # Keep all other values as they are
+  ), 
+  orig_label = case_when(
+    orig_label == "Grocery store, other stores or mall" ~ "Grocery store",
+    orig_label == "Restaurant, bar or club" ~ "Restaurant",
+    orig_label == "Sports centre, field or arena" ~ "Sport area",
+    orig_label == "Medical, dental or other health clinic" ~ "Health clinic",
+    orig_label == "In the neighbourhood" ~ "Neighbourhood",
+    orig_label == "Library, museum or theatre" ~ "Cultural venues",
+    TRUE ~ orig_label))
+```
+
+```{r main-episodes-junction, echo=FALSE, cache=FALSE, include=FALSE}
+values_ordered <- c("15 to 24 years","25 to 34 years","35 to 44 years",
+                    "45 to 54 years", "55 to 64 years","65 to 74 years",
+                    "75 years and over")
+
+# 1992
+gss_main_1992_file <- gss_main_1992 %>%
+  filter(DVCMA == 'CMA') %>% # Selecting only people living in CMA/CA
+  dplyr::select(SEQNUM, FWGHT, DVSEX, DVAGEGR) %>%
+  rename(PUMFID = SEQNUM, 
+         WGHT_PER = FWGHT, 
+         GENDER2 = DVSEX, 
+         AGE = DVAGEGR) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "1992",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 1992, 
+         AGE = case_when(
+           AGE == "15 to 17 years" ~ "15 to 24 years",
+           AGE == "18 to 19 years" ~ "15 to 24 years",
+           AGE == "20 to 24 years" ~ "15 to 24 years",
+           AGE == "25 to 29 years" ~ "25 to 34 years",
+           AGE == "30 to 34 years" ~ "25 to 34 years",
+           AGE == "35 to 39 year" ~ "35 to 44 years",
+           AGE == "40 to 44 years" ~ "35 to 44 years",
+           AGE == "45 to 49 years" ~ "45 to 54 years",
+           AGE == "50 to 54 years" ~ "45 to 54 years",
+           AGE == "55 to 59 year" ~ "55 to 64 years",
+           AGE == "60 to 64 years" ~ "55 to 64 years",
+           AGE == "65 to 69 years" ~ "65 to 74 years",
+           AGE == "70 to 74 years" ~ "65 to 74 years",
+           AGE == "75 to 79 year" ~ "75 years and over",
+           AGE == "80 years and over" ~ "75 years and over"), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE),
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE))
+
+# 1998
+gss_main_1998_file <- gss_main_1998 %>%
+  filter(CMAPRV == 'CMA') %>% # Selecting only people living in CMA/CA
+  dplyr::select(RECID, WGHTFIN, SEX, AGEGR10) %>%
+  rename(PUMFID = RECID, 
+         WGHT_PER = WGHTFIN, 
+         GENDER2 = SEX, 
+         AGE = AGEGR10) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "1998",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 1998, 
+         AGE = case_when(
+           AGE == "15 to 24 years" ~ "15 to 24 years",
+           AGE == "25 to 34 years" ~ "25 to 34 years",
+           AGE == "35 to 44 years" ~ "35 to 44 years",
+           AGE == "45 to 54 years" ~ "45 to 54 years",
+           AGE == "55 to 64 years" ~ "55 to 64 years",
+           AGE == "65 to 74 years" ~ "65 to 74 years",
+           AGE == "75 to 84 years" ~ "75 years and over",
+           AGE == "85 years and over" ~ "75 years and over"), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE),
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE))
+
+# 2005
+gss_main_2005_file <- gss_main_2005 %>% 
+  filter(LUC_RST == "CMA/CA") %>% # Selecting only people living in CMA/CA
+  dplyr::select(RECID, WGHT_PER, SEX, AGEGR10) %>%
+  rename(PUMFID = RECID, 
+         WGHT_PER = WGHT_PER, 
+         AGE = AGEGR10,
+         GENDER2 = SEX) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "2005",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 2005,
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE))
+
+# 2010
+gss_main_2010_file <- gss_main_2010 %>% 
+  filter(LUC_RST == "CMA/CA") %>% # Selecting only people living in CMA/CA
+  dplyr::select(RECID, WGHT_PER, SEX, AGEGR10) %>%
+  rename(PUMFID = RECID, 
+         WGHT_PER = WGHT_PER, 
+         AGE = AGEGR10,
+         GENDER2 = SEX) %>%
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "2010",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 2010,
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE))
+
+# 2015
+gss_main_2015_file <- gss_main_2015 %>% 
+  filter(LUC_RST == "CMA/CA") %>% # Selecting only people living in CMA/CA
+  dplyr::select(PUMFID, WGHT_PER, SEX, AGEGR10) %>%
+  rename(AGE = AGEGR10, 
+         GENDER2 = SEX) %>% 
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "2015",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 2015,
+         GENDER2 = case_when(
+           GENDER2 == "Male" ~ "Men+",
+           GENDER2 == "Female" ~ "Women+"),
+         GENDER2 = factor(GENDER2, levels = c("Men+", "Women+"), ordered = FALSE), 
+           AGE = factor(AGE, levels = values_ordered, ordered = TRUE))
+
+# 2022
+gss_main_2022_file <- gss_main_2022 %>% 
+  filter(LUC_RST == "CMA/CA") %>% # Selecting only people living in CMA/CA
+  dplyr::select(PUMFID, WGHT_PER, GENDER2, AGEGR10) %>%
+  rename(AGE = AGEGR10) %>% 
+  mutate(dest_label = list(unique(
+    gss_episodes_renamed[gss_episodes_renamed$YEAR == "2022",]$dest_label))) %>%
+  unnest(dest_label) %>%
+  mutate(YEAR = 2022)
+
+# Creating a new file with all main files 
+main_file <- rbind(gss_main_1992_file, gss_main_1998_file, gss_main_2005_file, 
+                   gss_main_2010_file, gss_main_2015_file, gss_main_2022_file)
+
+# Counting walking episodes 
+act_walk <- gss_episodes_renamed %>% 
+  filter(YEAR > 1986 & MODE == 'Walking') %>%
+  group_by(PUMFID, YEAR, MODE, dest_label) %>% 
+  summarise(Count = n(), Total_eps = sum(WGHT_EPI))
+
+# Counting cycling episodes 
+act_bike <- gss_episodes_renamed %>% 
+  filter(YEAR > 1986 & MODE == 'Cycling') %>%
+  group_by(PUMFID, YEAR, MODE, dest_label) %>% 
+  summarise(Count = n(), Total_eps = sum(WGHT_EPI))
+
+# Joining walking and cycling episodes
+act_ep_counts <- rbind(act_bike, act_walk)
+
+# Bring the counts of activity episodes to the person's file
+main_act_eps <-  main_file %>%
+  mutate(MODE = list(c("Walking", "Cycling"))) %>%
+  unnest(MODE) %>%
+  left_join(act_ep_counts, by = c("PUMFID", "YEAR", "MODE","dest_label")) %>%
+  mutate(Count = replace_na(Count, 0), Total_eps = replace_na(Total_eps, 0))
+```
+
+## Analyzing active travel episodes
+
+## Estimating impedance function parameters
+
+```{r echo=FALSE, cache=FALSE, include=FALSE}
+less_than100 <- gss_episodes %>% 
+  filter(DURATION > 100 & YEAR > 1986) %>%
+  summarise(total_eps = n(),
+            total_WGHT_EPI = sum(WGHT_EPI, na.rm = TRUE))
+
+
+all_episodes <- gss_episodes %>% 
+  filter(YEAR > 1986) %>%
+  summarise(total_eps = n(),
+            total_WGHT_EPI = sum(WGHT_EPI, na.rm = TRUE))
+  
+```
+
+# Results and discussion
+
+## Descriptive analysis
+
+### Active transportation episodes
+```{r}
+max_duration <- 100
+
+gss_impedances_renamed <- gss_impedances_renamed %>% 
+  filter(DURATION <= max_duration & 
+           DURATION > 0 & 
+           YEAR > 1986 & 
+           Pop_centre %in% c("CMA/CA", "CMA")) %>%
+  mutate(WGHT_EPI = ifelse(is.na(WGHT_EPI), 1, WGHT_EPI)) 
+```
+
+
+```{r destinations-percentual, echo=FALSE, cache=FALSE, include=FALSE}
+# summarizing episodes by mode, year and destination
+main_act_eps_summary <- main_act_eps %>%
+   group_by(Count, MODE, YEAR, dest_label) %>%
+   summarise(WGHT_PER_SUM = sum(WGHT_PER, na.rm = TRUE), .groups = "drop")
+
+# Order of destinations 
+destination_order <- c("Home", "Work or school", "Other's home", "Grocery store", 
+                       "Restaurant", "Health clinic", "Outdoors", "Neighbourhood",
+                       "Cultural venues", "Place of worship", 
+                       "Sport area", "Business")
+
+#my_colors <- kelly(length(destination_order))
+my_colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f",
+"#ff7f00", "#cab2d6","#6a3d9a","#ffff99","#b15928")
+
+names(my_colors) <- destination_order
+
+
+destination_percentual <- gss_impedances_renamed %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>%
+  group_by(MODE, dest_label, YEAR) %>%
+  dplyr::summarise(n = sum(WGHT_EPI), .groups = "drop") %>%
+  group_by(MODE, YEAR) %>%
+  mutate(percentage = n / sum(n) * 100) %>%
+  ungroup() %>%
+  group_by(MODE, YEAR) %>%
+  mutate(rank = rank(-percentage, ties.method = "first")) %>%
+  mutate(label = ifelse(rank <= 5, paste0(round(percentage, 1), "%"), NA)) %>%
+  ggplot(aes(x = MODE, fill = dest_label, y = percentage)) +
+  geom_bar(stat = "identity", position = "fill") +
+  labs(y = "Proportion (%)",
+       x = "Mode",
+       fill = "Destination") +
+  theme_minimal() +
+  facet_wrap(~ as.factor(YEAR)) +
+  geom_text(aes(label = label),
+            position = position_fill(vjust = 0.5), size = 4) +
+  scale_fill_manual(values = my_colors) + 
+  theme(axis.title = element_text(size = 20),
+    axis.text = element_text(size = 15),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 16),
+    strip.text = element_text(size = 16))
+
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/poster_destination_percentual.jpg"),
+       plot = destination_percentual,
+       width = 17,
+       height = 10,
+       units = "in",
+       dpi = 300)
+```
+
+```{r figure-destmodeyearperc, echo=FALSE, out.width="100%", fig.cap="Percentage of walking and cycling trips categorized by destination and year."}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/poster_destination_percentual.jpg"))
+```
+
+```{r make-figs-heatmaps, include=FALSE}
+# Walking heat map
+walking_hm_fig <- gss_impedances_renamed %>%
+  filter(MODE == 'Walking') %>%
+  group_by(orig_label, dest_label, YEAR) %>%
+  dplyr::summarise(n = sum(WGHT_EPI), .groups = "drop") %>%
+  group_by(YEAR) %>%
+  mutate(percentage = n / sum(n) * 100) %>%
+  ungroup() %>%
+  ggplot(aes(x = dest_label,
+    y = orig_label)) +
+    geom_tile(aes(fill = percentage)) +
+    labs(x = "Destination",
+    y = "Origin",
+    fill = "Percentage (%)") + 
+    #geom_text(aes(label = round(percentage)), color = "black", size = 3) + 
+    theme_bw() + 
+    scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "YlOrRd")) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), 
+          axis.text = element_text(size = 18),
+          axis.title = element_text(size = 20),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 16),
+          strip.text = element_text(size = 18)) +
+  facet_wrap(~YEAR)
+
+# Saving figure
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/poster_walking_hm_fig.jpg"), 
+       plot = walking_hm_fig,
+       width = 16, 
+       height = 10, 
+       units = "in", 
+       dpi = 300)
+```
+
+```{r walking-heatmap, echo=FALSE, out.width="100%", fig.cap="Percentage of walking trips categorized by origin and destination."}
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/poster_walking_hm_fig.jpg"))
+```
+
+
+## Calibrated impedance function
+
+```{r selected-functions, echo=FALSE, cache=FALSE, warning=FALSE, include=FALSE}
+selected_functions <- gss_impedances_renamed %>% 
+  group_by(MODE, YEAR, dest_label) %>% 
+  dplyr::summarise(Function = first(f_name), 
+            est_1 = first(est_1),
+            est_2 = first(est_2),
+            AIC = first(aic),
+            f_name = first(f_name),
+            count = first(count),
+            .groups = "drop") %>% 
+  mutate(Function = case_when(
+    Function == "lnorm" ~ "Lognormal",
+    Function == "gamma" ~ "Gamma",
+    Function == "unif" ~ "Uniform",
+    Function == "norm" ~ "Normal",
+    TRUE ~ Function), 
+  across(c(est_1,est_2), ~ round(., digits = 2)), 
+  across(c(AIC), ~ round(., digits = 0))) %>% 
+  rename(Mode = MODE, Year = YEAR, Destination = dest_label)
+
+walking_functions_table <- selected_functions %>%
+  arrange(Year, Destination) %>% 
+  filter(Mode == 'Walking') %>% 
+  select(Year, Destination, Function,est_1,est_2, AIC, count) %>% 
+  mutate(across(c(AIC, count), 
+                ~ number(., accuracy = 1, big.mark = ","))) %>% 
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = paste0("\\label{tab:walking-functions-tab}Impedance functions and AIC for walking trips."), 
+        col.names = c("Year", "Destination", "Impedance function","Parameter 1*","Parameter 2*", "AIC", "Count")) %>%
+    kable_styling(full_width = FALSE, 
+                latex_options=c("scale_down"),
+                font_size = 8) %>% 
+  row_spec(0, bold = TRUE, align = "c") %>% 
+  collapse_rows(columns = 1, valign = "top", latex_hline = "major") %>%
+  footnote(general = c("For lognormal distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For Gamma distributions, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For uniform distributions,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion."), threeparttable = T)
+
+biking_functions_table <- selected_functions %>%
+  arrange(Year, Destination) %>% 
+  filter(Mode == 'Cycling') %>% 
+  select(Year, Destination, Function, est_1, est_2, AIC, count) %>%
+  mutate(across(c(AIC, count), 
+                ~ number(., accuracy = 1, big.mark = ","))) %>% 
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = paste0("\\label{tab:cycling-functions-tab}Impedance functions and AIC for cycling trips."), 
+        col.names = c("Year", "Destination", "Impedance function","Parameter 1*","Parameter 2*", "AIC", "Count")) %>% 
+    kable_styling(full_width = FALSE, 
+                latex_options=c("scale_down"),
+                font_size = 8) %>% 
+  row_spec(0, bold = TRUE, align = "c") %>% 
+  collapse_rows(columns = 1, valign = "top", latex_hline = "major") %>%
+  footnote(general = c("For lognormal distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution on the logarithmic scaler, respectively. For normal distributions, 'Parameter 1' and 'Parameter 2' refer to the mean and standard deviation of the distribution, respectively. For the gamma distributions, 'Parameter 1' and 'Parameter 2' refer to the rate and shape of the distribution, respectively. For the uniform distribution,  'Parameter 1' refers to the minimum lower bound and 'Parameter 2'  refers to the upper bound (maximum) of the distribution.  'AIC' means Akaike information criterion."), threeparttable = T)
+```
+
+In total, we fitted `r nrow(selected_functions)` impedance functions. Among the candidate distributions, only the negative exponential type was not selected. The absence of exponential functions, given the variety of destinations, year and mode of transport, indicates that the impedance functions applied in active accessibility studies may not be adequately measuring travel behavior, especially for cases when the travel time is close to 0 minute. Table \ref{tab:walking-functions-tab} displays the selected functions for walking trips, while Table \ref{tab:cycling-functions-tab} presents the functions for cycling trips. 
+
+```{r walking_functions_table,echo=FALSE, cache=FALSE, warning=FALSE}
+
+walking_functions_table
+```
+
+```{r biking_functions_table,echo=FALSE, cache=FALSE, warning=FALSE}
+
+biking_functions_table
+```
+
+Figure \ref{fig:outdoors-impedance-fig} presents the calibrated functions for the destination 'Outdoors,' along with a histogram of the empirical distribution of trips, split by year and transportation mode. Comparing functions from different categories can be difficult when analyzed for the first time, but by starting with the functions from the walking transportation mode (blue curves), the calibrated functions from this example show a similar pattern. At a duration of around zero minutes, the probability of making the trip is lower (with a density of zero for the years 2015 and 2022). After a few minutes, there is a peak in the maximum probability of traveling to reach 'Outdoors,' followed by a drop in willingness to zero for very high values of time, indicating a low probability of making the trip.
+
+```{r mean_functions, include = FALSE}
+mean_functions <- selected_functions %>% 
+  group_by(Function) %>%
+  dplyr::summarise(mean = mean(count))
+
+mean_gamma <- round(mean_functions[mean_functions$Function == 'Gamma', ]$mean)
+mean_uniform <- round(mean_functions[mean_functions$Function == 'Uniform', ]$mean)
+mean_lognormal <- round(mean_functions[mean_functions$Function == 'Lognormal', ]$mean)
+```
+
+```{r theoretical_impedance_values, include = FALSE}
+theoretical_impedance <- function(df_functions, travel_cost) {
+  
+  # Initialize the main data frame to store results
+  result <- data.frame()
+  
+  # Create the 't' sequence
+  t_seq <- seq(1, travel_cost, 1)
+  
+  for (mode in unique(df_functions$Mode)){
+    
+    for (year in unique(df_functions[df_functions$Mode == mode, ]$Year)){ 
+      
+      for (destino in unique(df_functions[df_functions$Year == year & df_functions$Mode == mode, ]$Destination)){
+        
+      name_function <- df_functions[df_functions$Year == year & 
+                                      df_functions$Mode == mode & 
+                                      df_functions$Destination == destino, ]$f_name
+      
+      print(paste0("YEAR: ", year, " MODE: ", mode," Destination: ", destino))
+      
+      subset <- df_functions %>% 
+        filter(Year == year & Mode == mode & Destination == destino)
+      
+      # Temporary data frame for this iteration
+      temp_df <- data.frame(t = t_seq)
+      
+      # Add the appropriate distribution
+      if (name_function == "lnorm") {
+        temp_df$f <- dlnorm(temp_df$t,
+                            meanlog = subset$est_1[1],
+                            sdlog = subset$est_2[1])
+        
+      } else if (name_function == "gamma") {  
+        temp_df$f <- dgamma(temp_df$t,
+                            shape = subset$est_1[1],
+                            rate = subset$est_2[1])
+        
+      } else if (name_function == "norm") {  
+        temp_df$f <- dnorm(temp_df$t,
+                           mean = subset$est_1[1],
+                           sd = subset$est_2[1])
+        
+      } else if (name_function == "exp") {  
+        temp_df$f <- dexp(temp_df$t,
+                          rate = subset$est_1[1])
+        
+      } else if (name_function == "unif") {  
+        temp_df$f <- dunif(temp_df$t,
+                           min = subset$est_1[1],
+                           max = subset$est_2[1])
+      }
+      
+      # Add mode, year and destination columns
+      temp_df$MODE <- mode
+      temp_df$YEAR <- year
+      temp_df$dest_label <- destino
+        
+      # Append to the result data frame
+      result <- rbind(result, temp_df)
+    }
+  }
+}
+  return(result)
+}
+
+theoretical_values <- theoretical_impedance(selected_functions, travel_cost = max_duration)
+```
+
+```{r include = FALSE}
+
+for(destino in c("Sport area")){
+  
+  medianas <- gss_impedances_renamed %>%
+    filter(dest_label == destino) %>%
+    group_by(MODE) %>%
+    dplyr::summarise(mediana_duracao = Hmisc::wtd.quantile(DURATION, weights = WGHT_EPI, probs = 0.5), .groups = 'drop')
+  
+  maximos <- theoretical_values %>%
+    filter(dest_label == destino) %>%
+    group_by(MODE, YEAR) %>%
+    filter(f == max(f)) %>%
+    slice(which.max(t)) %>%
+    ungroup()
+  
+combined_plot <- gss_impedances_renamed %>% 
+  filter(dest_label == destino) %>%
+  mutate(dest_label = factor(dest_label, levels = destination_order)) %>%
+  ggplot(aes(x= DURATION)) +
+  geom_histogram(aes(y = ..density.., colour = MODE, fill = MODE), bins = 20, alpha=0.1, position="identity") + 
+  geom_line(data = theoretical_values[theoretical_values$dest_label == destino, ], aes(x = t, y = f, colour = MODE), size = 0.8) +   
+  geom_vline(data = medianas, aes(xintercept = mediana_duracao, color = MODE), linetype = "dashed") + 
+  geom_point(data = maximos, aes(x = t, y = f, colour = MODE), size = 5) + 
+  geom_label(data = maximos, aes(x = t, y = f, label = round(t, 2), colour = MODE), 
+            vjust = 0, size = 5) + 
+  theme_minimal() + 
+  facet_wrap(~YEAR) + 
+  labs(x = "Trip duration (in minutes)", y = "Density", colour = "Transportation Mode", fill = "Transportation Mode") +
+  theme(legend.position="right", 
+    strip.text = element_text(size = 20), 
+    axis.title = element_text(size = 22),
+    axis.text = element_text(size = 18),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 18))
+
+ggsave(file = paste0(here::here(),"/Journal-manuscript/figures/poster_impf.jpg"), 
+       plot = combined_plot,
+       width = 16, 
+       height = 5, 
+       units = "in", 
+       dpi = 300)
+}
+```
+
+```{r outdoors-impedance-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Empirical data and impedance functions fitted for walking trips for Outdoors destination."), fig.align="center"}
+# selecting mode and destination to display impedance functions
+destino <- "Sport area"
+
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/poster_impf.jpg"))
+```

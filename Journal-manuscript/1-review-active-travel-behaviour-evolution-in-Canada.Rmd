@@ -503,7 +503,7 @@ adults.
 
 ## Time Use Surveys in Transportation
 
-Transportation researchers generally agree that previous behaviour strongly influences current behaviour [@gershuny2000; @minnen2015]. Therefore, identifying activity patterns that remain stable over time provides valuable insights for forecasting travel behaviour. Time-diary surveys are particularly useful due to their activity-based design, which captures activities within a complete daily cycle. Although their primary focus is not transportation per se, TUS can provide data to create models for travel and transport behaviour patterns. Some studies suggest that recording travel within the broader daily context of activities reduces memory-related errors, as it helps respondents recall short and infrequent trips [@pendyala2003; @clarke1981], although this view is contested by other researchers [@gerike2015].
+Transportation researchers generally agree that previous behaviour strongly influences current behaviour [@gershuny2000; @minnen2015]. Therefore, identifying activity patterns that remain stable over time provides valuable insights for forecasting travel behaviour. Time-diary surveys are particularly useful due to their activity-based design, which captures activities within a complete daily cycle. Although their primary focus is not transport and mobility aspects, TUS can provide data to create models for travel and transport behaviour patterns. Some studies suggest that recording travel within the broader daily context of activities reduces memory-related errors, as it helps respondents recall short and infrequent trips [@pendyala2003; @clarke1981], although this view is contested by other researchers [@gerike2015].
 
 According to Harms et al. [-@harms2018], more than 65 countries worldwide have collectively conducted over one hundred TUS cycles. In these surveys, respondents complete a diary based on the previous day's activities, and the records are structured as an episode with its main and detailed activity, start and end times, and a location. Transportation modes are often registered as an option of location, allowing researcher to use TUS data as a proxy for travel surveys.
 
@@ -511,27 +511,14 @@ Adams [-@adams2010] used the 2005 UK TUS to examine the prevalence of active tra
 
 Lachapelle et al. [-@lachapelle2026] analyzed two cycles of the Canadian TUS (2010 and 2015) to investigate grocery shopping activities, trip characteristics, and the potential loss of detail in the 2015 cycle, which grouped all shopping into a single activity category. They found that grocery shopping sequences were shorter than other shopping activities. No significant differences in duration were observed by gender or income for grocery trips, although differences emerged for other shopping activities. The authors concluded that combining grocery and non-grocery shopping in future surveys, as occurred for 2015, may obscure meaningful behavioural distinctions.
 
-A key limitation of TUS data for transportation research is the adoption of fixed time intervals to report the duration of activities [@gerike2015; @adams2010]. This design may exclude short trips lasting less than half the reporting interval, leading to an underestimation of active travel, since short trips are predominantly made by walking. In addition, fixed time intervals can also inflate reported travel times. Gerike et al. [-@gerike2015] found an overestimation of short trips when comparing data obtained from TUS with the National Travel Survey (NTS), since in many cases the duration was reported as 10 minutes. However, Minnen [-@minnen2015] notes that continuous activity diaries, while methodologically superior, are also more expensive, time-consuming, and tend to have lower response rates. Comparative studies between TUS and NTS reveals others systematic differences. Hubert et al. [-@hubert2008], comparing data from Belgium, France, and Great Britain, found that while both survey types tell broadly parallel stories, TUS data report lower immobility rates and longer average travel times. Nonetheless, they emphasize that TUS datasets enable crucial cross-temporal and cross-national comparisons due to their harmonized design and widespread implementation.
+A key limitation of TUS data for transportation research is the adoption of fixed time intervals to report the duration of activities [@gerike2015; @adams2010]. This design may exclude short trips lasting less than half the reporting interval, leading to an underestimation of active travel, since short trips are predominantly made by walking. In addition, TUS fixed time intervals tend to inflate reported travel times when compared to National Travel Survey (NTS), as consistently indicated by literature [e.g., @vilhelmson1997; @harvey2003; @hubert2003; @hubertet2008; @richardson2007; @yennamani2008]. 
+
+Gerike et al. [-@gerike2015] found an overestimation of short trips in their comparison of TUS and NTS data in Germany, as in many cases the duration was reported as 10 minutes. They stressed that TUS data do not always accurately represent the actual duration of trips and should therefore be examined with caution. The authors recommend that transportation researchers use activity diaries with continuous time recording rather than fixed interval formats. However, all studies documenting such limitations refer to TUS with intervals of at least 10 minutes—unlike the Canadian case, which adopts a more refined resolution of 5-minute intervals for the last two cycles. According to Rietveld (2002), rounding to 5-minute intervals for start and end times also occurs in NTS data, even though respondents are asked to report exact times. However, Minnen [-@minnen2015] notes that continuous activity diaries, while methodologically preferable, are also more expensive, time-consuming, and tend to have lower response rates. 
+
+Comparative studies between TUS and NTS reveals others systematic differences. Hubert et al. [-@hubert2008], comparing data from Belgium, France, and Great Britain, found that while both survey types tell broadly parallel stories, TUS data report lower immobility rates and longer average travel times. Nonetheless, they emphasize that TUS datasets enable crucial cross-temporal and cross-national comparisons due to their harmonized design and widespread implementation.
 
 Adams [-@adams2010] also highlighted that some TUS do not capture trip-chaining - when  there is a link of multiple trip purposes within a single travel sequence [@primerano2008]. For example, a trip to buy a gift, visit a friend, and return home may be recorded as a single-purpose trip, masking the complexity of actual travel patterns. 
 
-
-
-<!-- The literature consistently indicates that TUS -->
-<!-- tends to overestimate travel times when compared to National Travel -->
-<!-- Surveys (NTS) [e.g., @vilhelmson1997; @harvey2003; @hubert2003; -->
-<!-- @hubertet2008; @richardson2007; @yennamani2008]. Gerike et al. found -->
-<!-- that TUS may exaggerate daily travel times due to its fixed-interval -->
-<!-- reporting structure, concluding that TUS data do not always represent -->
-<!-- actual trip durations accurately and should be interpreted with caution. -->
-<!-- They recommend that transportation researchers use activity diaries with -->
-<!-- continuous time recording, rather than fixed-interval formats. However, -->
-<!-- all studies documenting such limitations refer to TUS with intervals of -->
-<!-- at least 10 minutes. In contrast, the Canadian TUS cycles of 2015 and -->
-<!-- 2022 adopted a finer resolution of 5-minute intervals.According to -->
-<!-- Rietveld (2002), rounding to 5-minute intervals for start and end times -->
-<!-- occurs in NTS data as well, despite respondents being asked to report -->
-<!-- exact times.  -->
 
 ### Time Use Surveys in Canada
 
@@ -2943,8 +2930,7 @@ ggsave(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_yea
 
 # Limitations
 
-Although the TUS is a reliable and standardized data source, its two
-most recent cycles (2015 and 2022) present a limitation for
+Although the Canadian TUS is a reliable and standardized data source, its two most recent cycles (2015 and 2022) present a limitation for
 transportation analysis due to their use of fixed time intervals for
 reporting activities. We believe that using a 5-minute time interval introduces
 fewer complications than a 10-minute interval, but it still causes
@@ -2968,8 +2954,7 @@ shorter than 2.5 minutes. Our analysis indicates that approximately
 20.4% of travel episodes were omitted in 2022. Among all mobility cases,
 walking represented 11.3% and cycling 0.96% of reported trips. Based on
 these proportions, we estimate that approximately 2.3% of walking and
-0.2% of cycling episodes were omitted due to time-interval rounding. At
-the individual level, 22.2% of respondents had at least one omitted
+0.2% of cycling episodes were omitted due to time-interval rounding. In terms of population, 22.2% of respondents had at least one omitted
 trip, with an estimated 2.7% missing walking and 0.25% missing cycling
 episodes. Given that short trips are most often made by walking or car,
 these values likely represent a conservative estimate of AT
@@ -2977,11 +2962,11 @@ underreporting. For cycling, short episodes represented 0% in 1992, 4%
 in 1998, and less than 2.5% in both 2005 and 2010, suggesting minimal
 underreporting for this mode.
 
-In 2015, 19.2% of cases showed a change in location without an intermediate travel episode. For the 2010 TUS, the last cycle before the introduction of the 5-minutes  interval, we found 11.1% of such cases, a lower proportion than in 2015 and 2022 but still notable. Comparable rates were 10.6% in 2005, 9.8% in 1998, and 15% in 1992. These results suggest that omissions of travel episodes may also stem from reporting errors or inconsistencies in diary completion, rather than from the fixed-interval design alone.
+In 2015, 19.2% of cases showed a change in location without an intermediate travel episode. For the 2010 TUS, the last cycle before the introduction of the 5-minutes  interval, we found 11.1% of such cases, a lower proportion than in 2015 and 2022 but still notable. Comparable rates were 10.6% in 2005, 9.8% in 1998, and 15% in 1992. These results suggest that omissions of travel episodes may also comes from reporting errors or inconsistencies in diary completion, rather than from the fixed-interval design alone.
 
 Therefore, the adoption of a 5-minute interval by Statistics Canada in
 TUS 2015 and 2022 represents the main limitation for our study. However,
-because this interval is relatively short, we believe the impact on
+because this time interval is relatively short, we believe the impact on
 typical travel durations is minimal. In fact, despite the increase in
 short-trip representation between 1998 and 2010, the median walking time
 remained stable at 10 minutes. The more significant impact likely lies

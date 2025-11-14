@@ -2501,7 +2501,8 @@ walking_functions_table <- selected_functions %>%
                 font_size = 8) %>% 
   row_spec(0, bold = TRUE, align = "c") %>% 
   collapse_rows(columns = 1, valign = "top", latex_hline = "major") %>%
-  footnote(general = c("For each probability distribution, Parameter 1 and Parameter 2 correspond to their standard defining parameters: the mean and standard deviation (for lognormal and normal), the rate and shape (for gamma), and the minimum and maximum bounds (for uniform). The AIC represents the Akaike Information Criterion used to assess model fit."), threeparttable = T)
+  footnote(general = c("For each probability distribution, Parameter 1 and Parameter 2 correspond to their standard defining parameters: the mean and standard deviation (for lognormal and normal), the rate and shape (for gamma), and the minimum and maximum bounds (for uniform). The AIC represents the Akaike Information Criterion used to assess model fit."), threeparttable = T)  %>%
+  kable_styling(latex_options = "HOLD_position")
 
 biking_functions_table <- selected_functions %>%
   arrange(Year, Destination) %>% 
@@ -2518,7 +2519,8 @@ biking_functions_table <- selected_functions %>%
                 font_size = 8) %>% 
   row_spec(0, bold = TRUE, align = "c") %>% 
   collapse_rows(columns = 1, valign = "top", latex_hline = "major") %>%
-  footnote(general = c("For each probability distribution, Parameter 1 and Parameter 2 correspond to their standard defining parameters: the mean and standard deviation (for lognormal and normal), the rate and shape (for gamma), and the minimum and maximum bounds (for uniform). The AIC represents the Akaike Information Criterion used to assess model fit."), threeparttable = T)
+  footnote(general = c("For each probability distribution, Parameter 1 and Parameter 2 correspond to their standard defining parameters: the mean and standard deviation (for lognormal and normal), the rate and shape (for gamma), and the minimum and maximum bounds (for uniform). The AIC represents the Akaike Information Criterion used to assess model fit."), threeparttable = T) %>%
+  kable_styling(latex_options = "HOLD_position")
 ```
 
 In total, we fitted `r nrow(selected_functions)` impedance functions
@@ -2532,7 +2534,7 @@ travel time is close to 0 minute. Table A.2 displays the selected
 functions for walking trips, while Table A.3 presents the functions for
 cycling trips.
 
-Figure \ref{fig:outdoors-impedance-fig} shows the calibrated functions
+As an example, figure \ref{fig:outdoors-impedance-fig} shows the calibrated functions
 for the destination 'Outdoors,' along with a histogram of the empirical
 distribution of trips, split by year and transportation mode. Starting
 with the functions from the walking transportation mode (blue curves),
@@ -2850,16 +2852,16 @@ ggsave(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_yea
        dpi = 300)
 ```
 
+Figure \ref{fig:cycling-function-by-year-fig} presents the calibrated impedance functions for the cycling mode, separated by survey year. We observe that these functions align with the previously described trends for walking episodes, with the most recent functions (2022) showing a peak at longer durations compared with earlier cycles. Initially, peaks were concentrated around 15 minutes, whereas in the most recent cycle they shift to approximately 25 minutes. The functions also show, for each year, how Canadians' cycling behaviour varies by destination type. For example, the function for grocery store trips exhibits a more evenly distributed density, although its peak is concentrated around 45 minutes. The function for health clinic trips shows that durations longer than one hour have essentially zero probability. In contrast, Canadians who cycle to work or school typically travel around 20 minutes, with trips longer than this becoming increasingly unlikely (especially those exceeding 50 minutes).
+
 ```{r cycling-function-by-year-fig, echo=FALSE, out.width="100%", fig.cap=paste0("Cycling functions grouped by year."), fig.align="center"}
 
-# knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_year.jpg"))
+knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_year.jpg"))
 ```
 
+In terms of transportation planning, the diversity of impedance functions contributes to the understanding that relying on a generic function in accessibility studies can lead to misrepresented indicators, since opportunities may end up being distributed in an inadequate way. While the statistics presented earlier describe the typical travel times for different modes, destinations, and population groups over the years, calibrated impedance functions illustrate how far the general population is actually willing to walk or cycle to reach a variety of opportunities, including non-work activities.
 
-How these functions can help accessibility studies? 
-
-What patterns can we obtain from analyzing this functions. How do they connect with the previous knowledge on . 
-
+In addition, these functions allow us to examine how accessibility to specific destinations has changed over the past 30 years. For instance, we know that the typical travel time for walking trips increased in 2022 compared with earlier cycles. With calibrated functions, we can assess whether this increase in travel time corresponds to a greater number of opportunities being reached by the population, helping us understand not only how active travel has changed over time but also how active accessibility has evolved.
 
 # Limitations
 
@@ -3299,8 +3301,6 @@ repository *(include after the review)*.
 
 The authors declare no conflicts of interest.
 
-# References {.unnumbered}
-
 # Appendix {.unnumbered}
 
 ```{r kruskal-walking, include = FALSE, warning= FALSE, cache=TRUE}
@@ -3371,7 +3371,7 @@ result_pw_style <- result_pw_style[,c("Mode","Destination","Year","1992","1998",
 
 result_pw_style <- result_pw_style %>%
   mutate(across(all_of(c("1992","1998","2005","2010","2015")),
-                ~ ifelse(is.na(.x), "", formatC(.x, format = "e", digits = 2))))
+                ~ ifelse(is.na(.x), "", formatC(.x, format = "e", digits = 2)))) 
 
 table_stats <- result_pw_style %>%
   kable(format = "latex",
@@ -3381,7 +3381,8 @@ table_stats <- result_pw_style %>%
   kable_styling(full_width = FALSE, 
                 latex_options = c("scale_down"),
                 font_size = 8) %>%
-  collapse_rows(columns = 1, valign = "top", latex_hline = "major")
+  collapse_rows(columns = 1, valign = "top", latex_hline = "major") %>%
+  kable_styling(latex_options = "HOLD_position")
 ```
 
 \renewcommand{\thetable}{A.1}
@@ -3404,3 +3405,5 @@ walking_functions_table
 
 biking_functions_table
 ```
+
+# References {.unnumbered}

@@ -412,15 +412,9 @@ conducted a analysis of active travel behaviour in Canada using the full
 set of TUS GSS cycles. This study is driven by the following research
 questions: How can active trips in Canada be characterized in terms of
 their main origins, destinations, typical durations, and  how these patterns have evolved over time? How is the population engaged in AT distributed across gender and age cohorts? Finally, how can these travel behaviours be represented using impedance
-functions? To answer these questions, this study has two main
-objectives: to investigate the Canadian TUS GSS cycles from 1992 to
-2022, providing an overview of AT in terms of main origins,
-destinations, travel times, and the demographic profile of individuals
-engaging in AT; and to calibrate impedance functions that represent
-Canadians’ travel behaviours for walking and cycling, considering a wide
-range of destinations and time periods across Canadian metropolitan
-areas. To achieve both objectives, we utilize data provided by the
-`ActiveCA` R package [@dossantos2025], an open data product in the form
+functions? To answer these questions, this study aims to provide evidence of actual active travel behaviour in Canadian metropolitan areas, first by analyzing the Canadian TUS GSS cycles from 1992 to 2022 to offer an overview of AT in terms of main origins, destinations, travel times, and the demographic profile of individuals
+engaging in AT, and second, by calibrating impedance functions to represent
+walking and cycling travel behaviour. To achieve this objective, we utilize data provided by the `ActiveCA` R package [@dossantos2025], an open data product in the form
 of an R data package with information about active travel in Canada.
 This data product is based on Public Use Microdata Files of TUS GSS
 cycles. To build this package, the authors extracted all walking and
@@ -485,9 +479,9 @@ considerably by age, sex, BMI, and income.
 The second and more recent study, conducted by Borhani et al.
 [-@borhani2024], explored active transportation (AT) patterns in Canada
 using data from four national health surveys: the National Population
-Health Survey (1994–1998), the Canadian Community Health Survey
-(2000–2020), the Canadian Health Measures Survey (2007–2019), and the
-Health Behaviour in School-aged Children Study (2010–2018). Their
+Health Survey (1994-1998), the Canadian Community Health Survey
+(2000-2020), the Canadian Health Measures Survey (2007-2019), and the
+Health Behaviour in School-aged Children Study (2010-2018). Their
 analysis assessed the prevalence of AT participation and time spent on
 active trips, focusing on walking and cycling, with results stratified
 by age group and sex. The authors noted that inconsistencies in AT
@@ -516,23 +510,6 @@ A key limitation of TUS data for transportation research is the adoption of fixe
 Adams [-@adams2010] also highlighted that some TUS do not capture trip-chaining - when  there is a link of multiple trip purposes within a single travel sequence [@primerano2008]. For example, a trip to buy a gift, visit a friend, and return home may be recorded as a single-purpose trip, masking the complexity of actual travel patterns. 
 
 
-
-<!-- The literature consistently indicates that TUS -->
-<!-- tends to overestimate travel times when compared to National Travel -->
-<!-- Surveys (NTS) [e.g., @vilhelmson1997; @harvey2003; @hubert2003; -->
-<!-- @hubertet2008; @richardson2007; @yennamani2008]. Gerike et al. found -->
-<!-- that TUS may exaggerate daily travel times due to its fixed-interval -->
-<!-- reporting structure, concluding that TUS data do not always represent -->
-<!-- actual trip durations accurately and should be interpreted with caution. -->
-<!-- They recommend that transportation researchers use activity diaries with -->
-<!-- continuous time recording, rather than fixed-interval formats. However, -->
-<!-- all studies documenting such limitations refer to TUS with intervals of -->
-<!-- at least 10 minutes. In contrast, the Canadian TUS cycles of 2015 and -->
-<!-- 2022 adopted a finer resolution of 5-minute intervals.According to -->
-<!-- Rietveld (2002), rounding to 5-minute intervals for start and end times -->
-<!-- occurs in NTS data as well, despite respondents being asked to report -->
-<!-- exact times.  -->
-
 ### Time Use Surveys in Canada
 
 In Canada, the GSS TUS cycles have provided comprehensive cross-sectional snapshots of the Canadian population since 1986 [@statisticscanada2022]. Each survey cycle spans a full 12-month period, typically from July to July of the following year. The target population includes all Canadians aged 15 and older, excluding residents of the Yukon, Northwest Territories, and Nunavut, full-time residents of institutions, and individuals living on Indigenous reserves. The TUS covers both rural and urban areas, including metropolitan and non-metropolitan regions, ensuring a diverse and representative sample of the Canadian population. For sampling purposes, the ten provinces were divided into distinct geographic strata. Several Census Metropolitan Areas (CMAs) and some Census Agglomerations (CAs) were treated as separate strata, while additional strata were created by grouping other CMAs within Quebec, Ontario, and British Columbia, and by categorizing non-CMA areas within each province.
@@ -541,35 +518,17 @@ Since 2015, the TUS has adopted fixed 5-minute time intervals for recording acti
 
 However, major methodological changes can affect data comparability over time. It is therefore difficult to determine with certainty whether observed differences across survey cycles reflect genuine changes in population behaviour or result from modifications in data collection methods. While Statistics Canada maintains rigorous standards to ensure the accuracy and quality of published estimates, there is reason to believe that the use of an electronic questionnaire influenced some results. The potential impact of the new collection mode was assessed by Statistics Canada for a subset of key questions, although sample size limitations prevented this analysis from being extended to all variables. Importantly, none of the variables used in this study are identified in the 2022 TUS Public Use Microdata File User Guide [@statisticscanada2022] as unsuitable for trend analysis due to differences in data collection mode.
 
+Another difference is that the range of activities and destinations considered in the
+surveys changed from 1992 to 2022. In 1992, there were only a few options of origin/destination location available to the respondent: their home, other's home, Work, elsewhere; as well travel options to describe cases in which a person was currently travelling from one place to another: Car (as driver or passenger), public transit (bus or subway), walk, bicycle, and other type of transportation option. In its turn, the most recent survey (2022) counts with twelve possible destination, adding to the previous list sport
+area (sports centre, field or arena), restaurant (including bar and
+club), health clinics (medical, dental or other health clinic), grocery
+stores (including other types of stores and malls), place of worship, art venues (library, museum or theatre), outdoors, in the neighbourhood, business, and school (in fact, work or study); and ten travel options, adding to the previous list more options of public transit (street-car and light-rail), airplane, bicycle, motocyle, scooter or moped, and taxi or limousine service. 
+
 ## Representation of travel behaviour with impedance functions
 
-Accessibility is the main benefit provided by the transportation system
-[@pereira2017], being understood as the potential to access spatially
-distributed opportunities [@hansen1959; @paez2012]. When computing
-accessibility measure, is necessary take into account the challenges
-associated with this access to different locations and opportunities.
-Usually, the effect of travel costs is expressed by "impedance
-functions", also called "distance decay functions" [@soukhov2024].
-Overall, impedance functions are derived from estimates based on
-distributions of sample data that reflect variations in the willingness
-of individuals to travel different distances to reach opportunities
-[@li2020approach]. Their objective is to describe the decrease in the
-intensity of interaction as the cost of travel between locations
-increases. The cost of travel is usually measured in terms of the
-distance between the places of origin and destination, or in terms of
-the time spent reaching the destination from the point of origin.
+Current interest in creating "livable" communities often relies on broad assumptions about individuals' willingness to walk or bike to different destinations [@iacono2008access]. For example, it is commonly assumed that people are generally willing to walk up to a quarter mile to access most places [@untermann1984; @larsen2010]. Similarly, the recent "15-minute city" concept proposes that the majority of daily necessities should be accessible by walking or cycling within 15 minutes [@moreno2021]. When calibrated with real data, impedance functions provide empirical evidence to test the validity of such assumptions and support urban planners in their decision-making.
 
-Examining the impedance functions across different modes of transport
-and destinations is a good way to understand the travel behaviour
-associated with each mode, while also helping to examine allegations
-about travel behaviour. Current interest in creating "livable"
-communities often relies on broad assumptions about individuals'
-willingness to walk or bike to different destinations. For example, it
-is commonly assumed that people are generally willing to walk up to a
-quarter mile to access most places [@untermann1984; @larsen2010].
-Similarly, the recent "15-minute city" concept proposes that the
-majority of daily necessities should be accessible by walking or cycling
-within 15 minutes [@moreno2021].
+Perhaps the most important application of impedance functions is their use in calculating accessibility measures - the potential to access spatially distributed opportunities [@hansen1959; @paez2012]. For these calculations, it is necessary to account for the challenges associated with accessing different locations and opportunities. The core idea is that greater distances between origins and destinations lead to lower movement intensity, following a distance-decay effect. The effect of travel costs is typically expressed through impedance functions, which, when calibrated, are derived from sample data distributions that reflect variations in individuals' willingness to travel different distances to reach opportunities [@li2020approach]. These functions are therefore central not only to accessibility analysis but also to travel demand forecasting [@primerano2008; @sveda2023].
 
 Different categories of accessibility measures have been developed, such
 as indicators based on actives, infrastructure, individuals and
@@ -611,54 +570,23 @@ challenging and results in a diverse range of cost decay functions that
 are employed as impedance functions in accessibility measures, including
 threshold functions and smooth cost decay functions (e.g., log-normal,
 normal, gamma, and exponential function) [@de2009exponential;
-@reggiani2011accessibility; @osth2016new].
-
-Another type of family of accessibility measures are *cumulative
-opportunity* metrics, commonly referred to as isochronous indices. The
-binary function Equation \ref{eq:cumulative-equation} forms the basis of
-the cumulative opportunities measure approach. This function determine
-accessibility by summing up the number of opportunities available within
-a specific threshold of travel time or distance from a reference point,
-without discounting the potential of the trip in relation to the
-associated cost. They use a rectangular function, categorizing the trip
-as "acceptable" within certain limits and "unacceptable" beyond them.
-One of the main complexities of these metrics is deciding what the
-appropriate threshold point is. This decision may be based on the
-prevailing mobility patterns of the population or may reflect
-established norms, conventions or informed projections of the
-researcher. Note that the cumulative opportunity measure can be
-understood as a special case of a gravity-based measure in which the
-weight of each opportunity is defined by a binary function, rather than
-a gradually decaying function [@pereira2023].
-
-\begin{equation}
-C_{ij} =
-\begin{cases}
-  1 & \text{if } c_{ij} \le x \\
-  0 & otherwise
-\end{cases}
-\label{eq:cumulative-equation}
-\end{equation}
-
-Among the various mathematical forms that can represent impedance
-functions, the negative exponential function is the dominant choice in
-accessibility research [@hansen1959; @apparicio2008comparing;
+@reggiani2011accessibility; @osth2016new], with the negative exponential function being the dominant choice [@hansen1959; @apparicio2008comparing;
 @iacono2008access; @larsen2010; @millward2013active]. Its high adoption
 can be attributed mainly to its ability to give greater weight to nearby
-opportunities, and greater weight to distant opportunities - a highly
+opportunities while discounting distant ones - a highly
 relevant characteristic for active modes of transportation, such as
 walking and cycling. When Hansen [-@hansen1959] introduced their
 accessibility measure, the author applied and indicated the use of
 exponential distributions $(e ^ {-\beta x})$ as the impedance function.
-After this, several other studies [@fotheringham1989spatial;
-@de2009exponential; @iacono2010; @signorino2011gravity; @prins2014many]
-use the negative exponential function after comparison with empirical
-trip distribution data.
+After this, several other studies use the negative exponential function after comparison with empirical trip distribution data [@fotheringham1989spatial;
+@de2009exponential; @iacono2010; @signorino2011gravity; @prins2014many].
+
+However, impedance functions with the same parameters are still often applied to different modes and destinations to describe the decay effect. In other cases, when functions are specified separately for different transportation modes and destinations, researchers have fixed a single function form, which limits the validity of the resulting decay curve or produces a function type that does not necessarily best describe willingness to travel. Consequently, the use of unsuitable or generalized functions can lead to significant mispredictions of accessibility. After examining which factors should be used to distinguish impedance functions, Verma and Ukkusuri [-@sveda2023] recommended that urban and transport planners differentiate impedance functions at least by travel mode, and, where data and policy allow greater detail, develop separate functions for workplace and non-work destinations. In our study, we aim to provide helpful resources for transportation planners by calibrating specific impedance functions, without restricting their form to a specific type, for several destinations included in the Canadian TUS, and distinguishing them by survey year and by walking and cycling transportation modes.
 
 # Materials and Methods
 
-To investigate the historical active travel behaviour in Canada, we
-analyzed six GSS Time Use cycles: Cycles 7 (1992), 12 (1998), 19 (2005),
+To provide evidence of actual behavior in relation to active transportation and investigate its evolution over the years in Canadian metropolitan areas, we
+analyzed six cycles of GSS TUS: Cycles 7 (1992), 12 (1998), 19 (2005),
 24 (2010), 29 (2015) and 37 (2022). We excluded Cycle 2 (1986) from our
 analysis because this survey did not specify whether the respondent
 lived in a metropolitan area and did not present cycling as a option of
@@ -681,7 +609,7 @@ cycle, destination, and AT mode.
 
 To facilitate collaboration and further analysis, we updated the
 `ActiveCA` R Package to include the methodology to obtain impedance
-functions from the raw data files (GSS surveys). Additionally, we
+functions from the raw data files (GSS TUS). Additionally, we
 created this paper using literate programming in which the R markdown
 code to fully reproduce this article is available on our GitHub
 repository *(include after the review)*, in line with the best practices
@@ -698,27 +626,12 @@ identify the origin and the destination of the active travel episode. We
 labeled the code variables with their appropriate descriptions,
 identifying the transportation mode, activity/reason of the travel, as
 well the province and urban classification of the respondent's residency
-(if the respondent lives in a CMA or in a Census Agglomerations).
+(if the respondent lives in a CMA or in a CA).
 
-Additionally, it was necessary to guarantee the data consistency across
-the surveys, since they have employed a variety of variable coding
-schemes. The range of activities and destinations considered in the
-surveys changed from 1992 to 2022. In 1992, there were only three
-options of origin/destination location available to the respondent:
-their home, other's home and work or study. In its turn, the most recent
-survey (2022) counts with twelve possible destination, including sport
-area (sports centre, field or arena), restaurant (including bar and
-club), health clinics (medical, dental or other health clinic), grocery
-stores (including other types of stores and malls) and more. In order to
-achieve uniformity, the activity categories from 2005, 2010, 2015, and
-2022 were synchronised, and a similar process was employed for those
-from 1992 and 1998. For the preceding years (1992, and 1998), the trip
-origins and destinations were classified as "Home," "Other's home," and
-"Work or school." In the subsequent years (2005, 2010, 2015, and 2022),
-these categories were expanded to include "Business," "Restaurant"
-"Place of worship," "Grocery store" "Neighbourhood," "Outdoors,"
-"Cultural venues" (such as library, museum and theatre), and "Sport
-area."
+Additionally, it was necessary to ensure data consistency across the surveys, since they employed a variety of variable coding schemes. To achieve uniformity, location categories were synchronized into the following destination options: "Home," "Other’s home," "Work or school", "Business," and "Elsewhere." We combined work and school as a unique destination because work destination is available from 1998 to 2010, and study, present only in 2005 and 2010, were merged into a single category in 2015 and 2022. 
+Then, we standardized the categories that have been present since 2005: "Grocery store" (including grocery stores, other stores, or malls), "Outdoors," "Cultural venues" (library, museum, or theatre), "Restaurant" (restaurant, bar, or club), and "Place of worship". Categories available since 2015 include "Business," "Neighbourhood," "Sport area" (sports centre, field, or arena), and "Health clinic" (medical, dental, or other health clinic). 
+
+For travel-related options, we created two destination categories: "Travel - Motorized," which combines car, truck, or van (whether as a driver or passenger), taxi or limousine service, and motorcycle, scooter, or moped; and "Travel - Public Transit," which includes bus, streetcar, subway, and light-rail. We excluded airplane travel and other unspecified travel modes from our analysis. Episodes were identified as cycling when the location was coded as "Travel - Bicycle" and as walking when coded as "Travel - Walk."
 
 Statistical analysis was used to characterize active travel episodes
 using cross-tabulations and graphs. Summary statistics and visualization
@@ -791,12 +704,9 @@ all_episodes <- gss_episodes %>%
 ```
 
 After analyzing the AT episodes in terms of the population with AT
-records, we calculated impedance functions to represent the transport
-behaviour of Canadians for each survey year and destination. One can
-adopt different forms of impedance functions to model the population’s
-transport behaviour. In this study, we adopted Probability Density
-Functions (PDFs), following the approach of Soukhov and Paez
-[-@soukhov2024]. With a PDF, $f()$ can be interpreted as the probability
+records, we calculated the best impedance functions to represent the transport
+behaviour of Canadians for each survey year and destination. In this study, we adopted Probability Density Functions (PDFs), following the approach of Soukhov and Paez
+[-@soukhov2024] and Verma and Ukkusuri [-@sveda2023]. With a PDF, $f()$ can be interpreted as the probability
 density of a trip occurring for each value of travel cost $c_{ij}$. If a
 graph of the PDF (y-axis) is plotted against the travel cost $c_{ij}$
 (x-axis), the probability of a trip occurring between a given range of
@@ -2940,6 +2850,12 @@ ggsave(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_yea
 
 # knitr::include_graphics(paste0(here::here(),"/Journal-manuscript/figures/cycling_functions_by_year.jpg"))
 ```
+
+
+How these functions can help accessibility studies? 
+
+What patterns can we obtain from analyzing this functions. How do they connect with the previous knowledge on . 
+
 
 # Limitations
 

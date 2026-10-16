@@ -1,0 +1,28 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# A 30-year analysis of active travel behaviour in Canada
+
+[![DOI](https://img.shields.io/badge/DOI-10.1177%2F23998083251374724-blue)](https://doi.org/10.1016/j.jtrangeo.2026.104561)
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+-   Bruno Santos, School of Earth, Environment and Society, McMaster University
+-   Mahdis Mogadhasi, School of Earth, Environment and Society, McMaster University
+-   Antonio Paez, School of Earth, Environment and Society, McMaster University
+
+This study aims to provide evidence of the temporal evolution of active travel (AT) behaviour, specifically walking or cycling, in Canadian metropolitan areas. We analysed more than 21,000 AT records representing over 46 million weighted episodes, continuous blocks of time spent on a single main activity, from seven cycles (1992, 1998, 2005, 2010, 2015, and 2022) of the Canadian Time Use Survey (TUS) module of the General Social Survey (GSS). We identified records of active trips and examined temporal trends in destinations, travel times, and demographic profiles. In addition, we calibrated impedance functions to represent walking and cycling behaviour across thirteen destinations and two multimodal travel options. Results indicate that Home, Work or study, and Grocery store were the most frequent destinations. Walking dominated AT, accounting for more than 92% of episodes, with median walking durations rising from 10 min in earlier cycles to 15 min in 2022. Cycling durations increased from 15 min to 30 min over the same period. Since 1992, both the share of individuals with at least one AT episode and the number of episodes per person have declined. We also identified a shift in a long-standing gender pattern, in which men+ became the most active gender in 2022. The 15 to 24 age cohort remained the most active overall, and AT participation generally decreased with age. All calibrated impedance functions deviated from the exponential form, suggesting that standard distance-decay assumptions may misrepresent AT behaviour, particularly for very short trips. As study limitations, we identified omitted trips in TUS diaries (amounting to 20% of trips in 2022) and noted that the two most recent survey cycles (2015 and 2022) used 5-minute reporting intervals, which tend to overestimate short trip durations. Overall, our findings facilitate an analysis of long-term trends in AT in Canada and provide evidence to support active transportation planning.
+
+*keywords*: Time use; Walking; Cycling; Impedance function; Temporal evolution; Decay effect.
